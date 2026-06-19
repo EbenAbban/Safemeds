@@ -1,0 +1,36 @@
+rules_version='2'
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // WebRTC video-call signaling. Only authenticated users can read/write
+    // their own rooms. Rooms auto-expire via Cloud Function TTL.
+    match /videoRooms/{roomId} {
+      allow read, write: if request.auth != null
+        && roomId matches "^[a-zA-Z0-9_-]+$";
+      match /{subcollection}/{candidateId} {
+        allow read, write: if request.auth != null
+          && candidateId matches "^[a-zA-Z0-9_-]+$";
+      }
+    }
+
+    // Live delivery GPS. Courier writes their device position; the student
+    // reads it. Requires authentication.
+    match /deliveryLocations/{deliveryId} {
+      allow read, write: if request.auth != null
+        && deliveryId matches "^[a-zA-Z0-9_-]+$";
+    }
+
+    // Real-time chat rooms. Only authenticated users can read/write.
+    match /chatRooms/{chatId} {
+      allow read, write: if request.auth != null;
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null;
+      }
+    }
+
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,474 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/lib/prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String          @id @default(cuid())
+  email                 String          @unique
+  firstName             String
+  lastName              String
+  role                  UserRole
+  organization          String?
+  pharmacyName          String?
+  licenseNumber         String?
+  phone                 String?
+  address               String?
+  city                  String?
+  state                 String?
+  zipCode               String?
+  isVerified            Boolean         @default(false)
+  termsAcceptedAt       DateTime?
+  termsVersion          String?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  passwordHash          String
+  username              String          @unique
+  assignedConsultations Consultation[]  @relation("PharmacistConsultations")
+  consultations         Consultation[]
+  deliveries            Delivery[]
+  inventoryItems        InventoryItem[]
+  messages              Message[]
+  orders                Order[]
+  prescriptions         Prescription[]
+  staff                 Staff?
+  settings              UserSettings?
+  notifications         Notification[]
+  licenseVerification   LicenseVerification?
+
+  @@map("users")
+}
+
+model Consultation {
+  id                   String             @id @default(cuid())
+  userId               String?
+  type                 String
+  status               ConsultationStatus @default(PENDING)
+  description          String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  age                  Int?
+  allergies            String?
+  anonymousId          String?
+  assignedPharmacistId String?
+  gender               String?
+  isAnonymous          Boolean            @default(false)
+  medications          String?
+  symptoms             String?
+  assignedStaffId      String?
+  assignedPharmacist   User?              @relation("PharmacistConsultations", fields: [assignedPharmacistId], references: [id])
+  assignedStaff        Staff?             @relation("StaffConsultations", fields: [assignedStaffId], references: [id])
+  user                 User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages             Message[]
+  prescriptions        Prescription[]
+
+  @@map("consultations")
+}
+
+model Message {
+  id               String       @id @default(cuid())
+  chatId           String
+  userId           String?
+  content          String
+  type             MessageType  @default(TEXT)
+  createdAt        DateTime     @default(now())
+  anonymousId      String?
+  isFromPharmacist Boolean      @default(false)
+  consultation     Consultation @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user             User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model Delivery {
+  id                String         @id @default(cuid())
+  userId            String?
+  status            DeliveryStatus @default(ORDER_CONFIRMED)
+  trackingNumber    String         @unique
+  estimatedDelivery DateTime?
+  actualDelivery    DateTime?
+  address           String
+  city              String
+  state             String
+  zipCode           String
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  anonymousId       String?
+  dropPoint         String?
+  dropLat           Float?
+  dropLng           Float?
+  isAnonymous       Boolean        @default(false)
+  orderId           String?        @unique
+  packageType       String         @default("DISCREET")
+  order             Order?         @relation(fields: [orderId], references: [id])
+  user              User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("deliveries")
+}
+
+model Medication {
+  id                String          @id @default(cuid())
+  name              String
+  genericName       String?
+  description       String?
+  dosageForm        String
+  strength          String
+  manufacturer      String
+  isPrescription    Boolean         @default(true)
+  isControlled      Boolean         @default(false)
+  requiresLicense   Boolean         @default(false)
+  sideEffects       String?
+  interactions      String?
+  contraindications String?
+  price             Decimal         @db.Decimal(10, 2)
+  isActive          Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  inventoryItems    InventoryItem[]
+  prescriptions     Prescription[]
+
+  @@map("medications")
+}
+
+model InventoryItem {
+  id             String     @id @default(cuid())
+  medicationId   String
+  pharmacyId     String
+  quantity       Int
+  minQuantity    Int        @default(10)
+  maxQuantity    Int        @default(1000)
+  lotNumber      String?
+  expirationDate DateTime?
+  location       String?
+  isActive       Boolean    @default(true)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  medication     Medication @relation(fields: [medicationId], references: [id])
+  pharmacy       User       @relation(fields: [pharmacyId], references: [id])
+
+  @@unique([medicationId, pharmacyId])
+  @@map("inventory_items")
+}
+
+model Prescription {
+  id             String             @id @default(cuid())
+  consultationId String?
+  userId         String?
+  anonymousId    String?
+  medicationId   String
+  prescribedBy   String
+  dosage         String
+  frequency      String
+  duration       String
+  quantity       Int
+  refills        Int                @default(0)
+  instructions   String?
+  status         PrescriptionStatus @default(PENDING)
+  isAnonymous    Boolean            @default(false)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  orders         Order[]
+  consultation   Consultation?      @relation(fields: [consultationId], references: [id])
+  medication     Medication         @relation(fields: [medicationId], references: [id])
+  user           User?              @relation(fields: [userId], references: [id])
+
+  @@map("prescriptions")
+}
+
+model Order {
+  id                  String        @id @default(cuid())
+  prescriptionId      String?
+  userId              String?
+  anonymousId         String?
+  orderNumber         String        @unique
+  status              OrderStatus   @default(PENDING)
+  totalAmount         Decimal       @db.Decimal(10, 2)
+  paymentStatus       PaymentStatus @default(PENDING)
+  paymentMethod       String?
+  isAnonymous         Boolean       @default(false)
+  specialInstructions String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  delivery            Delivery?
+  prescription        Prescription? @relation(fields: [prescriptionId], references: [id])
+  user                User?         @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
+}
+
+model LicenseVerification {
+  id              String       @id @default(cuid())
+  userId          String       @unique
+  licenseNumber   String
+  licenseType     String
+  issuingBody     String
+  verified        Boolean      @default(false)
+  verifiedBy      String?
+  verifiedAt      DateTime?
+  expiresAt       DateTime?
+  documentUrl     String?
+  rejectionReason String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("license_verifications")
+}
+
+enum NotificationType {
+  ORDER
+  CONSULTATION
+  DELIVERY
+  SYSTEM
+}
+
+model AnonymousSession {
+  id             String   @id @default(cuid())
+  sessionId      String   @unique
+  consultationId String?
+  orderId        String?
+  deliveryId     String?
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+
+  @@map("anonymous_sessions")
+}
+
+model UserSettings {
+  id                       String   @id @default(cuid())
+  userId                   String   @unique
+  theme                    String   @default("light")
+  language                 String   @default("en")
+  timezone                 String   @default("UTC")
+  dateFormat               String   @default("MM/DD/YYYY")
+  anonymousConsultations   Boolean  @default(true)
+  dataRetentionPeriod      String   @default("30")
+  encryptionLevel          String   @default("aes256")
+  autoDeleteChats          Boolean  @default(true)
+  maskedDeliveryDefault    Boolean  @default(true)
+  campusDropPoints         String[] @default([])
+  deliveryHoursStart       String   @default("08:00")
+  deliveryHoursEnd         String   @default("20:00")
+  emergencyDelivery        Boolean  @default(true)
+  deliveryRadius           String   @default("5")
+  trackingEnabled          Boolean  @default(true)
+  newConsultations         Boolean  @default(true)
+  urgentRequests           Boolean  @default(true)
+  deliveryUpdates          Boolean  @default(true)
+  systemAlerts             Boolean  @default(true)
+  emailNotifications       Boolean  @default(true)
+  smsNotifications         Boolean  @default(false)
+  twoFactorAuth            Boolean  @default(false)
+  sessionTimeout           String   @default("30")
+  ipWhitelist              String   @default("")
+  auditLogging             Boolean  @default(true)
+  suspiciousActivityAlerts Boolean  @default(true)
+  maxActiveChats           String   @default("10")
+  responseTimeTarget       String   @default("15")
+  autoAssignment           Boolean  @default(true)
+  prioritizeUrgent         Boolean  @default(true)
+  allowFileUploads         Boolean  @default(true)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+model Staff {
+  id                    String           @id @default(cuid())
+  userId                String           @unique
+  employeeId            String           @unique
+  position              StaffPosition
+  department            String
+  hireDate              DateTime
+  salary                Decimal?         @db.Decimal(10, 2)
+  isActive              Boolean          @default(true)
+  emergencyContact      String?
+  emergencyPhone        String?
+  certifications        String[]
+  specializations       String[]
+  notes                 String?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  assignedConsultations Consultation[]   @relation("StaffConsultations")
+  shifts                Shift[]
+  user                  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schedules             StaffSchedule[]
+  timeOffRequests       TimeOffRequest[]
+
+  @@map("staff")
+}
+
+model StaffSchedule {
+  id         String   @id @default(cuid())
+  staffId    String
+  dayOfWeek  Int
+  startTime  String
+  endTime    String
+  breakStart String?
+  breakEnd   String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  staff      Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, dayOfWeek])
+  @@map("staff_schedules")
+}
+
+model Shift {
+  id              String      @id @default(cuid())
+  staffId         String
+  date            DateTime
+  startTime       DateTime
+  endTime         DateTime
+  status          ShiftStatus @default(SCHEDULED)
+  notes           String?
+  actualStartTime DateTime?
+  actualEndTime   DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  staff           Staff       @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@map("shifts")
+}
+
+model TimeOffRequest {
+  id         String        @id @default(cuid())
+  staffId    String
+  startDate  DateTime
+  endDate    DateTime
+  reason     String
+  type       TimeOffType
+  status     TimeOffStatus @default(PENDING)
+  approvedBy String?
+  approvedAt DateTime?
+  notes      String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  staff      Staff         @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@map("time_off_requests")
+}
+
+enum UserRole {
+  CLIENT
+  PHARMACY
+  ADMIN
+}
+
+enum ConsultationStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  SYSTEM
+}
+
+enum DeliveryStatus {
+  ORDER_CONFIRMED
+  PROCESSING
+  PACKAGED
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum PrescriptionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DISPENSED
+  EXPIRED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  READY_FOR_PICKUP
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum StaffPosition {
+  PHARMACIST
+  PHARMACY_TECHNICIAN
+  CASHIER
+  MANAGER
+  SUPERVISOR
+  INTERN
+  VOLUNTEER
+}
+
+enum ShiftStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum TimeOffType {
+  VACATION
+  SICK_LEAVE
+  PERSONAL_DAY
+  BEREAVEMENT
+  MATERNITY_PATERNITY
+  UNPAID_LEAVE
+  OTHER
+}
+
+enum TimeOffStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
