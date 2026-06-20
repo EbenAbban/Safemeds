@@ -10,7 +10,7 @@ import { getConsultations, Consultation, ConsultationFilters } from "@/services/
 
 export default function ConsultationsPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  useAuth(); // keep auth/redirect side-effect
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<ConsultationFilters>({

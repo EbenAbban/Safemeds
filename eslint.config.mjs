@@ -18,6 +18,16 @@ const eslintConfig = [
     rules: {
       "@typescript-eslint/no-explicit-any": "warn",
       "react/no-unescaped-entities": "warn",
+      // Honor the `_`-prefix convention for intentionally-unused bindings
+      // (e.g. `catch (_error)`, required-but-unused handler args).
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
     },
   },
 ];

@@ -12,7 +12,7 @@ async function getUserIdFromSession(): Promise<string | null> {
 }
 
 // GET endpoint to retrieve user settings
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const userId = await getUserIdFromSession();
 
@@ -102,7 +102,7 @@ export async function PUT(request: NextRequest) {
 }
 
 // DELETE endpoint to reset settings to defaults
-export async function DELETE(request: NextRequest) {
+export async function DELETE(_request: NextRequest) {
   try {
     const userId = await getUserIdFromSession();
 

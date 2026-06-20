@@ -3,14 +3,7 @@ import { auth } from "@/app/auth";
 import {
   StaffService,
   CreateStaffData,
-  UpdateStaffData,
 } from "@/services/staffService";
-
-// Helper function to get user ID from session
-async function getUserIdFromSession(): Promise<string | null> {
-  const session = await auth();
-  return session?.user?.id || null;
-}
 
 // GET endpoint to retrieve all staff members
 export async function GET(request: NextRequest) {

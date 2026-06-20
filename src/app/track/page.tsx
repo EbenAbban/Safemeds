@@ -6,11 +6,42 @@ import { motion } from "framer-motion";
 import Navigation from "@/components/Common/Navigation";
 import { getAnonymousConsultationStatus } from "@/services/consultationService";
 
+interface TrackedMessage {
+  content: string;
+  createdAt: string;
+  isFromPharmacist: boolean;
+}
+
+interface TrackedPrescription {
+  dosage: string;
+  duration: string;
+  frequency: string;
+  quantity: number;
+  status: string;
+  instructions?: string;
+  medication: { name: string };
+}
+
+interface TrackedConsultation {
+  id: string;
+  type: string;
+  status: string;
+  description?: string;
+  symptoms?: string;
+  allergies?: string;
+  medications?: string;
+  anonymousId?: string;
+  createdAt: string;
+  updatedAt: string;
+  messages: TrackedMessage[];
+  prescriptions: TrackedPrescription[];
+}
+
 function TrackConsultationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [sessionId, setSessionId] = useState(searchParams.get("sessionId") || "");
-  const [consultation, setConsultation] = useState<any>(null);
+  const [consultation, setConsultation] = useState<TrackedConsultation | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -26,7 +57,7 @@ function TrackConsultationContent() {
     try {
       const response = await getAnonymousConsultationStatus(sessionId);
       if (response) {
-        setConsultation(response.consultation);
+        setConsultation(response.consultation as TrackedConsultation);
       } else {
         setError("Session not found or has expired");
       }
@@ -205,7 +236,7 @@ function TrackConsultationContent() {
                 <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Messages</h4>
                   <div className="space-y-4 max-h-96 overflow-y-auto">
-                    {consultation.messages.map((message: any, index: number) => (
+                    {consultation.messages.map((message, index) => (
                       <div
                         key={index}
                         className={`p-4 rounded-lg ${
@@ -234,7 +265,7 @@ function TrackConsultationContent() {
                 <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Prescriptions</h4>
                   <div className="space-y-4">
-                    {consultation.prescriptions.map((prescription: any, index: number) => (
+                    {consultation.prescriptions.map((prescription, index) => (
                       <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                         <div className="flex justify-between items-start mb-3">
                           <h5 className="font-medium text-gray-900 dark:text-white">
@@ -297,7 +328,7 @@ function TrackConsultationContent() {
             <h4 className="font-semibold text-yellow-800 mb-2">Need Help?</h4>
             <ul className="text-sm text-yellow-700 space-y-1">
               <li>• Your session ID was provided when you submitted your consultation</li>
-              <li>• If you've lost your session ID, you'll need to submit a new consultation</li>
+              <li>• If you&apos;ve lost your session ID, you&apos;ll need to submit a new consultation</li>
               <li>• For emergencies, please contact emergency services immediately</li>
               <li>• Sessions expire after 7 days for security reasons</li>
             </ul>

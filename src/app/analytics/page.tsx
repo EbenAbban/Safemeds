@@ -5,11 +5,11 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
-import { getAnalytics } from "@/services/analyticsService";
+import { getAnalytics, type AnalyticsData } from "@/services/analyticsService";
 
 export default function AnalyticsPage() {
-  const { user } = useAuth();
-  const [analytics, setAnalytics] = useState<any>(null);
+  useAuth(); // keep auth/redirect side-effect
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState("30");
 
@@ -191,12 +191,12 @@ export default function AnalyticsPage() {
                     Daily Sales Trend
                   </h3>
                   <div className="h-64 flex items-end justify-between space-x-2">
-                    {analytics.sales.dailySales.map((day: any, index: number) => (
+                    {analytics.sales.dailySales.map((day, index) => (
                       <div key={index} className="flex-1 flex flex-col items-center">
                         <div
                           className="w-full bg-orange-500 rounded-t"
                           style={{
-                            height: `${(day.revenue / Math.max(...analytics.sales.dailySales.map((d: any) => d.revenue))) * 200}px`,
+                            height: `${(day.revenue / Math.max(...analytics.sales.dailySales.map((d) => d.revenue))) * 200}px`,
                           }}
                         ></div>
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
@@ -256,7 +256,7 @@ export default function AnalyticsPage() {
                     Consultation Status
                   </h3>
                   <div className="space-y-3">
-                    {analytics.consultations.statusBreakdown.map((status: any) => (
+                    {analytics.consultations.statusBreakdown.map((status) => (
                       <div key={status.status} className="flex items-center justify-between">
                         <span className={`text-sm font-medium ${getStatusColor(status.status)}`}>
                           {status.status.replace("_", " ")}
@@ -280,7 +280,7 @@ export default function AnalyticsPage() {
                     Prescription Status
                   </h3>
                   <div className="space-y-3">
-                    {analytics.prescriptions.statusBreakdown.map((status: any) => (
+                    {analytics.prescriptions.statusBreakdown.map((status) => (
                       <div key={status.status} className="flex items-center justify-between">
                         <span className={`text-sm font-medium ${getStatusColor(status.status)}`}>
                           {status.status.replace("_", " ")}
@@ -355,7 +355,7 @@ export default function AnalyticsPage() {
                       </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                      {analytics.topMedications.map((med: any, index: number) => (
+                      {analytics.topMedications.map((med, index) => (
                         <tr key={med.medicationId}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">

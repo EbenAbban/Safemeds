@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma, OrderStatus, PaymentStatus } from "@/lib/prisma-client";
 import { auth } from "@/app/auth";
 
 // GET - Fetch orders with comprehensive details
@@ -19,14 +20,14 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: any = {};
+    const where: Prisma.OrderWhereInput = {};
 
     if (status) {
-      where.status = status;
+      where.status = status as OrderStatus;
     }
 
     if (paymentStatus) {
-      where.paymentStatus = paymentStatus;
+      where.paymentStatus = paymentStatus as PaymentStatus;
     }
 
     // Filter by user role

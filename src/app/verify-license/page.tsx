@@ -2,14 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
 import { Shield, CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
 
 export default function VerifyLicensePage() {
-  const router = useRouter();
   const { user } = useAuth();
   const [licenseNumber, setLicenseNumber] = useState("");
   const [licenseType, setLicenseType] = useState("");
@@ -17,7 +15,6 @@ export default function VerifyLicensePage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "pending" | "verified" | "rejected">("idle");
   const [error, setError] = useState("");
-  const [existingVerification, setExistingVerification] = useState<any>(null);
   const [checkingStatus, setCheckingStatus] = useState(true);
 
   useEffect(() => {

@@ -13,12 +13,8 @@ import {
   Settings,
   FileText,
   HelpCircle,
-  UserCheck,
-  Calendar,
-  Package,
   MessageSquare,
   Activity,
-  Database,
   LayoutDashboard,
   Mail,
   IdCard,
@@ -26,7 +22,7 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Search,
+  type LucideIcon,
 } from "lucide-react";
 
 interface AdminUser {
@@ -90,7 +86,7 @@ export default function AdminPage() {
   const [verifications, setVerifications] = useState<LicenseVerification[]>([]);
   const [verificationsLoading, setVerificationsLoading] = useState(false);
 
-  const tabs: { id: Tab; label: string; icon: any }[] = [
+  const tabs: { id: Tab; label: string; icon: LucideIcon }[] = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "users", label: "Users", icon: Users },
     { id: "messages", label: "Contact Messages", icon: Mail },

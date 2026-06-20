@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma, ConsultationStatus } from "@/lib/prisma-client";
 import { auth } from "@/app/auth";
 
 // GET - Fetch consultations (for pharmacists and admins)
@@ -19,10 +20,10 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: any = {};
+    const where: Prisma.ConsultationWhereInput = {};
 
     if (status) {
-      where.status = status;
+      where.status = status as ConsultationStatus;
     }
 
     if (type) {

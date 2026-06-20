@@ -10,7 +10,7 @@ import { getOrders, Order } from "@/services/orderService";
 
 export default function OrdersPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  useAuth(); // keep auth/redirect side-effect
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({

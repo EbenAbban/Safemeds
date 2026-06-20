@@ -57,23 +57,6 @@ export default function AnonymousConsultationPage() {
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "general":
-        return "🏥";
-      case "mental health":
-        return "🧠";
-      case "pain relief":
-        return "💊";
-      case "pregnancy":
-        return "🤱";
-      case "sexual health":
-        return "❤️";
-      default:
-        return "💬";
-    }
-  };
-
   if (step === 2) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-900 dark:to-gray-800">

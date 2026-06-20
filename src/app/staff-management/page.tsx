@@ -8,7 +8,6 @@ import {
   Calendar,
   Clock,
   FileText,
-  Plus,
   Edit,
   Trash2,
   Eye,
@@ -141,22 +140,19 @@ export default function StaffManagementPage() {
 
   // Staff state
   const [staff, setStaff] = useState<StaffMember[]>([]);
-  const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
+  const [, setSelectedStaff] = useState<StaffMember | null>(null);
   const [showStaffForm, setShowStaffForm] = useState(false);
 
   // Schedules state
   const [schedules, setSchedules] = useState<StaffSchedule[]>([]);
-  const [selectedSchedule, setSelectedSchedule] = useState<StaffSchedule | null>(null);
   const [showScheduleForm, setShowScheduleForm] = useState(false);
 
   // Shifts state
   const [shifts, setShifts] = useState<Shift[]>([]);
-  const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
   const [showShiftForm, setShowShiftForm] = useState(false);
 
   // Time off state
   const [timeOffRequests, setTimeOffRequests] = useState<TimeOffRequest[]>([]);
-  const [selectedTimeOff, setSelectedTimeOff] = useState<TimeOffRequest | null>(null);
   const [showTimeOffForm, setShowTimeOffForm] = useState(false);
 
   // Form states

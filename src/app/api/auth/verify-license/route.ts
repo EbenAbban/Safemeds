@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
       message: "License verified successfully",
       details: verificationResult.details,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Unable to verify license. Please try again later." },
       { status: 500 }

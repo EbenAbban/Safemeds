@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma, PrescriptionStatus } from "@/lib/prisma-client";
 import { auth } from "@/app/auth";
 
 // GET - Fetch prescriptions with filtering
@@ -19,10 +20,10 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: any = {};
+    const where: Prisma.PrescriptionWhereInput = {};
 
     if (status) {
-      where.status = status;
+      where.status = status as PrescriptionStatus;
     }
 
     if (consultationId) {

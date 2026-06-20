@@ -28,12 +28,7 @@ const {
   Bell,
   Truck,
   Users,
-  Eye,
   Lock,
-  MapPin,
-  Clock,
-  Phone,
-  Mail,
   Settings,
   Save,
   AlertTriangle,
@@ -46,7 +41,6 @@ export default function SettingsPage() {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("privacy");
-  const tabIds = ["privacy", "delivery", "notifications", "security", "consultation", "appearance"] as const;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 

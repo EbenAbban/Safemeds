@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSession } from "next-auth/react";
 
 export interface UserSettings {
@@ -100,8 +100,9 @@ export function useSettings() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  // Default settings
-  const defaultSettings: UserSettings = {
+  // Default settings (memoized so its identity is stable across renders and
+  // doesn't churn the useCallback deps below).
+  const defaultSettings: UserSettings = useMemo(() => ({
     theme: "light",
     language: "en",
     timezone: "UTC",
@@ -145,7 +146,7 @@ export function useSettings() {
       prioritizeUrgent: true,
       allowFileUploads: true,
     },
-  };
+  }), []);
 
   // Fetch settings from API
   const fetchSettings = useCallback(async () => {

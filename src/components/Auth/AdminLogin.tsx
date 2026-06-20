@@ -46,15 +46,19 @@ const AdminLogin = () => {
       }
       
       router.push("/admin-dashboard");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Admin login error:", err);
-      
-      // Handle different error cases
-      if (err.response?.status === 401) {
+
+      // Handle different error cases (axios-style error shape)
+      const axiosErr = err as {
+        response?: { status?: number };
+        code?: string;
+      };
+      if (axiosErr.response?.status === 401) {
         setError("Invalid password. Please try again.");
-      } else if (err.response?.status === 429) {
+      } else if (axiosErr.response?.status === 429) {
         setError("Too many login attempts. Please try again later.");
-      } else if (err.code === "NETWORK_ERROR" || !err.response) {
+      } else if (axiosErr.code === "NETWORK_ERROR" || !axiosErr.response) {
         setError("Network error. Please check your connection and try again.");
       } else {
         setError("Login failed. Please try again.");

@@ -184,7 +184,7 @@ export default function SigninPage() {
                 key={type.value}
                 type="button"
                 onClick={() => {
-                  setUserType(type.value as any);
+                  setUserType(type.value as "CLIENT" | "PHARMACY" | "ADMIN");
                   resetForm();
                 }}
                 className={`p-4 rounded-xl text-sm font-medium transition-all duration-200 ${
@@ -243,7 +243,7 @@ export default function SigninPage() {
                   <p className="text-red-500 text-xs mt-1">{errors.licenseNumber}</p>
                 )}
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  💡 You can enter a new license number if you've recently
+                  💡 You can enter a new license number if you&apos;ve recently
                   renewed or changed your license.
                 </p>
               </div>
@@ -318,7 +318,7 @@ export default function SigninPage() {
 
         <div className="mt-6 text-center">
           <p className="text-gray-600 dark:text-gray-300">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <button
               onClick={() => router.push("/signup")}
               className="text-blue-500 hover:text-blue-600 font-medium"

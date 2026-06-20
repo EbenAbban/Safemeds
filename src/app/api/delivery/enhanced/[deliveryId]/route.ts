@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Delivery } from "@/lib/prisma-client";
 import { auth } from "@/app/auth";
 
 // GET - Fetch delivery details and tracking information
@@ -95,7 +96,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { status, estimatedDelivery, actualDelivery, notes } = body;
+    const { status, estimatedDelivery, actualDelivery } = body;
 
     const delivery = await prisma.delivery.findUnique({
       where: { id: deliveryId },
@@ -144,7 +145,7 @@ export async function PUT(
 }
 
 // Helper function to generate delivery timeline
-function generateDeliveryTimeline(delivery: any) {
+function generateDeliveryTimeline(delivery: Delivery) {
   const timeline = [
     {
       status: "ORDER_CONFIRMED",

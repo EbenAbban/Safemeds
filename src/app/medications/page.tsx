@@ -10,7 +10,7 @@ import { getMedications, Medication } from "@/services/medicationService";
 
 export default function MedicationsPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  useAuth(); // keep auth/redirect side-effect
   const [medications, setMedications] = useState<Medication[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -75,7 +75,9 @@ export default function MedicationsPage() {
     ) : null;
   };
 
-  const getStockStatus = (inventoryItems: any[]) => {
+  const getStockStatus = (
+    inventoryItems: Array<{ quantity: number; minQuantity?: number }>
+  ) => {
     if (!inventoryItems || inventoryItems.length === 0) {
       return {
         status: "out-of-stock",

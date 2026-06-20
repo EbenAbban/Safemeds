@@ -193,7 +193,7 @@ export default function EnhancedAuthPage() {
           }
         }
       }
-    } catch (error) {
+    } catch {
       setErrors({ general: "An error occurred. Please try again." });
     } finally {
       setIsLoading(false);
@@ -256,7 +256,7 @@ export default function EnhancedAuthPage() {
                 key={type.value}
                 type="button"
                 onClick={() => {
-                  setUserType(type.value as any);
+                  setUserType(type.value as "CLIENT" | "PHARMACY" | "ADMIN");
                   resetForm();
                 }}
                 className={`p-4 rounded-xl text-sm font-medium transition-all duration-200 ${

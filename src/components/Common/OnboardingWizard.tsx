@@ -34,7 +34,7 @@ const steps = [
 
 export default function OnboardingWizard() {
   const { showOnboarding, dismissOnboarding } = useOnboarding();
-  const { user } = useAuth();
+  useAuth(); // keep auth/redirect side-effect
   const router = useRouter();
   const [step, setStep] = useState(0);
 
