@@ -12,9 +12,13 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
+    "db:seed": "node prisma/seed.cjs",
     "db:studio": "prisma studio",
     "build:no-db": "next build",
     "vercel-build": "prisma generate --no-engine && next build"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.cjs"
   },
   "dependencies": {
     "@prisma/client": "^6.16.1",

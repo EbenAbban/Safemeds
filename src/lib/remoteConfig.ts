@@ -7,17 +7,8 @@ import {
 import { setLogLevel } from "firebase/app"; // Correct import location
 import { app } from "./firebase";
 
-// Initialize Firebase Remote Config
-export const remoteConfig: RemoteConfig = getRemoteConfig(app);
-
-// Configure Remote Config settings
-remoteConfig.settings = {
-  minimumFetchIntervalMillis: 3600000, // 1 hour in development
-  fetchTimeoutMillis: 10000, // 10 seconds timeout
-};
-
-// Set default values for Remote Config parameters
-remoteConfig.defaultConfig = {
+// Default values for Remote Config parameters.
+const DEFAULT_CONFIG = {
   welcome_message: "Welcome to SafeMeds!",
   feature_chat_enabled: true,
   feature_delivery_enabled: true,
@@ -40,14 +31,38 @@ remoteConfig.defaultConfig = {
   lockout_duration_minutes: 15,
 };
 
+// Remote Config is browser-only: getRemoteConfig throws on the server because it
+// needs Firebase Installations (a real projectId + a browser). Initialize lazily
+// on first use in the browser; callers fall back to defaults when it's null.
+let _remoteConfig: RemoteConfig | null = null;
+function getRC(): RemoteConfig | null {
+  if (typeof window === "undefined") return null;
+  if (_remoteConfig) return _remoteConfig;
+  try {
+    _remoteConfig = getRemoteConfig(app);
+    _remoteConfig.settings = {
+      minimumFetchIntervalMillis: 3600000, // 1 hour in development
+      fetchTimeoutMillis: 10000, // 10 seconds timeout
+    };
+    _remoteConfig.defaultConfig = DEFAULT_CONFIG;
+  } catch (error) {
+    console.warn("Failed to initialize Remote Config:", error);
+    return null;
+  }
+  return _remoteConfig;
+}
+
 // Remote Config helper functions
 export const initializeRemoteConfig = async (): Promise<boolean> => {
   try {
+    const rc = getRC();
+    if (!rc) return false;
+
     // Set log level for debugging (this affects the entire Firebase app)
     setLogLevel("info");
 
     // Fetch and activate remote config
-    await fetchAndActivate(remoteConfig);
+    await fetchAndActivate(rc);
     console.log("Remote Config initialized and activated");
 
     return true;
@@ -62,7 +77,9 @@ export const getRemoteConfigValue = (
   defaultValue?: string
 ): string => {
   try {
-    const value = getValue(remoteConfig, key);
+    const rc = getRC();
+    if (!rc) return defaultValue || "";
+    const value = getValue(rc, key);
     return value.asString() || defaultValue || "";
   } catch (error) {
     console.error(`Failed to get Remote Config value for key: ${key}`, error);
@@ -75,7 +92,9 @@ export const getRemoteConfigBoolean = (
   defaultValue: boolean = false
 ): boolean => {
   try {
-    const value = getValue(remoteConfig, key);
+    const rc = getRC();
+    if (!rc) return defaultValue;
+    const value = getValue(rc, key);
     return value.asBoolean() ?? defaultValue;
   } catch (error) {
     console.error(`Failed to get Remote Config boolean for key: ${key}`, error);
@@ -88,7 +107,9 @@ export const getRemoteConfigNumber = (
   defaultValue: number = 0
 ): number => {
   try {
-    const value = getValue(remoteConfig, key);
+    const rc = getRC();
+    if (!rc) return defaultValue;
+    const value = getValue(rc, key);
     return value.asNumber() ?? defaultValue;
   } catch (error) {
     console.error(`Failed to get Remote Config number for key: ${key}`, error);

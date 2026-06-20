@@ -5,20 +5,28 @@ import {
   enableNetwork,
   disableNetwork,
 } from "firebase/firestore";
-import { getRemoteConfig } from "firebase/remote-config";
+import { getRemoteConfig, type RemoteConfig } from "firebase/remote-config";
 import { setLogLevel } from "firebase/app";
 
 // Firebase configuration (values from env so they can differ per environment).
 // The keys are prefixed NEXT_PUBLIC_ so Next.js inlines them at build time for
 // the browser bundle. API key alone is not a secret — it is restricted by
 // Firebase App Check + Firestore Security Rules + Cloud Function enforcement.
+//
+// Fallback placeholders keep the SDK from throwing (e.g. getAuth throws
+// `auth/invalid-api-key` on an empty key) when no Firebase env vars are set,
+// such as during a build/preview without real credentials. Network-backed
+// Firebase calls still require real values configured via .env.local.
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "demo-api-key",
+  authDomain:
+    process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "demo.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "demo-project",
+  storageBucket:
+    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "demo-project.appspot.com",
+  messagingSenderId:
+    process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "0000000000",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:0000000000:web:demo",
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
@@ -28,20 +36,25 @@ export const app = initializeApp(firebaseConfig);
 // Set log level for the Firebase app
 if (process.env.NODE_ENV === "development") setLogLevel("debug");
 
-// Initialize Remote Config
-export const remoteConfig = getRemoteConfig(app);
-
-// Configure Remote Config settings (NOT logLevel)
-remoteConfig.settings = {
-  minimumFetchIntervalMillis: 3600000, // 1 hour for testing, 12 hours for production
-  fetchTimeoutMillis: 60000, // Optional: timeout for fetch requests
-};
-
-// Set default config values (optional)
-remoteConfig.defaultConfig = {
-  // Add your default remote config values here
-  // example: "feature_flag": false
-};
+// Initialize Remote Config — browser-only. On the server (e.g. during static
+// prerendering) getRemoteConfig throws because Firebase Installations requires a
+// real projectId and a browser environment, so we guard it behind a window check.
+export let remoteConfig: RemoteConfig | null = null;
+if (typeof window !== "undefined") {
+  try {
+    remoteConfig = getRemoteConfig(app);
+    remoteConfig.settings = {
+      minimumFetchIntervalMillis: 3600000, // 1 hour for testing, 12 hours for production
+      fetchTimeoutMillis: 60000, // Optional: timeout for fetch requests
+    };
+    remoteConfig.defaultConfig = {
+      // Add your default remote config values here
+      // example: "feature_flag": false
+    };
+  } catch (error) {
+    console.warn("Firebase Remote Config initialization failed:", error);
+  }
+}
 
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);

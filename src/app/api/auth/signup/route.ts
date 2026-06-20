@@ -61,10 +61,48 @@ export async function POST(request: NextRequest) {
       termsVersion,
     } = body;
 
+    // Normalize inputs up front so validation, duplicate checks, and storage
+    // all operate on the same canonical values.
+    const usernameNorm = typeof username === "string" ? username.trim() : "";
+    const emailNorm = typeof email === "string" ? email.trim().toLowerCase() : "";
+    const roleNorm = typeof role === "string" ? role.trim().toUpperCase() : "";
+
     // Validate required fields
-    if (!username || !email || !password || !firstName || !lastName || !role) {
+    if (!usernameNorm || !emailNorm || !password || !firstName || !lastName || !roleNorm) {
       return NextResponse.json(
         { error: "All required fields must be provided" },
+        { status: 400 }
+      );
+    }
+
+    // Only clients and pharmacists may self-register. Admin accounts must never
+    // be creatable through the public signup endpoint (privilege-escalation guard).
+    const ALLOWED_SIGNUP_ROLES = ["CLIENT", "PHARMACY"];
+    if (!ALLOWED_SIGNUP_ROLES.includes(roleNorm)) {
+      return NextResponse.json(
+        { error: "Invalid account type" },
+        { status: 400 }
+      );
+    }
+
+    // Username & password policy — kept in sync with the login checks in
+    // src/app/auth.ts so every account that can be created can also log in.
+    if (usernameNorm.length < 3 || usernameNorm.length > 50) {
+      return NextResponse.json(
+        { error: "Username must be between 3 and 50 characters" },
+        { status: 400 }
+      );
+    }
+    if (typeof password !== "string" || password.length < 6 || password.length > 128) {
+      return NextResponse.json(
+        { error: "Password must be between 6 and 128 characters" },
+        { status: 400 }
+      );
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailNorm)) {
+      return NextResponse.json(
+        { error: "Please enter a valid email address" },
         { status: 400 }
       );
     }
@@ -81,7 +119,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Additional validation for pharmacists
-    if (role === "PHARMACY") {
+    if (roleNorm === "PHARMACY") {
       if (!licenseNumber || !pharmacyName || !phone) {
         return NextResponse.json(
           {
@@ -96,7 +134,7 @@ export async function POST(request: NextRequest) {
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [{ username }, { email }],
+        OR: [{ username: usernameNorm }, { email: emailNorm }],
       },
     });
 
@@ -109,7 +147,7 @@ export async function POST(request: NextRequest) {
 
     // Verify pharmacist license if applicable
     let isVerified = true;
-    if (role === "PHARMACY" && licenseNumber) {
+    if (roleNorm === "PHARMACY" && licenseNumber) {
       try {
         isVerified = await verifyPharmacistLicense(
           licenseNumber,
@@ -142,12 +180,13 @@ export async function POST(request: NextRequest) {
     // Create user
     const user = await prisma.user.create({
       data: {
-        username,
-        email,
+        username: usernameNorm,
+        email: emailNorm,
         passwordHash: hashedPassword,
         firstName,
         lastName,
-        role: role.toUpperCase(),
+        // Safe: roleNorm is validated against ALLOWED_SIGNUP_ROLES above.
+        role: roleNorm as "CLIENT" | "PHARMACY",
         phone: phone || null,
         licenseNumber: licenseNumber || null,
         pharmacyName: pharmacyName || null,
@@ -226,9 +265,9 @@ export async function GET(
       );
     }
 
-    // Check if user exists using Prisma
+    // Check if user exists using Prisma (emails are stored lowercased)
     const existingUser = await prisma.user.findFirst({
-      where: { email },
+      where: { email: email.toLowerCase() },
     });
 
     return NextResponse.json({

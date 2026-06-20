@@ -361,11 +361,12 @@ export default function SignupPage() {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             I am a:
           </label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             {[
+              // Admins are never self-registered (server rejects role=ADMIN);
+              // they are seeded or promoted from the admin dashboard.
               { value: "CLIENT", label: "Student", icon: "👨‍🎓" },
               { value: "PHARMACY", label: "Pharmacist", icon: "💊" },
-              { value: "ADMIN", label: "Admin", icon: "⚙️" },
             ].map((type) => (
               <button
                 key={type.value}

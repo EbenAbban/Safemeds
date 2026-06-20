@@ -105,6 +105,14 @@ model Delivery {
   isAnonymous       Boolean        @default(false)
   orderId           String?        @unique
   packageType       String         @default("DISCREET")
+  // Live courier GPS for the tracking map (streamed from /deliver/[id]).
+  courierLat        Float?
+  courierLng        Float?
+  courierAccuracy   Float?
+  courierHeading    Float?
+  courierSpeed      Float?
+  courierActive     Boolean        @default(false)
+  courierUpdatedAt  DateTime?
   order             Order?         @relation(fields: [orderId], references: [id])
   user              User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 

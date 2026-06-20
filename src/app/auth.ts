@@ -25,6 +25,9 @@ declare module "next-auth" {
 
 export const { handlers, auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
+  // Required by NextAuth v5 when running behind a proxy/host it can't infer
+  // (e.g. Vercel) — without it auth throws `UntrustedHost` in production.
+  trustHost: true,
   debug: false,
   providers: [
     Credentials({
@@ -51,7 +54,7 @@ export const { handlers, auth } = NextAuth({
             throw new Error("Invalid credentials");
           }
 
-          const trimmedEmail = (email as string).trim();
+          const trimmedEmail = (email as string).trim().toLowerCase();
           const trimmedPassword = (password as string).trim();
           const trimmedLicenseNumber = (licenseNumber as string).trim();
 
@@ -90,43 +93,13 @@ export const { handlers, auth } = NextAuth({
             throw new Error("Invalid credentials");
           }
 
-          // Check if license number matches stored license OR verify new license
+          // The provided license number must match the one on file for this
+          // pharmacist. We intentionally do NOT auto-update it on mismatch:
+          // changing a verified credential must go through the admin license
+          // verification flow, never a login attempt. A generic error is
+          // returned to avoid leaking which field was wrong.
           if (dbUser.licenseNumber !== trimmedLicenseNumber) {
-            if (process.env.NODE_ENV === "development") console.log("License number doesn't match, verifying new license");
-            try {
-              const verificationResponse = await fetch(
-                `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/api/auth/verify-license`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    licenseNumber: trimmedLicenseNumber,
-                    email: trimmedEmail,
-                    isSignIn: true,
-                  }),
-                }
-              );
-
-              const verificationData = await verificationResponse.json();
-
-              if (!verificationData.isValid) {
-                console.error("Invalid license number provided:", trimmedLicenseNumber);
-                throw new Error("Invalid license number provided");
-              }
-
-              // Update user's license number in database
-              await prisma.user.update({
-                where: { id: dbUser.id },
-                data: { licenseNumber: trimmedLicenseNumber },
-              });
-
-              if (process.env.NODE_ENV === "development") console.log(`Pharmacist ${trimmedEmail} updated license to ${trimmedLicenseNumber}`);
-            } catch (error) {
-              console.error("License verification failed:", error);
-              throw new Error("License verification failed");
-            }
+            throw new Error("Invalid credentials");
           }
 
           // Return pharmacist user object
