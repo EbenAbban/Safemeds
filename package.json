@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate --no-engine && next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
@@ -15,7 +15,7 @@
     "db:seed": "node prisma/seed.cjs",
     "db:studio": "prisma studio",
     "build:no-db": "next build",
-    "vercel-build": "prisma generate --no-engine && next build"
+    "vercel-build": "prisma generate && next build"
   },
   "prisma": {
     "seed": "node prisma/seed.cjs"
