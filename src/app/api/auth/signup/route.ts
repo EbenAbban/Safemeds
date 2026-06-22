@@ -228,8 +228,13 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Signup error:", error);
+    // TEMPORARY DEBUG: surface the real error to diagnose the production 500.
+    // Remove the `detail` field once the root cause is fixed.
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Internal server error",
+        detail: error instanceof Error ? `${error.name}: ${error.message}` : String(error),
+      },
       { status: 500 }
     );
   }
@@ -239,7 +244,9 @@ export async function POST(request: NextRequest) {
 export async function GET(
   request: NextRequest
 ): Promise<
-  NextResponse<{ exists: boolean; available: boolean } | { error: string }>
+  NextResponse<
+    { exists: boolean; available: boolean } | { error: string; detail?: string }
+  >
 > {
   try {
     const { searchParams } = new URL(request.url);
@@ -276,8 +283,13 @@ export async function GET(
     });
   } catch (error: unknown) {
     console.error("Email check error:", error);
+    // TEMPORARY DEBUG: surface the real error to diagnose the production 500.
+    // Remove the `detail` field once the root cause is fixed.
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Internal server error",
+        detail: error instanceof Error ? `${error.name}: ${error.message}` : String(error),
+      },
       { status: 500 }
     );
   }
