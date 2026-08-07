@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 
 interface FormData {
   username: string;
@@ -32,7 +31,6 @@ export default function AuthPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
       const dashboardPath =
@@ -49,29 +47,22 @@ export default function AuthPage() {
     const newErrors: FormErrors = {};
 
     if (userType === "PHARMACY") {
-      // Pharmacist login validation
       if (!formData.email.trim()) {
-        newErrors.email = "Email is required";
+        newErrors.email = "Email is required.";
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = "Please enter a valid email address";
+        newErrors.email = "Enter a valid email address.";
       }
-
-      if (!formData.password) {
-        newErrors.password = "Password is required";
-      }
-
       if (!formData.licenseNumber.trim()) {
-        newErrors.licenseNumber = "License number is required";
+        newErrors.licenseNumber = "License number is required.";
       }
     } else {
-      // Client and Admin login validation
       if (!formData.username.trim()) {
-        newErrors.username = "Username is required";
+        newErrors.username = "Username is required.";
       }
+    }
 
-      if (!formData.password) {
-        newErrors.password = "Password is required";
-      }
+    if (!formData.password) {
+      newErrors.password = "Password is required.";
     }
 
     setErrors(newErrors);
@@ -80,23 +71,15 @@ export default function AuthPage() {
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     setIsLoading(true);
 
     try {
-      // Different login parameters based on user type
       const loginParams =
         userType === "PHARMACY"
           ? {
@@ -111,252 +94,230 @@ export default function AuthPage() {
               role: userType,
             };
 
-      const result = await signIn("credentials", {
-        ...loginParams,
-        redirect: false,
-      });
+      const result = await signIn("credentials", { ...loginParams, redirect: false });
 
       if (result?.error) {
-        setErrors({ general: "Invalid credentials. Please check your information and try again." });
-      } else if (result?.ok) {
-        // Successful login - redirect will be handled by the useEffect above
+        setErrors({ general: "Invalid credentials. Please check your details and try again." });
       }
     } catch {
-      setErrors({ general: "An error occurred. Please try again." });
+      setErrors({ general: "Something went wrong. Please try again." });
     } finally {
       setIsLoading(false);
     }
   };
 
   const resetForm = () => {
-    setFormData({
-      username: "",
-      email: "",
-      password: "",
-      licenseNumber: "",
-    });
+    setFormData({ username: "", email: "", password: "", licenseNumber: "" });
     setErrors({});
   };
 
+  const roles = [
+    { value: "CLIENT", label: "Student" },
+    { value: "PHARMACY", label: "Pharmacist" },
+    { value: "ADMIN", label: "Admin" },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 max-w-lg w-full relative"
-      >
-        {/* Theme Toggle */}
-
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-            SafeMeds
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            Sign in to your account
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            Secure, anonymous healthcare consultations for students
+    <div className="min-h-screen flex bg-white dark:bg-gray-950">
+      {/* Left brand panel */}
+      <div className="hidden lg:flex lg:w-2/5 xl:w-1/3 flex-col justify-between bg-gray-950 dark:bg-black p-10">
+        <div>
+          <span className="text-white text-xl font-semibold tracking-tight">SafeMeds</span>
+        </div>
+        <div>
+          <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+            Secure healthcare management platform for students and licensed pharmacists.
+            All data is encrypted end-to-end.
           </p>
         </div>
+        <p className="text-gray-600 text-xs">
+          &copy; {new Date().getFullYear()} SafeMeds. All rights reserved.
+        </p>
+      </div>
 
-        {/* User Type Selection */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            I am a:
-          </label>
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { value: "CLIENT", label: "Student", icon: "👨‍🎓" },
-              { value: "PHARMACY", label: "Pharmacist", icon: "💊" },
-              { value: "ADMIN", label: "Admin", icon: "⚙️" },
-            ].map((type) => (
+      {/* Right form panel */}
+      <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-16 xl:px-24">
+        <div className="w-full max-w-sm mx-auto">
+
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Sign in</h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              No account?{" "}
               <button
-                key={type.value}
-                type="button"
-                onClick={() => {
-                  setUserType(type.value as "CLIENT" | "PHARMACY" | "ADMIN");
-                  resetForm();
-                }}
-                className={`p-4 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  userType === type.value
-                    ? "bg-blue-500 text-white shadow-lg scale-105"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                }`}
+                onClick={() => router.push("/signup")}
+                className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
               >
-                <div className="text-2xl mb-1">{type.icon}</div>
-                {type.label}
+                Create one
               </button>
-            ))}
+            </p>
           </div>
-        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {userType === "PHARMACY" ? (
-            // Pharmacist login fields
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Email *
-                </label>
+          {/* Role tabs */}
+          <div className="mb-6">
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+              Sign in as
+            </label>
+            <div className="flex rounded-lg border border-gray-200 dark:border-gray-700 p-1 bg-gray-50 dark:bg-gray-900 gap-1">
+              {roles.map((role) => (
+                <button
+                  key={role.value}
+                  type="button"
+                  onClick={() => {
+                    setUserType(role.value as "CLIENT" | "PHARMACY" | "ADMIN");
+                    resetForm();
+                  }}
+                  className={`flex-1 py-2 text-xs font-medium rounded-md transition-colors ${
+                    userType === role.value
+                      ? "bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm border border-gray-200 dark:border-gray-700"
+                      : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  }`}
+                >
+                  {role.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Field: email (Pharmacist) or username (Client/Admin) */}
+            {userType === "PHARMACY" ? (
+              <Field label="Email" error={errors.email} required>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black dark:text-white bg-white dark:bg-gray-700 ${
-                    errors.email
-                      ? "border-red-500"
-                      : "border-gray-300 dark:border-gray-600"
-                  }`}
-                  placeholder="Enter your email"
+                  placeholder="pharmacist@example.com"
+                  autoComplete="email"
+                  className={inputClass(!!errors.email)}
                 />
-                {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-                )}
-              </div>
+              </Field>
+            ) : (
+              <Field label="Username" error={errors.username} required>
+                <input
+                  type="text"
+                  value={formData.username}
+                  onChange={(e) => handleInputChange("username", e.target.value)}
+                  placeholder="your_username"
+                  autoComplete="username"
+                  className={inputClass(!!errors.username)}
+                />
+              </Field>
+            )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  License Number *
-                </label>
+            {/* License number (Pharmacist only) */}
+            {userType === "PHARMACY" && (
+              <Field label="License number" error={errors.licenseNumber} required>
                 <input
                   type="text"
                   value={formData.licenseNumber}
                   onChange={(e) => handleInputChange("licenseNumber", e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black dark:text-white bg-white dark:bg-gray-700 ${
-                    errors.licenseNumber
-                      ? "border-red-500"
-                      : "border-gray-300 dark:border-gray-600"
-                  }`}
-                  placeholder="Enter your license number (e.g., PH123456)"
+                  placeholder="e.g. RPh-123456"
+                  autoComplete="off"
+                  className={inputClass(!!errors.licenseNumber)}
                 />
-                {errors.licenseNumber && (
-                  <p className="text-red-500 text-xs mt-1">{errors.licenseNumber}</p>
-                )}
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  💡 You can enter a new license number if you&apos;ve recently
-                  renewed or changed your license.
+                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                  Must match the license number on your account.
                 </p>
-              </div>
-            </div>
-          ) : (
-            // Client and Admin login fields
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Username *
-              </label>
-              <input
-                type="text"
-                value={formData.username}
-                onChange={(e) => handleInputChange("username", e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black dark:text-white bg-white dark:bg-gray-700 ${
-                  errors.username
-                    ? "border-red-500"
-                    : "border-gray-300 dark:border-gray-600"
-                }`}
-                placeholder="Enter your username"
-              />
-              {errors.username && (
-                <p className="text-red-500 text-xs mt-1">{errors.username}</p>
-              )}
-            </div>
-          )}
-
-          {/* Password field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Password *
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                value={formData.password}
-                onChange={(e) => handleInputChange("password", e.target.value)}
-                className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black dark:text-white bg-white dark:bg-gray-700 ${
-                  errors.password
-                    ? "border-red-500"
-                    : "border-gray-300 dark:border-gray-600"
-                }`}
-                placeholder="Enter your password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-              >
-                {showPassword ? "🙈" : "👁️"}
-              </button>
-            </div>
-            {errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+              </Field>
             )}
+
+            {/* Password */}
+            <Field label="Password" error={errors.password} required>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  className={inputClass(!!errors.password) + " pr-16"}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center text-xs font-medium text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  tabIndex={-1}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </Field>
+
+            {/* Error banner */}
+            {errors.general && (
+              <div className="rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+                {errors.general}
+              </div>
+            )}
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-2.5 px-4 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 dark:disabled:bg-indigo-800 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed mt-2"
+            >
+              {isLoading ? "Signing in..." : "Sign in"}
+            </button>
+          </form>
+
+          {/* What each role needs */}
+          <div className="mt-8 rounded-lg border border-gray-100 dark:border-gray-800 divide-y divide-gray-100 dark:divide-gray-800 text-xs text-gray-500 dark:text-gray-400">
+            <div className="px-4 py-3">
+              <span className="font-medium text-gray-700 dark:text-gray-300">Student</span>
+              &nbsp;&mdash; username + password
+            </div>
+            <div className="px-4 py-3">
+              <span className="font-medium text-gray-700 dark:text-gray-300">Pharmacist</span>
+              &nbsp;&mdash; email + license number + password
+            </div>
+            <div className="px-4 py-3">
+              <span className="font-medium text-gray-700 dark:text-gray-300">Admin</span>
+              &nbsp;&mdash; username + password
+            </div>
           </div>
 
-          {errors.general && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
-              {errors.general}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-gray-600 dark:text-gray-300">
-            Don&apos;t have an account?{" "}
-            <button
-              onClick={() => router.push("/signup")}
-              className="text-blue-500 hover:text-blue-600 font-medium"
-            >
-              Sign up
-            </button>
+          <p className="mt-6 text-xs text-gray-400 dark:text-gray-600 text-center">
+            All data is encrypted and handled in accordance with HIPAA guidelines.
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        {/* Quick Access Links */}
-        <div className="mt-6 grid grid-cols-2 gap-3">
-          <button
-            onClick={() => router.push("/signin")}
-            className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-          >
-            Alternative Sign In
-          </button>
-          <button
-            onClick={() => router.push("/signup")}
-            className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-          >
-            Create New Account
-          </button>
-        </div>
+// ---- Helpers ----
 
-        {/* Privacy Notice */}
-        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-          <p className="text-sm text-blue-700 dark:text-blue-300">
-            🔒 Your privacy is our priority. All data is encrypted (AES-256). Read our{" "}
-            <button
-              onClick={() => router.push("/legal?tab=terms")}
-              className="underline hover:text-blue-800 dark:hover:text-blue-200 font-semibold cursor-pointer"
-            >
-              Terms of Service
-            </button>{" "}
-            and{" "}
-            <button
-              onClick={() => router.push("/legal?tab=privacy")}
-              className="underline hover:text-blue-800 dark:hover:text-blue-200 font-semibold cursor-pointer"
-            >
-              Privacy Policy
-            </button>
-            .
-            {userType === "PHARMACY" &&
-              " License verification ensures only qualified pharmacists can provide consultations."}
-          </p>
-        </div>
-      </motion.div>
+function inputClass(hasError: boolean): string {
+  return [
+    "w-full px-3 py-2 rounded-lg text-sm border bg-white dark:bg-gray-900",
+    "text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600",
+    "focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors",
+    hasError
+      ? "border-red-400 dark:border-red-600"
+      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600",
+  ].join(" ");
+}
+
+function Field({
+  label,
+  error,
+  required,
+  children,
+}: {
+  label: React.ReactNode;
+  error: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+        {label}
+        {required && <span className="text-red-500 ml-0.5">*</span>}
+      </label>
+      {children}
+      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
   );
 }
