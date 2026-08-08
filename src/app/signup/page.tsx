@@ -431,7 +431,17 @@ export default function SignupPage() {
                   </Field>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <Field label="Address" error="">
+                  <input
+                    type="text"
+                    value={formData.address}
+                    onChange={(e) => handleInputChange("address", e.target.value)}
+                    placeholder="123 Main St"
+                    className={inputClass(false)}
+                  />
+                </Field>
+
+                <div className="grid grid-cols-3 gap-4">
                   <Field label="City" error="">
                     <input
                       type="text"
@@ -447,6 +457,15 @@ export default function SignupPage() {
                       value={formData.state}
                       onChange={(e) => handleInputChange("state", e.target.value)}
                       placeholder="NY"
+                      className={inputClass(false)}
+                    />
+                  </Field>
+                  <Field label="Zip code" error="">
+                    <input
+                      type="text"
+                      value={formData.zipCode}
+                      onChange={(e) => handleInputChange("zipCode", e.target.value)}
+                      placeholder="10001"
                       className={inputClass(false)}
                     />
                   </Field>
