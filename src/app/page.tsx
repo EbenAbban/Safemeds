@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Footer from "@/components/Common/Footer";
 import LiquidEtherBackground from "@/components/effects/LiquidEtherBackground";
 import LightTunnelBackground from "@/components/effects/LightTunnelBackground";
+import WebThreadsBackground from "@/components/effects/WebThreadsBackground";
 import ClickSpark from "@/components/effects/ClickSpark";
 import {
   GraduationCap,
@@ -101,8 +102,25 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Public Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 overflow-hidden">
+        {/* Glowing woven threads tucked against the nav's right edge —
+            React Bits' WebThreads, faded into the navbar background. */}
+        <WebThreadsBackground
+          wrapperClassName="absolute inset-y-0 right-0 w-40 sm:w-56 pointer-events-none opacity-70 dark:opacity-90 [mask-image:linear-gradient(to_left,black,transparent)]"
+          color1="#3b82f6"
+          color2="#a855f7"
+          color3="#ffffff"
+          speed={0.2}
+          threadCount={5}
+          frequency={4}
+          spread={0.22}
+          fanMode="right"
+          glow={0.02}
+          thickness={1.1}
+          brightness={0.7}
+          mouseInteraction={false}
+        />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <Link href="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
             SafeMeds
           </Link>
@@ -170,6 +188,20 @@ export default function Home() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Hero */}
         <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 mb-24">
+          {/* Looping ambient footage docked to the right edge of the hero,
+              faded into the page background so the headline stays readable. */}
+          <div className="absolute inset-y-0 right-0 w-1/2 md:w-2/5 overflow-hidden pointer-events-none opacity-30 dark:opacity-40 [mask-image:linear-gradient(to_left,black,transparent)]">
+            <video
+              className="h-full w-full object-cover"
+              src="/assets/videos/doctor-call-hero.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+            />
+          </div>
+
           {/* Ambient fluid backdrop, adapted from React Bits' LiquidEther —
               skipped automatically for prefers-reduced-motion users and
               loaded on demand so it never adds to the initial page JS. */}

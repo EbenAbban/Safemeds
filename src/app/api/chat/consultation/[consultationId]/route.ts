@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/app/auth";
+import { notifyConsultationReply } from "@/services/push";
+
+// web-push (reached via notifyConsultationReply) needs Node crypto.
+export const runtime = "nodejs";
 
 // GET - Fetch consultation chat messages
 export async function GET(
@@ -200,6 +204,13 @@ export async function POST(
         where: { id: consultation.id },
         data: { status: "IN_PROGRESS" },
       });
+    }
+
+    // Only a pharmacist's reply is worth interrupting someone's day for. Awaited
+    // rather than fire-and-forget because serverless functions can be frozen
+    // the moment the response is returned, dropping the in-flight send.
+    if (session?.user?.role === "PHARMACY") {
+      await notifyConsultationReply(consultation.id);
     }
 
     return NextResponse.json({

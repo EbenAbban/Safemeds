@@ -16,7 +16,11 @@ export async function middleware(request: NextRequest) {
     '/legal',
     '/consult',
     '/track',
-    '/delivery'
+    '/delivery',
+    // The service worker precaches this as the offline fallback, so it must be
+    // reachable without a session — an offline user cannot complete a sign-in
+    // redirect, and caching a 307 here would break the fallback entirely.
+    '/offline'
   ]
  
   // Check if current path is a public route

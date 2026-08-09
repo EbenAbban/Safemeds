@@ -92,3 +92,14 @@ body {
     animation: none;
   }
 }
+
+/* PWA install gate.
+ *
+ * The overlay ships in the server-rendered HTML so gated users see it without
+ * a hydration flash. These rules let the pre-paint script in <head> hide it
+ * again — before first paint — for people who already installed the app or
+ * dismissed the prompt this session, so they never glimpse it either. */
+html[data-display-mode="standalone"] [data-pwa-install-overlay],
+html[data-pwa-bypass="1"] [data-pwa-install-overlay] {
+  display: none !important;
+}
