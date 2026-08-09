@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useState, type ComponentProps } from "react";
-import Threads from "./Threads";
+import dynamic from "next/dynamic";
+import type ThreadsType from "./Threads";
 
-type ThreadsBackgroundProps = ComponentProps<typeof Threads> & {
+// Loaded on demand — kept out of the initial page JS — and skipped
+// entirely for prefers-reduced-motion users.
+const Threads = dynamic(() => import("./Threads"), { ssr: false });
+
+type ThreadsBackgroundProps = ComponentProps<typeof ThreadsType> & {
   wrapperClassName?: string;
 };
 
-// Skips the animated WebGL canvas for users who prefer reduced motion.
 export default function ThreadsBackground({ wrapperClassName = "", ...threadsProps }: ThreadsBackgroundProps) {
   const [enabled, setEnabled] = useState(false);
 

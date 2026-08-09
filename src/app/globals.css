@@ -66,3 +66,29 @@ body {
     transition: none;
   }
 }
+
+/* Horizontally-scrolling testimonial marquee. The track renders the list
+   twice back to back and animates exactly -50% (one full copy's width), so
+   the loop point is seamless regardless of how many cards are in the list. */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee-scroll var(--marquee-duration, 32s) linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}

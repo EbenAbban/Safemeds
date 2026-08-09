@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useState, type ComponentProps } from "react";
-import LightTunnel from "./LightTunnel";
+import dynamic from "next/dynamic";
+import type LightTunnelType from "./LightTunnel";
 
-type LightTunnelBackgroundProps = ComponentProps<typeof LightTunnel> & {
+// Loaded on demand — kept out of the initial page JS — and skipped
+// entirely for prefers-reduced-motion users.
+const LightTunnel = dynamic(() => import("./LightTunnel"), { ssr: false });
+
+type LightTunnelBackgroundProps = ComponentProps<typeof LightTunnelType> & {
   wrapperClassName?: string;
 };
 
-// Skips the animated WebGL canvas for users who prefer reduced motion.
 export default function LightTunnelBackground({ wrapperClassName = "", ...tunnelProps }: LightTunnelBackgroundProps) {
   const [enabled, setEnabled] = useState(false);
 

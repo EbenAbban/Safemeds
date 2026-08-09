@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import Footer from "@/components/Common/Footer";
-import AuroraBackground from "@/components/effects/AuroraBackground";
+import LiquidEtherBackground from "@/components/effects/LiquidEtherBackground";
 import LightTunnelBackground from "@/components/effects/LightTunnelBackground";
 import ClickSpark from "@/components/effects/ClickSpark";
 import {
@@ -120,7 +120,7 @@ export default function Home() {
               Contact
             </Link>
             <Link
-              href="/signin"
+              href="/auth"
               className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
               Sign In
@@ -159,7 +159,7 @@ export default function Home() {
                 <Link href="/consult" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Consult</Link>
                 <Link href="/track" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Track</Link>
                 <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Contact</Link>
-                <Link href="/signin" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors">Sign In</Link>
+                <Link href="/auth" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors">Sign In</Link>
                 <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 text-center transition-colors">Get Started</Link>
               </div>
             </motion.div>
@@ -170,14 +170,19 @@ export default function Home() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Hero */}
         <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 mb-24">
-          {/* Ambient aurora backdrop, adapted from React Bits — skipped
-              automatically for prefers-reduced-motion users. */}
-          <AuroraBackground
-            className="absolute inset-0 overflow-hidden pointer-events-none opacity-40 dark:opacity-60 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_40%,black,transparent)]"
-            colorStops={["#3b82f6", "#a855f7", "#ec4899"]}
-            amplitude={0.8}
-            blend={0.6}
-            speed={0.6}
+          {/* Ambient fluid backdrop, adapted from React Bits' LiquidEther —
+              skipped automatically for prefers-reduced-motion users and
+              loaded on demand so it never adds to the initial page JS. */}
+          <LiquidEtherBackground
+            wrapperClassName="absolute inset-0 overflow-hidden pointer-events-none opacity-40 dark:opacity-60 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_40%,black,transparent)]"
+            colors={["#3b82f6", "#a855f7", "#ec4899"]}
+            resolution={0.4}
+            iterationsPoisson={16}
+            mouseForce={16}
+            cursorSize={90}
+            autoDemo
+            autoSpeed={0.4}
+            autoIntensity={1.8}
           />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -425,50 +430,90 @@ export default function Home() {
           <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
             Trusted by students
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
+
+          {(() => {
+            const testimonials = [
               {
                 quote: "SafeMeds helped me get a prescription refill without leaving my dorm. The pharmacist was professional and the delivery was fast.",
                 author: "Sarah K.",
-                role: "Student, KNUST"
+                role: "Student, KNUST",
               },
               {
                 quote: "I was nervous about asking for help, but the anonymous consultation made it easy. Highly recommend for anyone on campus.",
                 author: "Michael O.",
-                role: "Student, University of Ghana"
+                role: "Student, University of Ghana",
               },
               {
                 quote: "As a pharmacist, SafeMeds lets me reach students who might otherwise avoid seeking care. The platform is intuitive and secure.",
                 author: "Dr. Amma B.",
-                role: "Licensed Pharmacist"
-              }
-            ].map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
-              >
-                <div className="flex gap-0.5 text-blue-500 mb-3" aria-label="5 out of 5 stars">
-                  {Array.from({ length: 5 }).map((_, starIndex) => (
-                    <Star key={starIndex} className="w-4 h-4 fill-current" aria-hidden="true" />
+                role: "Licensed Pharmacist",
+              },
+              {
+                quote: "Ordering a refill between classes used to mean skipping a lecture. Now I do it from the library and it shows up at my hall.",
+                author: "Kwame A.",
+                role: "Student, Legon",
+              },
+              {
+                quote: "The chat felt like texting a friend who happens to be a pharmacist. No judgment, just clear answers.",
+                author: "Priya N.",
+                role: "Student, Ashesi University",
+              },
+              {
+                quote: "License verification took minutes and the dashboard makes triaging consultations painless during a full shift.",
+                author: "Dr. Kojo M.",
+                role: "Licensed Pharmacist",
+              },
+              {
+                quote: "Delivery tracking meant I wasn't stuck guessing when my order would show up. It arrived exactly on time.",
+                author: "Ama D.",
+                role: "Student, KNUST",
+              },
+              {
+                quote: "As someone new to the city, not knowing a local pharmacy wasn't a barrier. SafeMeds connected me in minutes.",
+                author: "Daniel O.",
+                role: "Student, University of Ghana",
+              },
+            ];
+
+            // Base pace scales with list length so the loop always reads at a
+            // similar per-card speed, then sped up 1.9x per the requested pace.
+            const MARQUEE_SPEED_MULTIPLIER = 1.9;
+            const baseSecondsPerCard = 5;
+            const durationSeconds = (testimonials.length * baseSecondsPerCard) / MARQUEE_SPEED_MULTIPLIER;
+
+            return (
+              <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+                <div
+                  className="marquee-track flex w-max gap-6 px-4 sm:px-6 lg:px-8"
+                  style={{ "--marquee-duration": `${durationSeconds}s` } as React.CSSProperties}
+                >
+                  {[...testimonials, ...testimonials].map((testimonial, index) => (
+                    <div
+                      key={index}
+                      className="w-80 flex-shrink-0 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
+                    >
+                      <div className="flex gap-0.5 text-blue-500 mb-3" aria-label="5 out of 5 stars">
+                        {Array.from({ length: 5 }).map((_, starIndex) => (
+                          <Star key={starIndex} className="w-4 h-4 fill-current" aria-hidden="true" />
+                        ))}
+                      </div>
+                      <p className="text-gray-700 dark:text-gray-300 mb-4 italic leading-relaxed">
+                        &ldquo;{testimonial.quote}&rdquo;
+                      </p>
+                      <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+                        <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                          {testimonial.author}
+                        </p>
+                        <p className="text-gray-500 dark:text-gray-400 text-xs">
+                          {testimonial.role}
+                        </p>
+                      </div>
+                    </div>
                   ))}
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 mb-4 italic leading-relaxed">
-                  &ldquo;{testimonial.quote}&rdquo;
-                </p>
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
-                  <p className="font-semibold text-gray-900 dark:text-white text-sm">
-                    {testimonial.author}
-                  </p>
-                  <p className="text-gray-500 dark:text-gray-400 text-xs">
-                    {testimonial.role}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+              </div>
+            );
+          })()}
         </motion.div>
 
         {/* CTA */}
@@ -512,7 +557,7 @@ export default function Home() {
                   Create Your Account
                 </Link>
                 <Link
-                  href="/signin"
+                  href="/auth"
                   className="px-8 py-4 bg-blue-500 text-white rounded-xl font-semibold text-lg hover:bg-blue-400 transition-colors"
                 >
                   Sign In
