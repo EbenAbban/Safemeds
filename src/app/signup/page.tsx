@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LEGAL_VERSION } from "@/lib/legal";
+import ThreadsBackground from "@/components/effects/ThreadsBackground";
 
 interface FormData {
   username: string;
@@ -263,17 +264,24 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex bg-white dark:bg-gray-950">
       {/* Left brand panel */}
-      <div className="hidden lg:flex lg:w-2/5 xl:w-1/3 flex-col justify-between bg-gray-950 dark:bg-black p-10">
-        <div>
+      <div className="relative hidden lg:flex lg:w-2/5 xl:w-1/3 flex-col justify-between overflow-hidden bg-gray-950 dark:bg-black p-10">
+        <ThreadsBackground
+          wrapperClassName="absolute inset-0 pointer-events-none opacity-50"
+          color={[0.36, 0.29, 1]}
+          amplitude={1.2}
+          distance={0.2}
+          enableMouseInteraction
+        />
+        <div className="relative">
           <span className="text-white text-xl font-semibold tracking-tight">SafeMeds</span>
         </div>
-        <div>
+        <div className="relative">
           <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
             Secure healthcare management platform for students and licensed pharmacists.
             All data is encrypted end-to-end.
           </p>
         </div>
-        <div>
+        <div className="relative">
           <p className="text-gray-600 text-xs">
             &copy; {new Date().getFullYear()} SafeMeds. All rights reserved.
           </p>
