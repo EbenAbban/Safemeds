@@ -40,8 +40,30 @@ model User {
   settings              UserSettings?
   notifications         Notification[]
   licenseVerification   LicenseVerification?
+  pushSubscriptions     PushSubscription[]
 
   @@map("users")
+}
+
+/// A browser push endpoint. `userId` is nullable because consultations can be
+/// anonymous — a student without an account still needs to be told when a
+/// pharmacist replies, so those rows key off an AnonymousSession instead.
+model PushSubscription {
+  id                 String   @id @default(cuid())
+  endpoint           String   @unique
+  p256dh             String
+  auth               String
+  userId             String?
+  anonymousSessionId String?
+  userAgent          String?
+  failureCount       Int      @default(0)
+  createdAt          DateTime @default(now())
+  lastSeenAt         DateTime @updatedAt
+  user               User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([anonymousSessionId])
+  @@map("push_subscriptions")
 }
 
 model Consultation {
