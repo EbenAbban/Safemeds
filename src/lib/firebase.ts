@@ -69,6 +69,10 @@ export const db = getFirestore(app);
 let authReady: Promise<User | null> | null = null;
 export function ensureAuth(): Promise<User | null> {
   if (typeof window === "undefined") return Promise.resolve(null); // server: skip
+  if (firebaseConfig.apiKey === "demo-api-key") {
+    console.warn("Firebase API key is missing. Skipping anonymous auth.");
+    return Promise.resolve(null);
+  }
   if (authReady) return authReady;
   authReady = new Promise((resolve, reject) => {
     const unsub = onAuthStateChanged(auth, (user) => {
