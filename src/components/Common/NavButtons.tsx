@@ -9,7 +9,7 @@ export default function NavButtons() {
   const router = useRouter();
 
   return (
-    <div className="fixed top-3 left-3 z-[60] flex items-center gap-2 print:hidden">
+    <div className="fixed bottom-4 left-3 z-[60] flex items-center gap-2 print:hidden">
       <button
         onClick={() => router.back()}
         aria-label="Go back"

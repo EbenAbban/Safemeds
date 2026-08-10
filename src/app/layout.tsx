@@ -12,6 +12,7 @@ import ThemeToggle from "@/components/Common/ThemeToggle";
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
@@ -28,14 +29,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.className} antialiased`}>
+      <body className={`${poppins.className} ${poppins.variable} antialiased`}>
         <ThemeProvider>
           <SessionProvider>
             <NotificationProvider>
               <OnboardingProvider>
                 <NavButtons />
                 {/* Global theme toggle — available on every page */}
-                <div className="fixed top-3 right-3 z-[60] print:hidden">
+                <div className="fixed bottom-4 right-3 z-[60] print:hidden">
                   <ThemeToggle variant="icon" size="sm" />
                 </div>
                 {children}
