@@ -276,9 +276,15 @@ The flow ends at `/track?sessionId=…`, and the session self-expires after 7 da
 
 Only layer 1 is a genuine security boundary. Layers 2 and 3 are UX.
 
-**Public routes** (middleware allowlist): `/`, `/auth`, `/signin`, `/signup`,
-`/verify`, `/about`, `/contact`, `/search`, `/legal`, `/consult`, `/track`,
-`/delivery`, `/offline`.
+**Public routes** are defined once in [`src/lib/routes.ts`](../src/lib/routes.ts) and
+consumed by both layer 1 and layer 2: `/`, `/auth`, `/signin`, `/signup`, `/verify`,
+`/about`, `/contact`, `/search`, `/legal`, `/consult`, `/track`, `/delivery`,
+`/offline`.
+
+`isPublicRoute()` matches a route exactly or as a genuine path prefix. `"/"` is
+special-cased to exact-match only — treating it as a prefix would make the entire site
+public, which is the one catastrophic bug this module could have. It is covered by a
+dedicated test.
 
 The middleware matcher excludes `api`, `_next/static`, `_next/image`, `favicon.ico`,
 and **any path containing a dot** — which is what lets `/sw.js`,
@@ -619,7 +625,7 @@ replies, routed through `AnonymousSession`.
 
 ## 13. Testing
 
-**Vitest 4**, `environment: "node"`, matching `src/**/*.test.ts`. **77 tests, 8 files.**
+**Vitest 4**, `environment: "node"`, matching `src/**/*.test.ts`. **90 tests, 9 files.**
 
 | File | Covers |
 |---|---|
@@ -627,6 +633,7 @@ replies, routed through `AnonymousSession`.
 | `legal.test.ts` | Legal document helpers |
 | `license.test.ts` | License verification rules |
 | `settings.test.ts` | Settings service |
+| `public-routes.test.ts` | Public-route allowlist, incl. the `"/"`-as-prefix trap |
 | `pwa-environment.test.ts` | UA classification — iOS, Android, Instagram, Googlebot, iPadOS, desktop |
 | `pwa-gated-routes.test.ts` | Route matching, incl. `/consultations` ≠ `/consult` |
 | `pwa-resolve-gate-state.test.ts` | All 8 gate branches + fail-open |
@@ -681,53 +688,64 @@ is in `schema.prisma` but **has no migration** — the four on disk predate it),
 mount `<PushPermissionPrompt />` in the consult chat. Until then `/api/push/subscribe`
 returns 503 by design.
 
-### 2. `tailwind.config.js` is dead configuration
-
-The project uses **Tailwind v4**, which is CSS-first. `globals.css` has
-`@import "tailwindcss"` but **no `@config` directive**, so the JS config is never
-loaded. Its `safe-blue` / `safe-green` / `safe-orange` palettes and `fade-in` /
-`slide-up` animations have **zero usages** in the codebase. It also references
-`--font-geist-sans`, a font the project no longer uses. Either wire it up with
-`@config` or delete it — right now it misleads anyone who reads it.
-
-### 3. `useAuth` redirects too aggressively
-
-The `useEffect` in [`useAuth.ts:47-54`](../src/hooks/useAuth.ts) pushes any
-unauthenticated visitor to `/auth` from *every* page except `/auth`, `/signup`, and
-`/`. Any public page that calls the hook — `/about`, `/contact`, `/legal` — bounces
-logged-out visitors to sign-in even though middleware treats those routes as public.
-This is observable and contradicts the middleware allowlist.
-
-### 4. Duplicate consultation services
+### 2. Duplicate consultation services
 
 `src/lib/consultationService.ts` and `src/services/consultationService.ts` are both
 248 lines with overlapping type names (`Consultation`, `CreateConsultationData`) and
 different shapes. Unclear which is authoritative.
 
-### 5. Every route is dynamically rendered
+### 3. Every route is dynamically rendered
 
 `headers()` in the root layout opts the whole app out of static generation. This is
 the deliberate cost of a flash-free install gate, but `/about`, `/contact`, and
 `/legal` could otherwise be static. Reversible by moving UA detection client-side and
 hiding content pre-paint instead.
 
-### 6. Rate limiting does not survive serverless
+### 4. Rate limiting does not survive serverless
 
 The in-memory `Map` in `rateLimit.ts` is per-instance and resets on cold start.
 Adequate against casual abuse, ineffective against a determined one.
 
-### 7. Video consultation is half-built
+### 5. Video consultation is half-built
 
 `webrtcSignaling.ts` implements the student side; the pharmacist client that would
 answer the offer does not exist. The file says so plainly.
 
-### 8. Inconsistent API discipline
+### 6. Inconsistent API discipline
 
 Newer routes validate with Zod and delegate to services. Older ones call Prisma
 inline with ad-hoc validation. Worth converging.
 
-### 9. iOS install flow is unverified
+### 7. iOS install flow is unverified
 
 The Add-to-Home-Screen path cannot be emulated. Every other branch — Android UA,
 Instagram webview, Googlebot, desktop, escape hatch, SW registration, cache
 contents — has been confirmed directly. This one needs one pass on real hardware.
+
+### 8. `body` background does not follow the dark theme
+
+`globals.css` declares `body { background: var(--background) }`, and `--background`
+does flip to `#0a0a0a` when `.dark` is on `<html>`. But the computed `body`
+background stays white, because the CSS chunk carrying that rule is not loaded on
+every route. It is invisible in practice — every page wraps its content in a
+`dark:from-gray-900` gradient container that covers the viewport — which is why it has
+gone unnoticed. Cosmetic, pre-existing, and unrelated to the Tailwind config removal
+below.
+
+---
+
+## Recently resolved
+
+**`tailwind.config.js` removed.** The project is on Tailwind v4 (CSS-first), and
+`globals.css` had no `@config` directive, so the JS config was never loaded. Verified
+empirically rather than assumed: adding `bg-safe-blue-600` to a component and running
+a full production build emitted **no matching CSS at all**. Its palettes and
+animations had zero usages, and its `darkMode: 'class'` was demonstrably inert — which
+is exactly why `globals.css` had to declare `@custom-variant dark` by hand. Deleting
+it left 143 dark-variant rules untouched and dark-mode utilities working.
+
+**`useAuth` redirect narrowed.** The hook bounced signed-out visitors to `/auth` from
+every route except `/auth`, `/signup`, and `/`, which contradicted the middleware
+allowlist and made `/about`, `/contact`, and `/legal` unreadable when logged out. The
+allowlist now lives once in [`src/lib/routes.ts`](../src/lib/routes.ts) and is
+consumed by both the middleware and the hook, so the two can no longer disagree.

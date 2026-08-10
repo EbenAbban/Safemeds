@@ -1,34 +1,14 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { isPublicRoute } from '@/lib/routes'
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
- 
-  // Public routes that don't need authentication
-  const publicRoutes = [
-    '/',
-    '/auth',
-    '/signin',
-    '/signup',
-    '/verify',
-    '/about',
-    '/contact',
-    '/search',
-    '/legal',
-    '/consult',
-    '/track',
-    '/delivery',
-    // The service worker precaches this as the offline fallback, so it must be
-    // reachable without a session — an offline user cannot complete a sign-in
-    // redirect, and caching a 307 here would break the fallback entirely.
-    '/offline'
-  ]
- 
-  // Check if current path is a public route
-  const isPublicRoute = publicRoutes.some(route =>
-    pathname === route || pathname.startsWith(route + '/')
-  )
- 
-  if (isPublicRoute) {
+
+  // The allowlist lives in @/lib/routes so the client-side redirect in useAuth
+  // enforces exactly the same set. When these two disagreed, public pages that
+  // called useAuth bounced signed-out visitors to /auth.
+  if (isPublicRoute(pathname)) {
     return NextResponse.next()
   }
 
