@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import "./globals.css";
 import SessionProvider from "@/components/Auth/SessionProvider";
 import { ThemeProvider } from "@/context/ThemeContext";
@@ -8,12 +7,6 @@ import { OnboardingProvider } from "@/context/OnboardingContext";
 import OnboardingWizard from "@/components/Common/OnboardingWizard";
 import NavButtons from "@/components/Common/NavButtons";
 import ThemeToggle from "@/components/Common/ThemeToggle";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
-});
 
 export const metadata: Metadata = {
   title: "SafeMeds - Healthcare Management Platform",
@@ -29,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.className} ${poppins.variable} antialiased`}>
+      <body className="antialiased">
         <ThemeProvider>
           <SessionProvider>
             <NotificationProvider>
