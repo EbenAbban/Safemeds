@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
+import localFont from "next/font/local";
 import "./globals.css";
 import InstallGate from "@/components/pwa/InstallGate";
 import ServiceWorkerRegistrar from "@/components/pwa/ServiceWorkerRegistrar";
@@ -10,6 +11,27 @@ import { OnboardingProvider } from "@/context/OnboardingContext";
 import OnboardingWizard from "@/components/Common/OnboardingWizard";
 import NavButtons from "@/components/Common/NavButtons";
 import ThemeToggle from "@/components/Common/ThemeToggle";
+
+// Self-hosted rather than next/font/google on purpose. The design system calls
+// for Inter + Manrope, but ba2725d removed the Google Fonts dependency so the
+// project could build offline — and next/font/google still fetches at build
+// time. These are the latin-subset variable woff2 files (73 KB combined, both
+// SIL Open Font License), committed so builds need no network at all.
+const inter = localFont({
+  src: "../assets/fonts/Inter-Variable-latin.woff2",
+  variable: "--font-inter",
+  weight: "100 900",
+  display: "swap",
+  fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
+});
+
+const manrope = localFont({
+  src: "../assets/fonts/Manrope-Variable-latin.woff2",
+  variable: "--font-manrope",
+  weight: "200 800",
+  display: "swap",
+  fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
+});
 
 export const metadata: Metadata = {
   title: "SafeMeds - Healthcare Management Platform",
@@ -32,8 +54,9 @@ export const viewport: Viewport = {
   // than sitting in letterboxed bars on notched phones.
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#2563eb" },
-    { media: "(prefers-color-scheme: dark)", color: "#111827" },
+    // Medical teal / dark navy, matching the SafeMeds Vital palette.
+    { media: "(prefers-color-scheme: light)", color: "#0b5e4d" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
   ],
 };
 
@@ -61,7 +84,7 @@ export default async function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: PRE_PAINT_SCRIPT }} />
       </head>
-      <body className="antialiased">
+      <body className={`${inter.variable} ${manrope.variable} antialiased`}>
         <ThemeProvider>
           <SessionProvider>
             <NotificationProvider>
