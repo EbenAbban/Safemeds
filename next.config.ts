@@ -10,6 +10,9 @@ let nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion"],
   },
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 // Bundle analysis — run with `ANALYZE=true npx next build`
