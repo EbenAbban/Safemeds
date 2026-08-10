@@ -48,7 +48,7 @@ export default function InboxPage() {
             <p className="text-gray-600 dark:text-gray-400">Loading chats…</p>
           ) : rooms.length === 0 ? (
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-8 text-center border border-gray-200 dark:border-gray-700">
-              <div className="text-4xl mb-3">💬</div>
+              <div className="text-4xl mb-3"></div>
               <p className="text-gray-600 dark:text-gray-400">
                 No patient chats yet. They appear here as students start consultations.
               </p>
@@ -66,7 +66,7 @@ export default function InboxPage() {
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-green-500 flex items-center justify-center text-white font-medium shrink-0">
-                      💊
+                      
                     </div>
                     <div className="min-w-0">
                       <p className="font-semibold text-gray-900 dark:text-white truncate">

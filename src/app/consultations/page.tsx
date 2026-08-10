@@ -72,17 +72,17 @@ export default function ConsultationsPage() {
   const getTypeIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case "general":
-        return "🏥";
+        return "";
       case "mental health":
-        return "🧠";
+        return "";
       case "pain relief":
-        return "💊";
+        return "";
       case "pregnancy":
-        return "🤱";
+        return "";
       case "sexual health":
-        return "❤️";
+        return "️";
       default:
-        return "💬";
+        return "";
     }
   };
 
@@ -180,7 +180,7 @@ export default function ConsultationsPage() {
               </div>
             ) : consultations.length === 0 ? (
               <div className="p-8 text-center">
-                <div className="text-4xl mb-4">📋</div>
+                <div className="text-4xl mb-4"></div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   No consultations found
                 </h3>

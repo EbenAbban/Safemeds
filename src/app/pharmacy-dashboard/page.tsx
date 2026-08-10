@@ -62,7 +62,7 @@ export default function PharmacyDashboard() {
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-2xl mb-2">💊</div>
+                <div className="text-2xl mb-2"></div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Pharmacy Account</div>
               </div>
             </div>
@@ -77,7 +77,7 @@ export default function PharmacyDashboard() {
               whileHover={{ scale: 1.02 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-purple-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-3xl mb-4">💬</div>
+              <div className="text-3xl mb-4"></div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Patient Consultations
               </h3>
@@ -99,7 +99,7 @@ export default function PharmacyDashboard() {
               whileHover={{ scale: 1.02 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-purple-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-3xl mb-4">💊</div>
+              <div className="text-3xl mb-4"></div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Medication Management
               </h3>
@@ -121,7 +121,7 @@ export default function PharmacyDashboard() {
               whileHover={{ scale: 1.02 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-purple-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-3xl mb-4">📦</div>
+              <div className="text-3xl mb-4"></div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Order Processing
               </h3>
@@ -143,7 +143,7 @@ export default function PharmacyDashboard() {
               whileHover={{ scale: 1.02 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-purple-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-3xl mb-4">📊</div>
+              <div className="text-3xl mb-4"></div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Pharmacy Analytics
               </h3>
@@ -165,7 +165,7 @@ export default function PharmacyDashboard() {
               whileHover={{ scale: 1.02 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-purple-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-3xl mb-4">👥</div>
+              <div className="text-3xl mb-4"></div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Staff Management
               </h3>
@@ -187,7 +187,7 @@ export default function PharmacyDashboard() {
               whileHover={{ scale: 1.02 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-purple-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-3xl mb-4">⚙️</div>
+              <div className="text-3xl mb-4">️</div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Settings
               </h3>
@@ -211,7 +211,7 @@ export default function PharmacyDashboard() {
             className="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-6"
           >
             <div className="flex items-start space-x-3">
-              <div className="text-2xl">🔒</div>
+              <div className="text-2xl"></div>
               <div>
                 <h3 className="font-semibold text-yellow-800 mb-2">
                   Security Notice

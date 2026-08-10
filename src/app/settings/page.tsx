@@ -6,20 +6,20 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 
 const iconMap = {
-  Shield: () => <span className="text-lg">🛡️</span>,
-  Bell: () => <span className="text-lg">🔔</span>,
-  Truck: () => <span className="text-lg">🚚</span>,
-  Users: () => <span className="text-lg">👥</span>,
-  Eye: () => <span className="text-lg">👁️</span>,
-  Lock: () => <span className="text-lg">🔒</span>,
-  MapPin: () => <span className="text-lg">📍</span>,
+  Shield: () => <span className="text-lg">️</span>,
+  Bell: () => <span className="text-lg"></span>,
+  Truck: () => <span className="text-lg"></span>,
+  Users: () => <span className="text-lg"></span>,
+  Eye: () => <span className="text-lg">️</span>,
+  Lock: () => <span className="text-lg"></span>,
+  MapPin: () => <span className="text-lg"></span>,
   Clock: () => <span className="text-lg">⏰</span>,
-  Phone: () => <span className="text-lg">📞</span>,
-  Mail: () => <span className="text-lg">📧</span>,
-  Settings: () => <span className="text-lg">⚙️</span>,
-  Save: () => <span className="text-lg">💾</span>,
-  AlertTriangle: () => <span className="text-lg">⚠️</span>,
-  CheckCircle: () => <span className="text-lg">✅</span>,
+  Phone: () => <span className="text-lg"></span>,
+  Mail: () => <span className="text-lg"></span>,
+  Settings: () => <span className="text-lg">️</span>,
+  Save: () => <span className="text-lg"></span>,
+  AlertTriangle: () => <span className="text-lg">️</span>,
+  CheckCircle: () => <span className="text-lg"></span>,
   Loader2: () => <span className="animate-spin text-lg inline-block">⏳</span>,
 };
 
@@ -613,7 +613,7 @@ export default function SettingsPage() {
                 onClick={toggleTheme}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
-                <span>{theme === "light" ? "🌙" : "☀️"}</span>
+                <span>{theme === "light" ? "" : "️"}</span>
                 <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
               </button>
             </div>
@@ -626,7 +626,7 @@ export default function SettingsPage() {
                 <p className="text-gray-600 dark:text-gray-400 text-sm capitalize">{theme} mode</p>
               </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {theme === "light" ? "☀️" : "🌙"}
+                {theme === "light" ? "️" : ""}
               </div>
             </div>
 

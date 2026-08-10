@@ -95,13 +95,13 @@ function TrackConsultationContent() {
       case "PENDING":
         return "⏳";
       case "IN_PROGRESS":
-        return "👨‍⚕️";
+        return "‍️";
       case "COMPLETED":
-        return "✅";
+        return "";
       case "CANCELLED":
-        return "❌";
+        return "";
       default:
-        return "📋";
+        return "";
     }
   };
 
@@ -126,7 +126,7 @@ function TrackConsultationContent() {
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8"
         >
           <div className="text-center mb-8">
-            <div className="text-6xl mb-4">🔍</div>
+            <div className="text-6xl mb-4"></div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Track Your Consultation
             </h1>

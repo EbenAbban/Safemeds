@@ -248,9 +248,9 @@ export default function EnhancedAuthPage() {
           </label>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { value: "CLIENT", label: "Student", icon: "👨‍🎓" },
-              { value: "PHARMACY", label: "Pharmacist", icon: "💊" },
-              { value: "ADMIN", label: "Admin", icon: "⚙️" },
+              { value: "CLIENT", label: "Student", icon: "‍" },
+              { value: "PHARMACY", label: "Pharmacist", icon: "" },
+              { value: "ADMIN", label: "Admin", icon: "️" },
             ].map((type) => (
               <button
                 key={type.value}
@@ -468,7 +468,7 @@ export default function EnhancedAuthPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                 >
-                  {showPassword ? "🙈" : "👁️"}
+                  {showPassword ? "" : "️"}
                 </button>
               </div>
               {errors.password && (
@@ -500,7 +500,7 @@ export default function EnhancedAuthPage() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                   >
-                    {showConfirmPassword ? "🙈" : "👁️"}
+                    {showConfirmPassword ? "" : "️"}
                   </button>
                 </div>
                 {errors.confirmPassword && (
@@ -553,7 +553,7 @@ export default function EnhancedAuthPage() {
         {/* Privacy Notice */}
         <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
           <p className="text-sm text-blue-700 dark:text-blue-300">
-            🔒 Your privacy is our priority. All consultations and data are
+             Your privacy is our priority. All consultations and data are
             encrypted and protected.
             {userType === "PHARMACY" &&
               " License verification ensures only qualified pharmacists can provide consultations."}

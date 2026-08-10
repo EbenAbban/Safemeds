@@ -85,7 +85,7 @@ export default function SignOutPage() {
           ) : error ? (
             <>
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl">⚠️</span>
+                <span className="text-2xl">️</span>
               </div>
               <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                 Sign Out Error
@@ -114,7 +114,7 @@ export default function SignOutPage() {
                 transition={{ delay: 0, type: "spring" }}
                 className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"
               >
-                <span className="text-2xl">✅</span>
+                <span className="text-2xl"></span>
               </motion.div>
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}

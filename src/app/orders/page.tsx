@@ -145,7 +145,7 @@ export default function OrdersPage() {
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600 text-lg">📦</span>
+                    <span className="text-blue-600 text-lg"></span>
                   </div>
                 </div>
                 <div className="ml-4">
@@ -161,7 +161,7 @@ export default function OrdersPage() {
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                    <span className="text-green-600 text-lg">💰</span>
+                    <span className="text-green-600 text-lg"></span>
                   </div>
                 </div>
                 <div className="ml-4">
@@ -177,7 +177,7 @@ export default function OrdersPage() {
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span className="text-purple-600 text-lg">📊</span>
+                    <span className="text-purple-600 text-lg"></span>
                   </div>
                 </div>
                 <div className="ml-4">
@@ -275,7 +275,7 @@ export default function OrdersPage() {
               </div>
             ) : orders.length === 0 ? (
               <div className="p-8 text-center">
-                <div className="text-4xl mb-4">📦</div>
+                <div className="text-4xl mb-4"></div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   No orders found
                 </h3>

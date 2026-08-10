@@ -68,7 +68,7 @@ export default function AnonymousConsultationPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center"
           >
-            <div className="text-6xl mb-6">✅</div>
+            <div className="text-6xl mb-6"></div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
               Consultation Submitted Successfully!
             </h1>
@@ -131,7 +131,7 @@ export default function AnonymousConsultationPage() {
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8"
         >
           <div className="text-center mb-8">
-            <div className="text-6xl mb-4">🔒</div>
+            <div className="text-6xl mb-4"></div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Anonymous Health Consultation
             </h1>
@@ -148,11 +148,11 @@ export default function AnonymousConsultationPage() {
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  { value: "general", label: "General Health", icon: "🏥" },
-                  { value: "mental health", label: "Mental Health", icon: "🧠" },
-                  { value: "pain relief", label: "Pain Relief", icon: "💊" },
-                  { value: "pregnancy", label: "Pregnancy", icon: "🤱" },
-                  { value: "sexual health", label: "Sexual Health", icon: "❤️" },
+                  { value: "general", label: "General Health", icon: "" },
+                  { value: "mental health", label: "Mental Health", icon: "" },
+                  { value: "pain relief", label: "Pain Relief", icon: "" },
+                  { value: "pregnancy", label: "Pregnancy", icon: "" },
+                  { value: "sexual health", label: "Sexual Health", icon: "️" },
                 ].map((type) => (
                   <button
                     key={type.value}

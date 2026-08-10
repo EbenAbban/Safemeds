@@ -38,7 +38,7 @@ function LegalContent() {
     {
       id: "terms",
       title: "Terms of Service",
-      icon: "📄",
+      icon: "",
       blocks: [
         {
           title: "1. Acceptance of Terms",
@@ -65,7 +65,7 @@ function LegalContent() {
     {
       id: "privacy",
       title: "Privacy Policy",
-      icon: "🔒",
+      icon: "",
       blocks: [
         {
           title: "1. Privacy Commitment",
@@ -92,7 +92,7 @@ function LegalContent() {
     {
       id: "hipaa",
       title: "HIPAA & Security Statement",
-      icon: "🏥",
+      icon: "",
       blocks: [
         {
           title: "1. HIPAA Alignment",
@@ -115,7 +115,7 @@ function LegalContent() {
     {
       id: "disclaimer",
       title: "Medical Disclaimer",
-      icon: "⚠️",
+      icon: "️",
       blocks: [
         {
           title: "1. EMERGENCY WARNING: NOT FOR EMERGENCIES",
@@ -216,7 +216,7 @@ function LegalContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => router.push("/")}>
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-              <span className="text-xl">🛡️</span>
+              <span className="text-xl">️</span>
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white leading-tight">
@@ -276,7 +276,7 @@ function LegalContent() {
             {/* Quick Actions Card */}
             <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
               <div className="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-10 text-8xl font-bold">
-                🔒
+                
               </div>
               <h4 className="font-semibold text-lg mb-2">Need a copy?</h4>
               <p className="text-sm opacity-90 mb-4 leading-relaxed">
@@ -300,7 +300,7 @@ function LegalContent() {
             <div className="bg-white/85 dark:bg-gray-800/85 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-150 dark:border-gray-700/50 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
               <div className="relative flex-1">
                 <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-400">
-                  🔍
+                  
                 </span>
                 <input
                   type="text"
@@ -314,7 +314,7 @@ function LegalContent() {
                     onClick={() => setSearchQuery("")}
                     className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600"
                   >
-                    ✕
+                    
                   </button>
                 )}
               </div>
@@ -343,7 +343,7 @@ function LegalContent() {
               <div className="space-y-8">
                 {filteredBlocks.length === 0 ? (
                   <div className="text-center py-16">
-                    <span className="text-4xl mb-4 block">🔍</span>
+                    <span className="text-4xl mb-4 block"></span>
                     <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-1">
                       No matching sections found
                     </h4>
@@ -375,7 +375,7 @@ function LegalContent() {
             {/* FAQs Accordion Panel (No-print) */}
             <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-150 dark:border-gray-700/50 no-print">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                <span>🤔</span> Legal & Trust FAQs
+                <span></span> Legal & Trust FAQs
               </h3>
               <div className="space-y-3">
                 {faqs.map((faq, index) => (

@@ -92,17 +92,17 @@ export default function AboutPage() {
         >
           {[
             {
-              icon: "🔒",
+              icon: "",
               title: "Privacy",
               description: "Every consultation is anonymous. No personal health data is ever linked to your identity without your explicit consent."
             },
             {
-              icon: "✅",
+              icon: "",
               title: "Trust",
               description: "Every pharmacist on the platform is license-verified. We enforce strict professional standards."
             },
             {
-              icon: "🌍",
+              icon: "",
               title: "Access",
               description: "Designed for students. Mobile-first, works on any device, available 24/7 wherever you are."
             }

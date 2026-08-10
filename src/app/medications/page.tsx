@@ -234,7 +234,7 @@ export default function MedicationsPage() {
               ))
             ) : medications.length === 0 ? (
               <div className="col-span-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
-                <div className="text-4xl mb-4">💊</div>
+                <div className="text-4xl mb-4"></div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   No medications found
                 </h3>
@@ -272,7 +272,7 @@ export default function MedicationsPage() {
                           </p>
                         )}
                       </div>
-                      <div className="text-2xl">💊</div>
+                      <div className="text-2xl"></div>
                     </div>
 
                     <div className="space-y-2 mb-4">

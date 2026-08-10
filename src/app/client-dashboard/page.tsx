@@ -66,7 +66,7 @@ export default function ClientDashboard() {
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-2xl mb-2">👥</div>
+                <div className="text-2xl mb-2"></div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Client Account</div>
               </div>
             </div>
@@ -81,7 +81,7 @@ export default function ClientDashboard() {
               whileHover={{ scale: 1.02 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-blue-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-3xl mb-4">💬</div>
+              <div className="text-3xl mb-4"></div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Chat with Pharmacist
               </h3>
@@ -104,7 +104,7 @@ export default function ClientDashboard() {
               whileHover={{ scale: 1.02 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-blue-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-3xl mb-4">📦</div>
+              <div className="text-3xl mb-4"></div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Track Deliveries
               </h3>
@@ -127,7 +127,7 @@ export default function ClientDashboard() {
               whileHover={{ scale: 1.02 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-blue-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-3xl mb-4">📋</div>
+              <div className="text-3xl mb-4"></div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Consultations
               </h3>
@@ -150,7 +150,7 @@ export default function ClientDashboard() {
               whileHover={{ scale: 1.02 }}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-blue-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
             >
-              <div className="text-3xl mb-4">⚙️</div>
+              <div className="text-3xl mb-4">️</div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Settings
               </h3>

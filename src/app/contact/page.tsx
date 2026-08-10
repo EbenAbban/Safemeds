@@ -72,21 +72,21 @@ export default function ContactPage() {
               </h2>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
-                  <span className="text-xl">📧</span>
+                  <span className="text-xl"></span>
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">Email</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">support@safemeds.com</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-xl">📱</span>
+                  <span className="text-xl"></span>
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">Phone</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">+233 50 123 4567</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-xl">📍</span>
+                  <span className="text-xl"></span>
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">Location</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">KNUST, Kumasi, Ghana</p>
@@ -120,7 +120,7 @@ export default function ContactPage() {
           >
             {sent ? (
               <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg text-center">
-                <div className="text-4xl mb-4">✅</div>
+                <div className="text-4xl mb-4"></div>
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                   Message sent!
                 </h2>

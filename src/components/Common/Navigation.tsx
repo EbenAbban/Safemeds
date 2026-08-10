@@ -28,10 +28,10 @@ export default function Navigation({ title, userRole }: NavigationProps) {
   };
 
   const getRoleIcon = () => {
-    if (userRole === "client") return "👥";
-    if (userRole === "pharmacy") return "💊";
-    if (userRole === "admin") return "👑";
-    return "👤";
+    if (userRole === "client") return "";
+    if (userRole === "pharmacy") return "";
+    if (userRole === "admin") return "";
+    return "";
   };
 
   const getRoleColor = () => {
@@ -82,7 +82,7 @@ export default function Navigation({ title, userRole }: NavigationProps) {
               onClick={() => router.push("/chat")}
               className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
             >
-              💬 Chat
+               Chat
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -90,7 +90,7 @@ export default function Navigation({ title, userRole }: NavigationProps) {
               onClick={() => router.push("/delivery")}
               className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
             >
-              📦 Delivery
+               Delivery
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -98,7 +98,7 @@ export default function Navigation({ title, userRole }: NavigationProps) {
               onClick={() => router.push("/consult")}
               className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
             >
-              📋 Consult
+               Consult
             </motion.button>
           </div>
 
@@ -189,7 +189,7 @@ export default function Navigation({ title, userRole }: NavigationProps) {
               }}
               className="block w-full text-left px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
-              💬 Chat with Pharmacist
+               Chat with Pharmacist
             </button>
             <button
               onClick={() => {
@@ -198,7 +198,7 @@ export default function Navigation({ title, userRole }: NavigationProps) {
               }}
               className="block w-full text-left px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
-              📦 Track Delivery
+               Track Delivery
             </button>
             <button
               onClick={() => {
@@ -207,7 +207,7 @@ export default function Navigation({ title, userRole }: NavigationProps) {
               }}
               className="block w-full text-left px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
-              📋 Book Consultation
+               Book Consultation
             </button>
             <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
               <p className="text-sm text-gray-500 dark:text-gray-400">

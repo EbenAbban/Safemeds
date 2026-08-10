@@ -103,7 +103,7 @@ export default function ChatPage() {
                 }}
                 className="text-4xl mb-4"
               >
-                🔐
+                
               </motion.div>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -153,7 +153,7 @@ export default function ChatPage() {
                 transition={{ delay: 0, duration: 0.5 }}
                 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-4"
               >
-                💬 Chat with Pharmacist
+                 Chat with Pharmacist
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0 }}
@@ -186,7 +186,7 @@ export default function ChatPage() {
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-purple-500">💬</span>
+                    <span className="text-purple-500"></span>
                     <span className="text-gray-700 dark:text-gray-300">
                       Messages: {sessionInfo.messageCount}
                     </span>
@@ -231,7 +231,7 @@ export default function ChatPage() {
                 whileHover={{ scale: 1.02 }}
                 className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-green-200 dark:border-gray-700"
               >
-                <div className="text-2xl mb-3">🔒</div>
+                <div className="text-2xl mb-3"></div>
                 <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
                   Secure & Private
                 </h3>
@@ -245,7 +245,7 @@ export default function ChatPage() {
                 whileHover={{ scale: 1.02 }}
                 className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-blue-200 dark:border-gray-700"
               >
-                <div className="text-2xl mb-3">👨‍⚕️</div>
+                <div className="text-2xl mb-3">‍️</div>
                 <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
                   Licensed Pharmacists
                 </h3>
@@ -259,7 +259,7 @@ export default function ChatPage() {
                 whileHover={{ scale: 1.02 }}
                 className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-purple-200 dark:border-gray-700"
               >
-                <div className="text-2xl mb-3">⚡</div>
+                <div className="text-2xl mb-3"></div>
                 <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
                   Instant Response
                 </h3>

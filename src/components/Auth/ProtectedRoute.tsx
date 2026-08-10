@@ -76,7 +76,7 @@ export default function ProtectedRoute({
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center"
         >
-          <div className="text-6xl mb-4">🔒</div>
+          <div className="text-6xl mb-4"></div>
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
             Authentication Required
           </h1>
@@ -105,7 +105,7 @@ export default function ProtectedRoute({
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center"
         >
-          <div className="text-6xl mb-4">🚫</div>
+          <div className="text-6xl mb-4"></div>
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
             Access Denied
           </h1>

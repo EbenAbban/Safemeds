@@ -8,24 +8,24 @@ import { useRouter } from "next/navigation";
 
 const steps = [
   {
-    icon: "👋",
+    icon: "",
     title: "Welcome to SafeMeds!",
     description: "Your secure telepharmacy platform. Let's take a quick tour of what you can do."
   },
   {
-    icon: "💬",
+    icon: "",
     title: "Consult a Pharmacist",
     description: "Start an anonymous consultation anytime. Licensed pharmacists are available to help with your health concerns.",
     action: "/consult"
   },
   {
-    icon: "📋",
+    icon: "",
     title: "Track Your Orders",
     description: "Get prescriptions delivered to your location. Track the delivery in real time on the map.",
     action: "/delivery"
   },
   {
-    icon: "📊",
+    icon: "",
     title: "Manage Your Health",
     description: "View your consultation history, medications, and health analytics from your dashboard.",
     action: "/client-dashboard"
