@@ -67,45 +67,61 @@ export const db = getFirestore(app);
 // We sign each browser in anonymously so chat / video signaling / live GPS
 // pass the rules. Idempotent + memoized — safe to await before any Firestore op.
 let authReady: Promise<User | null> | null = null;
-export function ensureAuth(): Promise<User | null> {
+export async function ensureAuth(): Promise<User | null> {
   if (typeof window === "undefined") return Promise.resolve(null); // server: skip
   if (firebaseConfig.apiKey === "demo-api-key") {
     console.warn("Firebase API key is missing. Skipping anonymous auth.");
     return Promise.resolve(null);
   }
   if (authReady) return authReady;
-  authReady = new Promise((resolve, reject) => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        unsub();
-        resolve(user);
+  authReady = (async () => {
+    await initializeFirestorePersistence();
+
+    return new Promise<User | null>((resolve, reject) => {
+      const unsub = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          unsub();
+          resolve(user);
+        }
+      });
+      if (!auth.currentUser) {
+        signInAnonymously(auth).catch((err) => {
+          unsub();
+          reject(err);
+        });
       }
     });
-    if (!auth.currentUser) {
-      signInAnonymously(auth).catch((err) => {
-        unsub();
-        reject(err);
-      });
-    }
-  });
+  })();
   return authReady;
 }
 
-// Enable offline persistence for Firestore
-// This allows the app to work offline and sync when connection is restored
-if (typeof window !== "undefined") {
-  // Only run in browser environment
-  import("firebase/firestore").then(({ enableIndexedDbPersistence }) => {
-    enableIndexedDbPersistence(db).catch((err) => {
-      if (err.code === "failed-precondition") {
-        // Multiple tabs open, persistence can only be enabled in one tab at a time
-        console.warn("Firestore persistence failed: Multiple tabs open");
-      } else if (err.code === "unimplemented") {
-        // Browser doesn't support persistence
-        console.warn("Firestore persistence not supported in this browser");
-      }
-    });
-  });
+let persistenceInitialized = false;
+
+export async function initializeFirestorePersistence() {
+  if (typeof window === "undefined") return;
+  if (persistenceInitialized) return;
+
+  persistenceInitialized = true;
+
+  try {
+    const { enableIndexedDbPersistence } = await import("firebase/firestore");
+    await enableIndexedDbPersistence(db);
+  } catch (error: any) {
+    if (error?.code === "failed-precondition") {
+      console.warn("Firestore persistence failed: Multiple tabs open");
+    } else if (error?.code === "unimplemented") {
+      console.warn("Firestore persistence not supported in this browser");
+    } else if (
+      error?.message?.includes("already been started") ||
+      error?.message?.includes("persistence can no longer be enabled")
+    ) {
+      console.warn(
+        "Firestore persistence could not be enabled because Firestore had already been initialized."
+      );
+    } else {
+      console.warn("Firestore persistence initialization failed:", error);
+    }
+  }
 }
 
 // Network status management
