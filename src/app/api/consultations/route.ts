@@ -36,6 +36,12 @@ export async function GET(request: NextRequest) {
         { assignedPharmacistId: session.user.id },
         { assignedPharmacistId: null },
       ];
+    } else if (session.user.role === "CLIENT") {
+      // Server-side scoping — this cannot rely on client-side route gating
+      // (ProtectedRoute) alone, or any authenticated CLIENT could read every
+      // other user's consultation by calling this endpoint directly. Admins
+      // are intentionally left unfiltered below.
+      where.userId = session.user.id;
     }
 
     const consultations = await prisma.consultation.findMany({
