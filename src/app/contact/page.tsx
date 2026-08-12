@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { Mail, MapPin, Phone, CheckCircle2 } from "lucide-react";
+import SiteHeader from "@/components/Common/SiteHeader";
 import Footer from "@/components/Common/Footer";
+import { Button, Card, Container, Input, Section } from "@/components/ui";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -27,177 +30,137 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-          <Link href="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
-            SafeMeds
-          </Link>
-          <Link
-            href="/"
-            className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          >
-            ← Back to Home
-          </Link>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-surface dark:bg-surface-dark">
+      <SiteHeader />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Contact Us
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            Have a question, concern, or feedback? We&apos;d love to hear from you.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {/* Contact Info */}
+      <Section className="pb-0">
+        <Container className="max-w-3xl">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-12 text-center"
           >
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Get in touch
-              </h2>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <span className="text-xl"></span>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Email</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">support@safemeds.com</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-xl"></span>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Phone</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">+233 50 123 4567</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-xl"></span>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Location</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">KNUST, Kumasi, Ghana</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Need help now?
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                For urgent medical concerns, please visit your nearest health
-                facility or call emergency services. SafeMeds is not a
-                replacement for emergency care.
-              </p>
-              <Link
-                href="/consult"
-                className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
-              >
-                Start an anonymous consultation →
-              </Link>
-            </div>
+            <h1 className="text-hero text-on-surface">Contact Us</h1>
+            <p className="mt-4 text-lg text-on-surface-variant">
+              Have a question, concern, or feedback? We&apos;d love to hear from you.
+            </p>
           </motion.div>
 
-          {/* Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            {sent ? (
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg text-center">
-                <div className="text-4xl mb-4"></div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  Message sent!
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  We&apos;ll get back to you within 24 hours.
+          <div className="mb-20 grid gap-8 md:grid-cols-2">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="space-y-6"
+            >
+              <Card>
+                <h2 className="text-lg font-semibold text-on-surface">Get in touch</h2>
+                <ul className="mt-4 space-y-4">
+                  <li className="flex items-start gap-3">
+                    <Mail className="mt-0.5 h-5 w-5 shrink-0 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+                    <div>
+                      <p className="font-medium text-on-surface">Email</p>
+                      <p className="text-sm text-on-surface-variant">support@safemeds.com</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Phone className="mt-0.5 h-5 w-5 shrink-0 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+                    <div>
+                      <p className="font-medium text-on-surface">Phone</p>
+                      <p className="text-sm text-on-surface-variant">+233 50 123 4567</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+                    <div>
+                      <p className="font-medium text-on-surface">Location</p>
+                      <p className="text-sm text-on-surface-variant">KNUST, Kumasi, Ghana</p>
+                    </div>
+                  </li>
+                </ul>
+              </Card>
+
+              <Card>
+                <h2 className="text-lg font-semibold text-on-surface">Need help now?</h2>
+                <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+                  For urgent medical concerns, please visit your nearest health
+                  facility or call emergency services. SafeMeds is not a
+                  replacement for emergency care.
                 </p>
-                <button
-                  onClick={() => { setSent(false); setForm({ name: "", email: "", subject: "", message: "" }); }}
-                  className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
+                <Link
+                  href="/consult"
+                  className="mt-4 inline-block text-sm font-medium text-medical-teal hover:underline dark:text-primary-fixed-dim"
                 >
-                  Send another message
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg space-y-5">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Name
-                  </label>
-                  <input
+                  Start an anonymous consultation →
+                </Link>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              {sent ? (
+                <Card className="text-center">
+                  <CheckCircle2 className="mx-auto h-12 w-12 text-secondary" aria-hidden="true" />
+                  <h2 className="mt-4 text-xl font-bold text-on-surface">Message sent!</h2>
+                  <p className="mt-2 text-on-surface-variant">
+                    We&apos;ll get back to you within 24 hours.
+                  </p>
+                  <button
+                    onClick={() => { setSent(false); setForm({ name: "", email: "", subject: "", message: "" }); }}
+                    className="mt-6 text-sm font-medium text-medical-teal hover:underline dark:text-primary-fixed-dim"
+                  >
+                    Send another message
+                  </button>
+                </Card>
+              ) : (
+                <Card as="form" onSubmit={handleSubmit} className="space-y-5">
+                  <Input
+                    label="Name"
                     type="text"
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Email
-                  </label>
-                  <input
+                  <Input
+                    label="Email"
                     type="email"
                     required
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Subject
-                  </label>
-                  <input
+                  <Input
+                    label="Subject"
                     type="text"
                     required
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Message
-                  </label>
-                  <textarea
-                    required
-                    rows={5}
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
-                  />
-                </div>
-                {error && (
-                  <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-                )}
-                <button
-                  type="submit"
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
-                >
-                  Send Message
-                </button>
-              </form>
-            )}
-          </motion.div>
-        </div>
-      </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-on-surface-variant">
+                      Message
+                    </label>
+                    <textarea
+                      required
+                      rows={5}
+                      value={form.message}
+                      onChange={(e) => setForm({ ...form, message: e.target.value })}
+                      className="w-full resize-none rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-base text-on-surface placeholder:text-on-surface-variant/60 focus:border-soft-aqua focus:outline-none focus:ring-2 focus:ring-soft-aqua dark:bg-surface-container"
+                    />
+                  </div>
+                  {error && <p className="text-sm text-error">{error}</p>}
+                  <Button type="submit" fullWidth>
+                    Send Message
+                  </Button>
+                </Card>
+              )}
+            </motion.div>
+          </div>
+        </Container>
+      </Section>
 
       <Footer />
     </div>

@@ -16,24 +16,33 @@ const PADDING: Record<CardPadding, string> = {
   lg: "p-8",
 };
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+type CardOwnProps<T extends React.ElementType> = {
+  as?: T;
   padding?: CardPadding;
   interactive?: boolean;
   /** Feature cards use 16px; large featured/hero containers use 24px. */
   radius?: "lg" | "xl";
   children: React.ReactNode;
-}
+};
 
-export default function Card({
+type CardProps<T extends React.ElementType> = CardOwnProps<T> &
+  Omit<React.ComponentPropsWithoutRef<T>, keyof CardOwnProps<T>>;
+
+const DEFAULT_TAG = "div";
+
+export default function Card<T extends React.ElementType = typeof DEFAULT_TAG>({
+  as,
   padding = "lg",
   interactive = false,
   radius = "lg",
   className,
   children,
   ...rest
-}: CardProps) {
+}: CardProps<T>) {
+  const Tag = as || DEFAULT_TAG;
+
   return (
-    <div
+    <Tag
       className={cn(
         "border border-outline-variant/60 bg-surface-container-lowest shadow-soft",
         "dark:border-outline-variant/40 dark:bg-surface-container",
@@ -45,6 +54,6 @@ export default function Card({
       {...rest}
     >
       {children}
-    </div>
+    </Tag>
   );
 }
