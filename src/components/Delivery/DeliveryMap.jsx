@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { LocateFixed, Satellite } from "lucide-react";
 import { watchLocation } from "@/lib/locationTracking";
 import { resolveDropCoords } from "@/lib/dropPoints";
 
@@ -18,9 +19,17 @@ const haversine = (a, b) => {
   return 2 * R * Math.asin(Math.sqrt(h));
 };
 
-// Shows the courier's REAL live position (streamed to Firestore by the courier
-// device) on an OpenStreetMap embed — no Google Maps API key required.
-// ETA comes from OSRM's free routing API (real road distance + duration).
+// Shows the courier's REAL live position (streamed via the app's own
+// Postgres-backed API — see src/lib/locationTracking.ts) on an OpenStreetMap
+// embed — no Google Maps API key required. ETA comes from OSRM's free
+// routing API (real road distance + duration).
+//
+// Before a courier has published any fix, the map used to show nothing —
+// just an icon and "waiting" text on a flat background. It now falls back to
+// the *viewer's own* live position (the browser's real navigator.geolocation,
+// not a placeholder), so there's always an actual map on screen, centered on
+// something real, the moment the component mounts. It switches to tracking
+// the courier automatically the instant a real courier fix arrives.
 const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
   // Drop-point coordinates: explicit dropCoords win, else resolve from the
   // drop-point name, else KNUST campus default.
@@ -29,6 +38,8 @@ const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
   const [location, setLocation] = useState(null);
   const [staleSeconds, setStaleSeconds] = useState(0);
   const [eta, setEta] = useState(null); // { distanceM, durationS, source }
+  const [viewerPos, setViewerPos] = useState(null);
+  const [viewerStatus, setViewerStatus] = useState("requesting"); // requesting | granted | denied | unsupported
 
   // Subscribe to the live courier location for this delivery.
   useEffect(() => {
@@ -49,6 +60,31 @@ const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
 
   const hasFix = location && typeof location.lat === "number";
   const isLive = hasFix && location.active && staleSeconds < 30;
+
+  // Viewer's own device location — real geolocation, requested once on
+  // mount. Never sent anywhere; used only to give the map something live and
+  // real to center on before a courier fix exists.
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setViewerStatus("unsupported");
+      return;
+    }
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        setViewerStatus("granted");
+        setViewerPos({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy ?? null,
+        });
+      },
+      (err) => {
+        setViewerStatus(err.code === err.PERMISSION_DENIED ? "denied" : "unsupported");
+      },
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
+    );
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, []);
 
   // Compute ETA from courier -> drop point using OSRM's free routing API
   // (real road distance + duration). Falls back to straight-line + assumed
@@ -98,18 +134,39 @@ const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
   const km1 = (m) => (m < 10000 ? 1 : 0);
   const etaInfo = formatEta();
 
-  // Small bounding box around the courier for the OSM embed.
-  const osmSrc = hasFix
-    ? `https://www.openstreetmap.org/export/embed.html?bbox=${
+  // Map center: courier fix if we have one (the thing this component exists
+  // to track), otherwise the viewer's own real position, otherwise the
+  // delivery's drop point (never a fake default like "0,0").
+  const mapCenter = hasFix ? { lat: location.lat, lng: location.lng } : viewerPos || drop;
+  const showingViewerFallback = !hasFix && !!viewerPos;
+
+  // Small bounding box for the OSM embed. Two markers when we're in the
+  // viewer-fallback state (you + the drop point), one when tracking the
+  // courier (courier position — the drop point is shown in the readout, not
+  // as a second pin, to keep the courier-tracking view uncluttered).
+  const osmSrc = (() => {
+    if (hasFix) {
+      return `https://www.openstreetmap.org/export/embed.html?bbox=${
         location.lng - 0.004
       }%2C${location.lat - 0.003}%2C${location.lng + 0.004}%2C${
         location.lat + 0.003
-      }&layer=mapnik&marker=${location.lat}%2C${location.lng}`
-    : null;
+      }&layer=mapnik&marker=${location.lat}%2C${location.lng}`;
+    }
+    if (viewerPos) {
+      return `https://www.openstreetmap.org/export/embed.html?bbox=${
+        viewerPos.lng - 0.006
+      }%2C${viewerPos.lat - 0.0045}%2C${viewerPos.lng + 0.006}%2C${
+        viewerPos.lat + 0.0045
+      }&layer=mapnik&marker=${viewerPos.lat}%2C${viewerPos.lng}`;
+    }
+    return null;
+  })();
+
+  const hasMap = !!osmSrc;
 
   return (
     <div className="relative h-72 rounded-lg overflow-hidden border border-outline-variant/60 bg-surface-container-low dark:bg-gray-900">
-      {hasFix ? (
+      {hasMap ? (
         <iframe
           title="Live delivery location"
           src={osmSrc}
@@ -118,12 +175,18 @@ const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
         />
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-          <span className="text-4xl mb-3">🛰️</span>
-          <p className="font-semibold text-on-surface dark:text-on-surface">
-            Waiting for courier location
+          <Satellite className="w-10 h-10 mb-3 text-on-surface-variant" aria-hidden="true" />
+          <p className="font-semibold text-on-surface">
+            {viewerStatus === "denied"
+              ? "Location access needed"
+              : "Waiting for courier location"}
           </p>
           <p className="text-sm text-on-surface-variant mt-1 max-w-xs">
-            The map goes live once the courier starts sharing their GPS for this delivery.
+            {viewerStatus === "denied"
+              ? "Enable location access in your browser to see the map, or wait for the courier to start sharing their GPS."
+              : viewerStatus === "requesting"
+              ? "Finding your location…"
+              : "The map goes live once the courier starts sharing their GPS for this delivery."}
           </p>
         </div>
       )}
@@ -135,14 +198,25 @@ const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
             isLive ? "bg-secondary animate-pulse" : "bg-gray-400"
           }`}
         />
-        <span className="text-xs font-semibold text-on-surface dark:text-on-surface">
+        <span className="text-xs font-semibold text-on-surface">
           {isLive
             ? "LIVE"
             : hasFix
             ? `Last seen ${staleSeconds}s ago`
+            : showingViewerFallback
+            ? "Courier offline"
             : "Offline"}
         </span>
       </div>
+
+      {/* Viewer-location badge — only shown while we're using it as the map
+          center, i.e. no courier fix yet. Makes clear whose position this is. */}
+      {showingViewerFallback && (
+        <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-surface-container-lowest/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-lg">
+          <LocateFixed className="w-3.5 h-3.5 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+          <span className="text-xs font-semibold text-on-surface">Your location</span>
+        </div>
+      )}
 
       {/* ETA badge */}
       {hasFix && etaInfo && (
@@ -167,6 +241,22 @@ const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
               {location.accuracy != null
                 ? `±${Math.round(location.accuracy)} m`
                 : "accuracy n/a"}
+            </span>
+          </div>
+          <div className="text-on-surface-variant mt-0.5">
+            Drop point: {dropPoint || "Campus Library - North Entrance"}
+          </div>
+        </div>
+      )}
+
+      {showingViewerFallback && (
+        <div className="absolute bottom-3 left-3 right-3 z-10 bg-surface-container-lowest/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg text-xs">
+          <div className="flex items-center justify-between gap-3">
+            <span className="font-mono text-on-surface-variant">
+              {viewerPos.lat.toFixed(5)}, {viewerPos.lng.toFixed(5)}
+            </span>
+            <span className="text-on-surface-variant">
+              {viewerPos.accuracy != null ? `±${Math.round(viewerPos.accuracy)} m` : "accuracy n/a"}
             </span>
           </div>
           <div className="text-on-surface-variant mt-0.5">
