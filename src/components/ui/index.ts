@@ -5,4 +5,7 @@ export { default as Badge } from "./Badge";
 export type { BadgeTone } from "./Badge";
 export { default as Input } from "./Input";
 export { Container, Section, SectionHeading } from "./Section";
+export { default as CountUp } from "./CountUp";
+export { default as Accordion } from "./Accordion";
+export type { AccordionItem } from "./Accordion";
 export { cn } from "./cn";
