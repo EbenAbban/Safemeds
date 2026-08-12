@@ -413,7 +413,7 @@ export default function StaffManagementPage() {
               <h2 className="text-2xl font-bold">Staff Members</h2>
               <button
                 onClick={() => setShowStaffForm(true)}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 bg-medical-teal text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
               >
                 <UserPlus size={20} />
                 Add Staff Member
@@ -429,23 +429,23 @@ export default function StaffManagementPage() {
                     key={member.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border dark:border-gray-700"
+                    className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-lg shadow-md border dark:border-outline-variant/40"
                   >
                     <div className="flex justify-between items-start">
                       <div>
                         <h3 className="text-lg font-semibold">
                           {member.user.firstName} {member.user.lastName}
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-300">ID: {member.employeeId}</p>
-                        <p className="text-gray-600 dark:text-gray-300">Position: {member.position}</p>
-                        <p className="text-gray-600 dark:text-gray-300">Department: {member.department}</p>
-                        <p className="text-gray-600 dark:text-gray-300">
+                        <p className="text-on-surface-variant">ID: {member.employeeId}</p>
+                        <p className="text-on-surface-variant">Position: {member.position}</p>
+                        <p className="text-on-surface-variant">Department: {member.department}</p>
+                        <p className="text-on-surface-variant">
                           Status:{" "}
                           <span
                             className={`px-2 py-1 rounded-full text-xs ${
                               member.isActive
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
+                                ? "bg-secondary-container text-on-secondary-container"
+                                : "bg-error-container text-on-error-container"
                             }`}
                           >
                             {member.isActive ? "Active" : "Inactive"}
@@ -455,14 +455,14 @@ export default function StaffManagementPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => setSelectedStaff(member)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                          className="p-2 text-medical-teal hover:bg-primary-fixed/40 rounded"
                         >
                           <Eye size={16} />
                         </button>
-                        <button className="p-2 text-green-600 hover:bg-green-50 rounded">
+                        <button className="p-2 text-secondary hover:bg-secondary-container/30 rounded">
                           <Edit size={16} />
                         </button>
-                        <button className="p-2 text-red-600 hover:bg-red-50 rounded">
+                        <button className="p-2 text-error hover:bg-error-container/60 rounded">
                           <Trash2 size={16} />
                         </button>
                       </div>
@@ -481,7 +481,7 @@ export default function StaffManagementPage() {
               <h2 className="text-2xl font-bold">Staff Schedules</h2>
               <button
                 onClick={() => setShowScheduleForm(true)}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 bg-medical-teal text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
               >
                 <CalendarDays size={20} />
                 Add Schedule
@@ -497,28 +497,28 @@ export default function StaffManagementPage() {
                     key={schedule.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border dark:border-gray-700"
+                    className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-lg shadow-md border dark:border-outline-variant/40"
                   >
                     <div className="flex justify-between items-center">
                       <div>
                         <h3 className="text-lg font-semibold">
                           {dayNames[schedule.dayOfWeek]}
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-300">
+                        <p className="text-on-surface-variant">
                           {schedule.startTime} - {schedule.endTime}
                         </p>
                         {schedule.breakStart && schedule.breakEnd && (
-                          <p className="text-gray-500 dark:text-gray-400 text-sm">
+                          <p className="text-on-surface-variant text-sm">
                             Break: {schedule.breakStart} - {schedule.breakEnd}
                           </p>
                         )}
-                        <p className="text-gray-600">
+                        <p className="text-on-surface-variant">
                           Status:{" "}
                           <span
                             className={`px-2 py-1 rounded-full text-xs ${
                               schedule.isActive
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
+                                ? "bg-secondary-container text-on-secondary-container"
+                                : "bg-error-container text-on-error-container"
                             }`}
                           >
                             {schedule.isActive ? "Active" : "Inactive"}
@@ -526,10 +526,10 @@ export default function StaffManagementPage() {
                         </p>
                       </div>
                       <div className="flex gap-2">
-                        <button className="p-2 text-green-600 hover:bg-green-50 rounded">
+                        <button className="p-2 text-secondary hover:bg-secondary-container/30 rounded">
                           <Edit size={16} />
                         </button>
-                        <button className="p-2 text-red-600 hover:bg-red-50 rounded">
+                        <button className="p-2 text-error hover:bg-error-container/60 rounded">
                           <Trash2 size={16} />
                         </button>
                       </div>
@@ -548,7 +548,7 @@ export default function StaffManagementPage() {
               <h2 className="text-2xl font-bold">Staff Shifts</h2>
               <button
                 onClick={() => setShowShiftForm(true)}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 bg-medical-teal text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
               >
                 <Clock4 size={20} />
                 Add Shift
@@ -564,29 +564,29 @@ export default function StaffManagementPage() {
                     key={shift.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border dark:border-gray-700"
+                    className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-lg shadow-md border dark:border-outline-variant/40"
                   >
                     <div className="flex justify-between items-center">
                       <div>
                         <h3 className="text-lg font-semibold">
                           {shift.staff.user.firstName} {shift.staff.user.lastName}
                         </h3>
-                        <p className="text-gray-600">
+                        <p className="text-on-surface-variant">
                           {new Date(shift.date).toLocaleDateString()}
                         </p>
-                        <p className="text-gray-600">
+                        <p className="text-on-surface-variant">
                           {new Date(shift.startTime).toLocaleTimeString()} -{" "}
                           {new Date(shift.endTime).toLocaleTimeString()}
                         </p>
-                        <p className="text-gray-600">
+                        <p className="text-on-surface-variant">
                           Status:{" "}
                           <span
                             className={`px-2 py-1 rounded-full text-xs ${
                               shift.status === "COMPLETED"
-                                ? "bg-green-100 text-green-800"
+                                ? "bg-secondary-container text-on-secondary-container"
                                 : shift.status === "IN_PROGRESS"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-gray-100 text-gray-800"
+                                ? "bg-primary-fixed text-on-primary-fixed"
+                                : "bg-surface-container-low text-on-surface"
                             }`}
                           >
                             {shift.status}
@@ -594,10 +594,10 @@ export default function StaffManagementPage() {
                         </p>
                       </div>
                       <div className="flex gap-2">
-                        <button className="p-2 text-green-600 hover:bg-green-50 rounded">
+                        <button className="p-2 text-secondary hover:bg-secondary-container/30 rounded">
                           <Edit size={16} />
                         </button>
-                        <button className="p-2 text-red-600 hover:bg-red-50 rounded">
+                        <button className="p-2 text-error hover:bg-error-container/60 rounded">
                           <Trash2 size={16} />
                         </button>
                       </div>
@@ -616,7 +616,7 @@ export default function StaffManagementPage() {
               <h2 className="text-2xl font-bold">Time Off Requests</h2>
               <button
                 onClick={() => setShowTimeOffForm(true)}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 bg-medical-teal text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
               >
                 <FileCheck size={20} />
                 Request Time Off
@@ -632,27 +632,27 @@ export default function StaffManagementPage() {
                     key={request.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border dark:border-gray-700"
+                    className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-lg shadow-md border dark:border-outline-variant/40"
                   >
                     <div className="flex justify-between items-center">
                       <div>
                         <h3 className="text-lg font-semibold">
                           {request.staff.user.firstName} {request.staff.user.lastName}
                         </h3>
-                        <p className="text-gray-600">
+                        <p className="text-on-surface-variant">
                           {new Date(request.startDate).toLocaleDateString()} -{" "}
                           {new Date(request.endDate).toLocaleDateString()}
                         </p>
-                        <p className="text-gray-600">Type: {request.type}</p>
-                        <p className="text-gray-600">Reason: {request.reason}</p>
-                        <p className="text-gray-600">
+                        <p className="text-on-surface-variant">Type: {request.type}</p>
+                        <p className="text-on-surface-variant">Reason: {request.reason}</p>
+                        <p className="text-on-surface-variant">
                           Status:{" "}
                           <span
                             className={`px-2 py-1 rounded-full text-xs ${
                               request.status === "APPROVED"
-                                ? "bg-green-100 text-green-800"
+                                ? "bg-secondary-container text-on-secondary-container"
                                 : request.status === "REJECTED"
-                                ? "bg-red-100 text-red-800"
+                                ? "bg-error-container text-on-error-container"
                                 : "bg-yellow-100 text-yellow-800"
                             }`}
                           >
@@ -663,15 +663,15 @@ export default function StaffManagementPage() {
                       <div className="flex gap-2">
                         {request.status === "PENDING" && (
                           <>
-                            <button className="p-2 text-green-600 hover:bg-green-50 rounded">
+                            <button className="p-2 text-secondary hover:bg-secondary-container/30 rounded">
                               <CheckCircle size={16} />
                             </button>
-                            <button className="p-2 text-red-600 hover:bg-red-50 rounded">
+                            <button className="p-2 text-error hover:bg-error-container/60 rounded">
                               <XCircle size={16} />
                             </button>
                           </>
                         )}
-                        <button className="p-2 text-blue-600 hover:bg-blue-50 rounded">
+                        <button className="p-2 text-medical-teal hover:bg-primary-fixed/40 rounded">
                           <Eye size={16} />
                         </button>
                       </div>
@@ -690,10 +690,10 @@ export default function StaffManagementPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface dark:bg-surface-dark flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+          <p className="mt-4 text-on-surface-variant">Loading...</p>
         </div>
       </div>
     );
@@ -701,28 +701,28 @@ export default function StaffManagementPage() {
 
   if (!session?.user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface dark:bg-surface-dark flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Access Denied</h1>
-          <p className="text-gray-600 dark:text-gray-300">Please log in to access staff management.</p>
+          <h1 className="text-2xl font-bold text-on-surface mb-2">Access Denied</h1>
+          <p className="text-on-surface-variant">Please log in to access staff management.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-surface dark:bg-surface-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Staff Management</h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          <h1 className="text-3xl font-bold text-on-surface">Staff Management</h1>
+          <p className="text-on-surface-variant mt-2">
             Manage pharmacy staff, schedules, shifts, and time-off requests
           </p>
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 mb-6">
+        <div className="bg-surface-container-lowest dark:bg-surface-container rounded-lg shadow-sm border dark:border-outline-variant/40 mb-6">
           <div className="flex space-x-1 p-1">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -732,8 +732,8 @@ export default function StaffManagementPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     activeTab === tab.id
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "bg-primary-fixed/50 text-primary"
+                      : "text-on-surface-variant hover:text-on-surface-variant dark:hover:text-on-surface hover:bg-surface-container-high"
                   }`}
                 >
                   <Icon size={16} />
@@ -746,29 +746,29 @@ export default function StaffManagementPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="mb-6 bg-error-container/60 border border-error/30 rounded-lg p-4">
             <div className="flex">
-              <AlertCircle className="h-5 w-5 text-red-400" />
+              <AlertCircle className="h-5 w-5 text-error" />
               <div className="ml-3">
-                <p className="text-sm text-red-800">{error}</p>
+                <p className="text-sm text-on-error-container">{error}</p>
               </div>
             </div>
           </div>
         )}
 
         {/* Tab Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-6">
+        <div className="bg-surface-container-lowest dark:bg-surface-container rounded-lg shadow-sm border dark:border-outline-variant/40 p-6">
           {renderTabComponent()}
         </div>
 
         {/* Staff Form Modal */}
         {showStaffForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-lg p-6 w-full max-w-md">
               <h3 className="text-lg font-semibold mb-4">Add Staff Member</h3>
               <form onSubmit={handleStaffSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     User ID
                   </label>
                   <input
@@ -777,12 +777,12 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setStaffForm({ ...staffForm, userId: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Employee ID
                   </label>
                   <input
@@ -791,12 +791,12 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setStaffForm({ ...staffForm, employeeId: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Position
                   </label>
                   <select
@@ -804,7 +804,7 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setStaffForm({ ...staffForm, position: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   >
                     <option value="">Select position</option>
@@ -816,7 +816,7 @@ export default function StaffManagementPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Department
                   </label>
                   <input
@@ -825,12 +825,12 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setStaffForm({ ...staffForm, department: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Hire Date
                   </label>
                   <input
@@ -839,21 +839,21 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setStaffForm({ ...staffForm, hireDate: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   />
                 </div>
                 <div className="flex gap-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="flex-1 bg-medical-teal text-white px-4 py-2 rounded-md hover:bg-secondary"
                   >
                     Add Staff Member
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowStaffForm(false)}
-                    className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+                    className="flex-1 bg-outline-variant text-on-surface-variant px-4 py-2 rounded-md hover:bg-outline-variant"
                   >
                     Cancel
                   </button>
@@ -866,11 +866,11 @@ export default function StaffManagementPage() {
         {/* Schedule Form Modal */}
         {showScheduleForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-lg p-6 w-full max-w-md">
               <h3 className="text-lg font-semibold mb-4">Add Schedule</h3>
               <form onSubmit={handleScheduleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Staff Member
                   </label>
                   <select
@@ -878,7 +878,7 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setScheduleForm({ ...scheduleForm, staffId: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   >
                     <option value="">Select staff member</option>
@@ -890,7 +890,7 @@ export default function StaffManagementPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Day of Week
                   </label>
                   <select
@@ -901,7 +901,7 @@ export default function StaffManagementPage() {
                         dayOfWeek: parseInt(e.target.value),
                       })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   >
                     {dayNames.map((day, index) => (
@@ -913,7 +913,7 @@ export default function StaffManagementPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-on-surface-variant">
                       Start Time
                     </label>
                     <input
@@ -925,12 +925,12 @@ export default function StaffManagementPage() {
                           startTime: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-on-surface-variant">
                       End Time
                     </label>
                     <input
@@ -942,7 +942,7 @@ export default function StaffManagementPage() {
                           endTime: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                       required
                     />
                   </div>
@@ -950,14 +950,14 @@ export default function StaffManagementPage() {
                 <div className="flex gap-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="flex-1 bg-medical-teal text-white px-4 py-2 rounded-md hover:bg-secondary"
                   >
                     Add Schedule
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowScheduleForm(false)}
-                    className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+                    className="flex-1 bg-outline-variant text-on-surface-variant px-4 py-2 rounded-md hover:bg-outline-variant"
                   >
                     Cancel
                   </button>
@@ -970,11 +970,11 @@ export default function StaffManagementPage() {
         {/* Shift Form Modal */}
         {showShiftForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-lg p-6 w-full max-w-md">
               <h3 className="text-lg font-semibold mb-4">Add Shift</h3>
               <form onSubmit={handleShiftSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Staff Member
                   </label>
                   <select
@@ -982,7 +982,7 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setShiftForm({ ...shiftForm, staffId: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   >
                     <option value="">Select staff member</option>
@@ -994,7 +994,7 @@ export default function StaffManagementPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Date
                   </label>
                   <input
@@ -1003,13 +1003,13 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setShiftForm({ ...shiftForm, date: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-on-surface-variant">
                       Start Time
                     </label>
                     <input
@@ -1021,12 +1021,12 @@ export default function StaffManagementPage() {
                           startTime: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-on-surface-variant">
                       End Time
                     </label>
                     <input
@@ -1038,7 +1038,7 @@ export default function StaffManagementPage() {
                           endTime: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                       required
                     />
                   </div>
@@ -1046,14 +1046,14 @@ export default function StaffManagementPage() {
                 <div className="flex gap-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="flex-1 bg-medical-teal text-white px-4 py-2 rounded-md hover:bg-secondary"
                   >
                     Add Shift
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowShiftForm(false)}
-                    className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+                    className="flex-1 bg-outline-variant text-on-surface-variant px-4 py-2 rounded-md hover:bg-outline-variant"
                   >
                     Cancel
                   </button>
@@ -1066,11 +1066,11 @@ export default function StaffManagementPage() {
         {/* Time Off Form Modal */}
         {showTimeOffForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-lg p-6 w-full max-w-md">
               <h3 className="text-lg font-semibold mb-4">Request Time Off</h3>
               <form onSubmit={handleTimeOffSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Staff Member
                   </label>
                   <select
@@ -1078,7 +1078,7 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setTimeOffForm({ ...timeOffForm, staffId: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   >
                     <option value="">Select staff member</option>
@@ -1091,7 +1091,7 @@ export default function StaffManagementPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-on-surface-variant">
                       Start Date
                     </label>
                     <input
@@ -1103,12 +1103,12 @@ export default function StaffManagementPage() {
                           startDate: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-on-surface-variant">
                       End Date
                     </label>
                     <input
@@ -1120,13 +1120,13 @@ export default function StaffManagementPage() {
                           endDate: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                       required
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Type
                   </label>
                   <select
@@ -1134,7 +1134,7 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setTimeOffForm({ ...timeOffForm, type: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     required
                   >
                     <option value="">Select type</option>
@@ -1146,7 +1146,7 @@ export default function StaffManagementPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-on-surface-variant">
                     Reason
                   </label>
                   <textarea
@@ -1154,7 +1154,7 @@ export default function StaffManagementPage() {
                     onChange={(e) =>
                       setTimeOffForm({ ...timeOffForm, reason: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface shadow-sm focus:border-soft-aqua focus:ring-soft-aqua"
                     rows={3}
                     required
                   />
@@ -1162,14 +1162,14 @@ export default function StaffManagementPage() {
                 <div className="flex gap-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="flex-1 bg-medical-teal text-white px-4 py-2 rounded-md hover:bg-secondary"
                   >
                     Submit Request
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowTimeOffForm(false)}
-                    className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+                    className="flex-1 bg-outline-variant text-on-surface-variant px-4 py-2 rounded-md hover:bg-outline-variant"
                   >
                     Cancel
                   </button>

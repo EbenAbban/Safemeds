@@ -77,7 +77,7 @@ const ChatWindow = ({
   };
 
   return (
-    <div className="flex flex-col h-[70vh] bg-white dark:bg-gray-900 relative">
+    <div className="flex flex-col h-[70vh] bg-surface-container-lowest dark:bg-surface-dark relative">
       <AnimatePresence>
         {isVideoCallActive && (
           <VideoCall
@@ -118,7 +118,7 @@ const ChatWindow = ({
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsVideoCallActive(true)}
-              className="bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 font-semibold text-xs border border-white/15 cursor-pointer shadow-sm hover:shadow"
+              className="bg-surface-container-lowest/10 hover:bg-surface-container-lowest/20 px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 font-semibold text-xs border border-white/15 cursor-pointer shadow-sm hover:shadow"
             >
               📹 <span className="hidden sm:inline">Start Video Call</span>
             </button>
@@ -135,7 +135,7 @@ const ChatWindow = ({
       {/* Messages Area */}
       <div
         ref={chatRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
+        className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white dark:from-surface-dark dark:to-surface-container-high"
       >
         {/* Welcome Message for New Sessions */}
         {messages.length === 0 && <WelcomeMessage />}
@@ -170,10 +170,10 @@ const ChatWindow = ({
                     whileHover={{ scale: 1.01 }}
                     className={`p-4 rounded-2xl shadow-sm ${
                       msg.sender === "system"
-                        ? "bg-slate-100/90 dark:bg-gray-800/80 text-slate-500 dark:text-gray-400 text-xs font-semibold border border-slate-200 dark:border-gray-700 text-center flex items-center justify-center gap-2"
+                        ? "bg-slate-100/90 dark:bg-surface-container/80 text-slate-500 dark:text-on-surface-variant text-xs font-semibold border border-slate-200 dark:border-outline-variant/40 text-center flex items-center justify-center gap-2"
                         : msg.sender === "user"
-                        ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-                        : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100"
+                        ? "bg-gradient-to-r from-primary-fixed/300 to-blue-600 text-white"
+                        : "bg-surface-container-lowest dark:bg-surface-container border border-outline-variant/60 text-on-surface dark:text-on-surface"
                     }`}
                   >
                     {msg.sender === "system" && <span className="text-base">📹</span>}
@@ -184,7 +184,7 @@ const ChatWindow = ({
                           className={`text-xs mt-2 ${
                             msg.sender === "user"
                               ? "text-blue-100"
-                              : "text-gray-500"
+                              : "text-on-surface-variant"
                           }`}
                         >
                           {formatTime(msg.timestamp)}
@@ -220,7 +220,7 @@ const ChatWindow = ({
               className="flex justify-start"
             >
               <div className="order-1">
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 shadow-sm">
+                <div className="bg-surface-container-lowest dark:bg-surface-container border border-outline-variant/60 rounded-2xl p-4 shadow-sm">
                   <div className="flex items-center gap-2">
                     <div className="flex space-x-1">
                       <motion.div
@@ -251,7 +251,7 @@ const ChatWindow = ({
                         className="w-2 h-2 bg-gray-400 rounded-full"
                       />
                     </div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className="text-sm text-on-surface-variant">
                       Pharmacist is typing...
                     </span>
                   </div>
@@ -266,7 +266,7 @@ const ChatWindow = ({
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900">
+      <div className="border-t border-outline-variant/60 p-4 bg-surface-container-lowest dark:bg-surface-dark">
         <div className="flex items-end gap-3">
           <div className="flex-1 relative">
             <textarea
@@ -275,15 +275,15 @@ const ChatWindow = ({
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message here..."
-              className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-xl p-3 pr-12 resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-black dark:text-white"
+              className="w-full border border-outline-variant bg-surface-container-lowest dark:bg-surface-container rounded-xl p-3 pr-12 resize-none focus:ring-2 focus:ring-soft-aqua focus:border-transparent transition-all duration-200 text-black dark:text-white"
               rows="1"
               style={{ minHeight: "44px", maxHeight: "120px" }}
             />
             <div className="absolute right-3 bottom-3 flex items-center gap-2">
-              <button className="text-gray-400 hover:text-gray-600 transition-colors">
+              <button className="text-outline hover:text-on-surface-variant transition-colors">
                 😊
               </button>
-              <button className="text-gray-400 hover:text-gray-600 transition-colors">
+              <button className="text-outline hover:text-on-surface-variant transition-colors">
                 📎
               </button>
             </div>
@@ -295,8 +295,8 @@ const ChatWindow = ({
             disabled={!input.trim() || isLoading}
             className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
               input.trim() && !isLoading
-                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                ? "bg-gradient-to-r from-primary-fixed/300 to-blue-600 text-white shadow-lg hover:shadow-xl"
+                : "bg-surface-container-high text-outline cursor-not-allowed"
             }`}
           >
             {isLoading ? (
@@ -324,7 +324,7 @@ const ChatWindow = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setInput(action)}
-              className="text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-3 py-1 rounded-full transition-colors"
+              className="text-xs bg-surface-container-high dark:bg-surface-container-high hover:bg-surface-container-high dark:hover:bg-gray-600 text-on-surface-variant dark:text-on-surface px-3 py-1 rounded-full transition-colors"
             >
               {action}
             </motion.button>

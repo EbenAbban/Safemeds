@@ -180,8 +180,8 @@ export default function SettingsPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
+      <div className="min-h-screen bg-surface dark:bg-surface-dark flex items-center justify-center">
+        <div className="flex items-center gap-2 text-on-surface dark:text-on-surface">
           <Loader2 />
           <span>Loading...</span>
         </div>
@@ -212,27 +212,27 @@ export default function SettingsPage() {
 
   const LabeledCheckbox = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => (
     <div className="flex items-center justify-between">
-      <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
+      <label className="text-sm font-medium text-on-surface dark:text-on-surface">
         {label}
       </label>
       <input
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="h-4 w-4 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+        className="h-4 w-4 text-medical-teal focus:ring-soft-aqua dark:bg-surface-container-high dark:border-outline-variant/40"
       />
     </div>
   );
 
   const SelectInput = ({ label, value, onChange, options }: { label: string; value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void; options: { value: string; label: string }[] }) => (
     <div>
-      <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+      <label className="block text-sm font-medium text-on-surface dark:text-on-surface mb-2">
         {label}
       </label>
       <select
         value={value}
         onChange={onChange}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+        className="w-full px-3 py-2 border border-outline-variant rounded-md focus:ring-soft-aqua focus:border-soft-aqua dark:bg-surface-container-high dark:text-on-surface"
       >
               {options.map((opt: { value: string; label: string }) => (
           <option key={opt.value} value={opt.value}>
@@ -245,7 +245,7 @@ export default function SettingsPage() {
 
   const TextInput = ({ label, value, onChange, placeholder, type = "text" }: { label: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; placeholder?: string; type?: string }) => (
     <div>
-      <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+      <label className="block text-sm font-medium text-on-surface dark:text-on-surface mb-2">
         {label}
       </label>
       <input
@@ -253,7 +253,7 @@ export default function SettingsPage() {
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+        className="w-full px-3 py-2 border border-outline-variant rounded-md focus:ring-soft-aqua focus:border-soft-aqua dark:bg-surface-container-high dark:text-on-surface"
       />
     </div>
   );
@@ -333,14 +333,14 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-3">Campus Drop Points</h4>
+              <h4 className="font-medium text-on-surface dark:text-on-surface mb-3">Campus Drop Points</h4>
               <div className="space-y-2 mb-3">
                 {settings.delivery.campusDropPoints.map((point, index) => (
-                  <div key={index} className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 p-2 rounded">
-                    <span className="text-sm text-gray-700 dark:text-gray-300">{point}</span>
+                  <div key={index} className="flex items-center justify-between bg-surface dark:bg-surface-container-high p-2 rounded">
+                    <span className="text-sm text-on-surface-variant">{point}</span>
                     <button
                       onClick={() => removeDropPoint(index)}
-                      className="text-red-600 hover:text-red-800 text-sm"
+                      className="text-error hover:text-on-error-container text-sm"
                     >
                       Remove
                     </button>
@@ -351,7 +351,7 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   placeholder="Add new drop point"
-                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-gray-200"
+                  className="flex-1 px-3 py-2 border border-outline-variant rounded-md dark:bg-surface-container-high dark:text-on-surface"
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
                       addDropPoint(e.currentTarget.value);
@@ -367,7 +367,7 @@ export default function SettingsPage() {
                       input.value = '';
                     }
                   }}
-                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                  className="px-4 py-2 bg-secondary text-white rounded-md hover:opacity-90"
                 >
                   Add
                 </button>
@@ -426,7 +426,7 @@ export default function SettingsPage() {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-800 dark:text-gray-200">System Notifications</h4>
+            <h4 className="font-medium text-on-surface dark:text-on-surface">System Notifications</h4>
             <LabeledCheckbox
               label="New Consultations"
               checked={settings.notifications.newConsultations}
@@ -457,7 +457,7 @@ export default function SettingsPage() {
             />
           </div>
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-800 dark:text-gray-200">Communication Methods</h4>
+            <h4 className="font-medium text-on-surface dark:text-on-surface">Communication Methods</h4>
             <LabeledCheckbox
               label="Email Notifications"
               checked={settings.notifications.emailNotifications}
@@ -602,16 +602,16 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium text-gray-800 dark:text-gray-200">
+                <h3 className="font-medium text-on-surface dark:text-on-surface">
                   Theme Mode
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-on-surface-variant text-sm">
                   Choose between light and dark themes
                 </p>
               </div>
               <button
                 onClick={toggleTheme}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-medical-teal text-white rounded-lg hover:bg-secondary transition-colors"
               >
                 <span>{theme === "light" ? "" : "️"}</span>
                 <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
@@ -620,54 +620,54 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium text-gray-800 dark:text-gray-200">
+                <h3 className="font-medium text-on-surface dark:text-on-surface">
                   Current Theme
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm capitalize">{theme} mode</p>
+                <p className="text-on-surface-variant text-sm capitalize">{theme} mode</p>
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="text-sm text-on-surface-variant">
                 {theme === "light" ? "️" : ""}
               </div>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-800 dark:text-gray-200">Interface Preferences</h4>
+              <h4 className="font-medium text-on-surface dark:text-on-surface">Interface Preferences</h4>
               <div className="space-y-2">
                 <label className="flex items-center gap-2">
                   <input type="checkbox" className="rounded" defaultChecked />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Compact sidebar</span>
+                  <span className="text-sm text-on-surface-variant">Compact sidebar</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="checkbox" className="rounded" />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Show tooltips</span>
+                  <span className="text-sm text-on-surface-variant">Show tooltips</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="checkbox" className="rounded" defaultChecked />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Enable animations</span>
+                  <span className="text-sm text-on-surface-variant">Enable animations</span>
                 </label>
               </div>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-800 dark:text-gray-200">Color Scheme</h4>
+              <h4 className="font-medium text-on-surface dark:text-on-surface">Color Scheme</h4>
               <div className="flex gap-2">
-                <button className="w-8 h-8 rounded-full bg-blue-500 ring-2 ring-blue-500 ring-offset-2"></button>
-                <button className="w-8 h-8 rounded-full bg-green-500 hover:ring-2 hover:ring-green-500 hover:ring-offset-2"></button>
-                <button className="w-8 h-8 rounded-full bg-purple-500 hover:ring-2 hover:ring-purple-500 hover:ring-offset-2"></button>
-                <button className="w-8 h-8 rounded-full bg-red-500 hover:ring-2 hover:ring-red-500 hover:ring-offset-2"></button>
+                <button className="w-8 h-8 rounded-full bg-soft-aqua ring-2 ring-blue-500 ring-offset-2"></button>
+                <button className="w-8 h-8 rounded-full bg-secondary hover:ring-2 hover:ring-green-500 hover:ring-offset-2"></button>
+                <button className="w-8 h-8 rounded-full bg-tertiary-fixed/400 hover:ring-2 hover:ring-purple-500 hover:ring-offset-2"></button>
+                <button className="w-8 h-8 rounded-full bg-error-container/600 hover:ring-2 hover:ring-red-500 hover:ring-offset-2"></button>
               </div>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-              <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">
+            <div className="p-4 border border-outline-variant/60 rounded-lg">
+              <h4 className="font-medium text-on-surface dark:text-on-surface mb-2">
                 Theme Preview
               </h4>
               <div
                 className={`p-3 rounded-lg ${
                   theme === "light"
-                    ? "bg-gray-100 text-gray-800"
+                    ? "bg-surface-container-low text-on-surface"
                     : "bg-gray-800 text-gray-200"
                 }`}
               >
@@ -675,28 +675,28 @@ export default function SettingsPage() {
                   This is how your interface will look with the {theme} theme.
                 </p>
                 <div className="mt-2 flex gap-2">
-                  <button className="px-3 py-1 bg-blue-500 text-white text-xs rounded">Button</button>
-                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Success</span>
+                  <button className="px-3 py-1 bg-soft-aqua text-white text-xs rounded">Button</button>
+                  <span className="px-2 py-1 bg-secondary-container text-on-secondary-container text-xs rounded">Success</span>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">
+            <div className="p-4 bg-surface-container-low dark:bg-surface-container rounded-lg">
+              <h4 className="font-medium text-on-surface dark:text-on-surface mb-2">
                 Font Settings
               </h4>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Font Size</label>
-                  <select defaultValue="Medium" className="w-full px-2 py-1 text-sm border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                  <label className="block text-sm text-on-surface-variant mb-1">Font Size</label>
+                  <select defaultValue="Medium" className="w-full px-2 py-1 text-sm border rounded dark:bg-surface-container-high dark:border-outline-variant/40 dark:text-on-surface">
                     <option>Small</option>
                     <option>Medium</option>
                     <option>Large</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Font Family</label>
-                  <select defaultValue="System Default" className="w-full px-2 py-1 text-sm border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                  <label className="block text-sm text-on-surface-variant mb-1">Font Family</label>
+                  <select defaultValue="System Default" className="w-full px-2 py-1 text-sm border rounded dark:bg-surface-container-high dark:border-outline-variant/40 dark:text-on-surface">
                     <option>System Default</option>
                     <option>Inter</option>
                     <option>Roboto</option>
@@ -706,7 +706,7 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="text-sm text-on-surface-variant">
               <p>• Theme preference is saved automatically</p>
               <p>• Changes apply immediately</p>
               <p>• Works across all pages</p>
@@ -718,13 +718,13 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-surface dark:bg-surface-dark">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl font-bold text-on-surface mb-2">
             SafeMeds Pharmacy Settings
           </h1>
-          <p className="text-gray-700 dark:text-gray-300">
+          <p className="text-on-surface-variant">
             Configure your dashboard for anonymous student consultations and
             secure delivery.
           </p>
@@ -734,8 +734,8 @@ export default function SettingsPage() {
           <div
             className={`mb-6 p-4 rounded-lg flex items-center gap-2 ${
               message.type === "success"
-                ? "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700"
-                : "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700"
+                ? "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-on-secondary-container border border-secondary/30 dark:border-green-700"
+                : "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-on-error-container border border-error/30 dark:border-red-700"
             }`}
           >
             {message.type === "success" ? <CheckCircle /> : <AlertTriangle />}
@@ -752,8 +752,8 @@ export default function SettingsPage() {
                   onClick={() => setActiveTab(id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition-colors ${
                     activeTab === id
-                      ? "bg-blue-600 text-white"
-                      : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      ? "bg-medical-teal text-white"
+                      : "bg-surface-container-lowest dark:bg-surface-container text-on-surface dark:text-on-surface hover:bg-surface-container-high"
                   }`}
                 >
                   <Icon />
@@ -764,14 +764,14 @@ export default function SettingsPage() {
           </aside>
 
           <main className="flex-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-lg shadow-sm border border-outline-variant/60 p-6">
               {renderTabComponent[activeTab as keyof typeof renderTabComponent]()}
 
-              <div className="flex justify-end mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex justify-end mt-8 pt-6 border-t border-outline-variant/60">
                 <button
                   onClick={handleSave}
                   disabled={loading}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 bg-medical-teal text-white px-6 py-2 rounded-lg hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? <Loader2 /> : <Save />}
                 </button>

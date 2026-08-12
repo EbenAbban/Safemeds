@@ -34,7 +34,7 @@ export default function ThemeToggle({
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={toggleTheme}
-        className={`${sizeClasses[size]} rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center ${className}`}
+        className={`${sizeClasses[size]} rounded-full bg-surface-container-high dark:bg-surface-container-high hover:bg-outline-variant dark:hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center ${className}`}
         aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
       >
         <motion.div
@@ -45,7 +45,7 @@ export default function ThemeToggle({
         >
           {theme === "light" ? (
             <svg
-              className="w-full h-full text-gray-700"
+              className="w-full h-full text-on-surface-variant"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -74,7 +74,7 @@ export default function ThemeToggle({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={toggleTheme}
-      className={`px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition-colors duration-200 flex items-center gap-2 font-medium ${className}`}
+      className={`px-4 py-2 rounded-lg bg-surface-container-high dark:bg-surface-container-high hover:bg-outline-variant dark:hover:bg-gray-600 text-on-surface-variant dark:text-on-surface transition-colors duration-200 flex items-center gap-2 font-medium ${className}`}
       aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
     >
       <motion.div

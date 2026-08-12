@@ -66,19 +66,19 @@ export default function OrdersPage() {
       case "PENDING":
         return "bg-yellow-100 text-yellow-800";
       case "CONFIRMED":
-        return "bg-blue-100 text-blue-800";
+        return "bg-primary-fixed text-on-primary-fixed";
       case "PROCESSING":
-        return "bg-purple-100 text-purple-800";
+        return "bg-tertiary-fixed text-on-tertiary-fixed";
       case "READY_FOR_PICKUP":
-        return "bg-green-100 text-green-800";
+        return "bg-secondary-container text-on-secondary-container";
       case "SHIPPED":
         return "bg-indigo-100 text-indigo-800";
       case "DELIVERED":
-        return "bg-green-100 text-green-800";
+        return "bg-secondary-container text-on-secondary-container";
       case "CANCELLED":
-        return "bg-red-100 text-red-800";
+        return "bg-error-container text-on-error-container";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-surface-container-low text-on-surface";
     }
   };
 
@@ -87,13 +87,13 @@ export default function OrdersPage() {
       case "PENDING":
         return "bg-yellow-100 text-yellow-800";
       case "PAID":
-        return "bg-green-100 text-green-800";
+        return "bg-secondary-container text-on-secondary-container";
       case "FAILED":
-        return "bg-red-100 text-red-800";
+        return "bg-error-container text-on-error-container";
       case "REFUNDED":
-        return "bg-gray-100 text-gray-800";
+        return "bg-surface-container-low text-on-surface";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-surface-container-low text-on-surface";
     }
   };
 
@@ -116,7 +116,7 @@ export default function OrdersPage() {
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
         <Navigation title="Order Management" userRole="pharmacy" />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -126,10 +126,10 @@ export default function OrdersPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-3xl font-bold text-on-surface mb-2">
               Order Management
             </h1>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-on-surface-variant">
               Process and track medication orders and deliveries
             </p>
           </motion.div>
@@ -141,48 +141,48 @@ export default function OrdersPage() {
             transition={{ delay: 0 }}
             className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
           >
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600 text-lg"></span>
+                  <div className="w-8 h-8 bg-primary-fixed/50 rounded-lg flex items-center justify-center">
+                    <span className="text-medical-teal text-lg"></span>
                   </div>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Orders</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-sm font-medium text-on-surface-variant">Total Orders</p>
+                  <p className="text-2xl font-bold text-on-surface">
                     {statistics.totalOrders}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                    <span className="text-green-600 text-lg"></span>
+                    <span className="text-secondary text-lg"></span>
                   </div>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Revenue</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-sm font-medium text-on-surface-variant">Total Revenue</p>
+                  <p className="text-2xl font-bold text-on-surface">
                     {formatCurrency(statistics.totalRevenue)}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span className="text-purple-600 text-lg"></span>
+                    <span className="text-tertiary text-lg"></span>
                   </div>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Average Order Value</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-sm font-medium text-on-surface-variant">Average Order Value</p>
+                  <p className="text-2xl font-bold text-on-surface">
                     {formatCurrency(statistics.averageOrderValue)}
                   </p>
                 </div>
@@ -195,17 +195,17 @@ export default function OrdersPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8"
+            className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 mb-8"
           >
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Order Status
                 </label>
                 <select
                   value={filters.status}
                   onChange={(e) => handleFilterChange("status", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
                 >
                   <option value="">All Statuses</option>
                   <option value="PENDING">Pending</option>
@@ -219,13 +219,13 @@ export default function OrdersPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Payment Status
                 </label>
                 <select
                   value={filters.paymentStatus}
                   onChange={(e) => handleFilterChange("paymentStatus", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
                 >
                   <option value="">All Payment Statuses</option>
                   <option value="PENDING">Pending</option>
@@ -236,13 +236,13 @@ export default function OrdersPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Items per page
                 </label>
                 <select
                   value={filters.limit}
                   onChange={(e) => handleFilterChange("limit", parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
                 >
                   <option value={20}>20</option>
                   <option value={50}>50</option>
@@ -253,7 +253,7 @@ export default function OrdersPage() {
               <div className="flex items-end">
                 <button
                   onClick={fetchOrders}
-                  className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  className="w-full bg-medical-teal text-white px-4 py-2 rounded-lg font-medium hover:bg-secondary transition-colors"
                 >
                   Refresh
                 </button>
@@ -266,20 +266,20 @@ export default function OrdersPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
+            className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg overflow-hidden"
           >
             {loading ? (
               <div className="p-8 text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="mt-4 text-gray-600 dark:text-gray-400">Loading orders...</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-soft-aqua mx-auto"></div>
+                <p className="mt-4 text-on-surface-variant">Loading orders...</p>
               </div>
             ) : orders.length === 0 ? (
               <div className="p-8 text-center">
                 <div className="text-4xl mb-4"></div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-semibold text-on-surface mb-2">
                   No orders found
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-on-surface-variant">
                   {filters.status || filters.paymentStatus
                     ? "Try adjusting your filters"
                     : "No orders have been placed yet"}
@@ -288,64 +288,64 @@ export default function OrdersPage() {
             ) : (
               <>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className="bg-gray-50 dark:bg-gray-700/50">
+                  <table className="min-w-full divide-y divide-outline-variant/60 dark:divide-outline-variant/40">
+                    <thead className="bg-surface dark:bg-surface-container-high/50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Order Details
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Patient
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Medication
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Amount
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Payment
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Created
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="bg-surface-container-lowest dark:bg-surface-container divide-y divide-outline-variant/60 dark:divide-outline-variant/40">
                       {orders.map((order) => (
                         <motion.tr
                           key={order.id}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           whileHover={{ backgroundColor: "#f9fafb" }}
-                          className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                          className="hover:bg-surface-container-high/50"
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div>
-                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              <div className="text-sm font-medium text-on-surface dark:text-on-surface">
                                 {order.orderNumber}
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-sm text-on-surface-variant">
                                 {order.isAnonymous ? "Anonymous Order" : "Regular Order"}
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div>
-                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              <div className="text-sm font-medium text-on-surface dark:text-on-surface">
                                 {order.isAnonymous
                                   ? "Anonymous Patient"
                                   : order.user
                                   ? `${order.user.firstName} ${order.user.lastName}`
                                   : "Unknown"}
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-sm text-on-surface-variant">
                                 {order.isAnonymous
                                   ? `ID: ${order.anonymousId}`
                                   : order.user?.email}
@@ -355,22 +355,22 @@ export default function OrdersPage() {
                           <td className="px-6 py-4 whitespace-nowrap">
                             {order.prescription?.medication ? (
                               <div>
-                                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                <div className="text-sm font-medium text-on-surface dark:text-on-surface">
                                   {order.prescription.medication.name}
                                 </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                <div className="text-sm text-on-surface-variant">
                                   {order.prescription.medication.strength} - {order.prescription.medication.dosageForm}
                                 </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                <div className="text-sm text-on-surface-variant">
                                   Qty: {order.prescription.quantity}
                                 </div>
                               </div>
                             ) : (
-                              <span className="text-sm text-gray-500 dark:text-gray-400">No prescription</span>
+                              <span className="text-sm text-on-surface-variant">No prescription</span>
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                            <div className="text-sm font-semibold text-on-surface dark:text-on-surface">
                               {formatCurrency(order.totalAmount)}
                             </div>
                           </td>
@@ -384,20 +384,20 @@ export default function OrdersPage() {
                               {order.paymentStatus}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
                             {formatDate(order.createdAt)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <button
                               onClick={() => router.push(`/orders/${order.id}`)}
-                              className="text-blue-600 hover:text-blue-900 mr-4"
+                              className="text-medical-teal hover:text-primary mr-4"
                             >
                               View Details
                             </button>
                             {order.delivery && (
                               <button
                                 onClick={() => order.delivery && router.push(`/delivery/${order.delivery.id}`)}
-                                className="text-green-600 hover:text-green-900"
+                                className="text-secondary hover:text-green-900"
                               >
                                 Track Delivery
                               </button>
@@ -411,26 +411,26 @@ export default function OrdersPage() {
 
                 {/* Pagination */}
                 {pagination.pages > 1 && (
-                  <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                  <div className="bg-surface-container-lowest px-4 py-3 flex items-center justify-between border-t border-outline-variant/60 sm:px-6">
                     <div className="flex-1 flex justify-between sm:hidden">
                       <button
                         onClick={() => handlePageChange(pagination.page - 1)}
                         disabled={pagination.page === 1}
-                        className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="relative inline-flex items-center px-4 py-2 border border-outline-variant text-sm font-medium rounded-md text-on-surface-variant bg-surface-container-lowest hover:bg-surface disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Previous
                       </button>
                       <button
                         onClick={() => handlePageChange(pagination.page + 1)}
                         disabled={pagination.page === pagination.pages}
-                        className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="ml-3 relative inline-flex items-center px-4 py-2 border border-outline-variant text-sm font-medium rounded-md text-on-surface-variant bg-surface-container-lowest hover:bg-surface disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Next
                       </button>
                     </div>
                     <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                       <div>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-on-surface-variant">
                           Showing{" "}
                           <span className="font-medium">
                             {(pagination.page - 1) * pagination.limit + 1}
@@ -451,8 +451,8 @@ export default function OrdersPage() {
                               onClick={() => handlePageChange(page)}
                               className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                                 page === pagination.page
-                                  ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
-                                  : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                                  ? "z-10 bg-primary-fixed/30 border-soft-aqua text-medical-teal"
+                                  : "bg-surface-container-lowest border-outline-variant text-on-surface-variant hover:bg-surface"
                               }`}
                             >
                               {page}

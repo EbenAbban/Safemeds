@@ -52,14 +52,14 @@ export default function OnboardingWizard() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.95 }}
           transition={{ duration: 0.3 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4"
+          className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4"
         >
           <div className="text-center mb-6">
             <div className="text-5xl mb-4">{current.icon}</div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-xl font-bold text-on-surface mb-2">
               {current.title}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="text-sm text-on-surface-variant leading-relaxed">
               {current.description}
             </p>
           </div>
@@ -70,7 +70,7 @@ export default function OnboardingWizard() {
               <div
                 key={i}
                 className={`w-2 h-2 rounded-full transition-colors ${
-                  i === step ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"
+                  i === step ? "bg-medical-teal" : "bg-outline-variant dark:bg-gray-600"
                 }`}
               />
             ))}
@@ -80,7 +80,7 @@ export default function OnboardingWizard() {
             {!isLast && (
               <button
                 onClick={dismissOnboarding}
-                className="flex-1 py-2.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="flex-1 py-2.5 text-sm text-on-surface-variant hover:text-on-surface transition-colors"
               >
                 Skip
               </button>
@@ -95,7 +95,7 @@ export default function OnboardingWizard() {
                   setStep(step + 1);
                 }
               }}
-              className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors"
+              className="flex-1 py-2.5 bg-medical-teal hover:bg-secondary text-white rounded-lg font-medium text-sm transition-colors"
             >
               {isLast ? "Get Started" : "Next"}
             </button>

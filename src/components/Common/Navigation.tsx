@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { GraduationCap, LogOut, Menu, Pill, ShieldCheck, Stethoscope, Truck, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import NotificationBell from "./NotificationBell";
 
@@ -11,6 +12,16 @@ interface NavigationProps {
   userRole: "client" | "pharmacy" | "admin";
 }
 
+const ROLE_ICON = { client: GraduationCap, pharmacy: Pill, admin: ShieldCheck } as const;
+
+/**
+ * Authenticated app-shell header — SafeMeds Vital design system.
+ *
+ * Shared by every internal CLIENT/PHARMACY/ADMIN page still on this
+ * component. Previously each role had its own gradient identity color
+ * (blue/purple/red). Dropped in favor of the single medical-teal identity —
+ * the design brief explicitly warns against a "rainbow UI."
+ */
 export default function Navigation({ title, userRole }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -27,195 +38,112 @@ export default function Navigation({ title, userRole }: NavigationProps) {
     }
   };
 
-  const getRoleIcon = () => {
-    if (userRole === "client") return "";
-    if (userRole === "pharmacy") return "";
-    if (userRole === "admin") return "";
-    return "";
-  };
-
-  const getRoleColor = () => {
-    if (userRole === "client") return "from-blue-500 to-blue-600";
-    if (userRole === "pharmacy") return "from-purple-500 to-purple-600";
-    if (userRole === "admin") return "from-red-500 to-red-600";
-    return "from-gray-500 to-gray-600";
-  };
+  const RoleIcon = ROLE_ICON[userRole];
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-lg border-b border-gray-200 dark:border-gray-700">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo and Title */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center space-x-4"
-          >
-            <div
-              className={`w-10 h-10 bg-gradient-to-r ${getRoleColor()} rounded-lg flex items-center justify-center`}
-            >
-              <span className="text-xl text-white">{getRoleIcon()}</span>
+    <nav className="border-b border-outline-variant/60 bg-surface-container-lowest shadow-soft dark:bg-surface-container">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between py-4">
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-medical-teal text-white">
+              <RoleIcon className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                {title}
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Welcome, {user?.name || "User"}
-              </p>
+              <h1 className="font-display text-xl font-bold text-on-surface">{title}</h1>
+              <p className="text-sm text-on-surface-variant">Welcome, {user?.name || "User"}</p>
             </div>
           </motion.div>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-6">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => router.push("/about")}
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
-            >
-              ℹ️ About
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => router.push("/chat")}
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
-            >
-               Chat
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => router.push("/delivery")}
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
-            >
-               Delivery
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => router.push("/consult")}
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
-            >
-               Consult
-            </motion.button>
+          <div className="hidden items-center gap-6 md:flex">
+            <button onClick={() => router.push("/about")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
+              About
+            </button>
+            <button onClick={() => router.push("/chat")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
+              <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              Chat
+            </button>
+            <button onClick={() => router.push("/delivery")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
+              <Truck className="h-4 w-4" aria-hidden="true" />
+              Delivery
+            </button>
+            <button onClick={() => router.push("/consult")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
+              <Stethoscope className="h-4 w-4" aria-hidden="true" />
+              Consult
+            </button>
           </div>
 
-          {/* User Menu */}
-          <div className="flex items-center space-x-4">
-            {/* Notifications */}
+          <div className="flex items-center gap-4">
             <NotificationBell />
 
-            {/* User Info */}
-            <div className="hidden md:block text-right">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {user?.email || user?.username}
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                {userRole} Account
-              </p>
+            <div className="hidden text-right md:block">
+              <p className="text-sm font-medium text-on-surface">{user?.email || user?.username}</p>
+              <p className="text-xs capitalize text-on-surface-variant">{userRole} Account</p>
             </div>
 
-            {/* Logout Button */}
-            <motion.button
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              whileHover={{ scale: isLoggingOut ? 1 : 1.05 }}
-              whileTap={{ scale: isLoggingOut ? 1 : 0.98 }}
+            <button
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors text-sm ${
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                 isLoggingOut
-                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  : "bg-red-500 text-white hover:bg-red-600"
+                  ? "cursor-not-allowed bg-surface-container-high text-on-surface-variant"
+                  : "bg-error-container text-on-error-container hover:opacity-90"
               }`}
             >
               {isLoggingOut ? (
-                <div className="flex items-center gap-2">
+                <>
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{
-                      duration: 1,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="h-4 w-4 rounded-full border-2 border-on-surface-variant border-t-transparent"
                   />
-                  <span>Logging out...</span>
-                </div>
+                  Logging out…
+                </>
               ) : (
-                "Logout"
+                <>
+                  <LogOut className="h-4 w-4" aria-hidden="true" />
+                  Logout
+                </>
               )}
-            </motion.button>
+            </button>
 
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-label="Toggle menu"
+              className="rounded-lg p-2 text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface md:hidden"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+              <Menu className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
         <motion.div
           initial={{ opacity: 0, height: 0 }}
-          animate={{
-            opacity: isMenuOpen ? 1 : 0,
-            height: isMenuOpen ? "auto" : 0,
-          }}
+          animate={{ opacity: isMenuOpen ? 1 : 0, height: isMenuOpen ? "auto" : 0 }}
           transition={{ duration: 0.3 }}
-          className="md:hidden overflow-hidden"
+          className="overflow-hidden md:hidden"
         >
-          <div className="py-4 space-y-3 border-t border-gray-200 dark:border-gray-700">
+          <div className="space-y-1 border-t border-outline-variant/60 py-4">
             <button
-              onClick={() => {
-                router.push("/chat");
-                setIsMenuOpen(false);
-              }}
-              className="block w-full text-left px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              onClick={() => { router.push("/chat"); setIsMenuOpen(false); }}
+              className="block w-full rounded-lg px-4 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
             >
-               Chat with Pharmacist
+              Chat with Pharmacist
             </button>
             <button
-              onClick={() => {
-                router.push("/delivery");
-                setIsMenuOpen(false);
-              }}
-              className="block w-full text-left px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              onClick={() => { router.push("/delivery"); setIsMenuOpen(false); }}
+              className="block w-full rounded-lg px-4 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
             >
-               Track Delivery
+              Track Delivery
             </button>
             <button
-              onClick={() => {
-                router.push("/consult");
-                setIsMenuOpen(false);
-              }}
-              className="block w-full text-left px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              onClick={() => { router.push("/consult"); setIsMenuOpen(false); }}
+              className="block w-full rounded-lg px-4 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
             >
-               Book Consultation
+              Book Consultation
             </button>
-            <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {user?.email || user?.username}
-              </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 capitalize">
-                {userRole} Account
-              </p>
+            <div className="border-t border-outline-variant/60 px-4 py-2">
+              <p className="text-sm text-on-surface-variant">{user?.email || user?.username}</p>
+              <p className="text-xs capitalize text-on-surface-variant/70">{userRole} Account</p>
             </div>
           </div>
         </motion.div>

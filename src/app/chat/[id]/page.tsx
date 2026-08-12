@@ -14,7 +14,7 @@ export default function ChatByIdPage() {
 
   return (
     <ProtectedRoute allowedRoles={["CLIENT", "PHARMACY"]}>
-      <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-purple-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark">
         <Navigation
           title="Consultation Chat"
           userRole={
@@ -23,7 +23,7 @@ export default function ChatByIdPage() {
           }
         />
         <main className="max-w-4xl mx-auto px-4 py-8">
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-2xl shadow-xl border border-outline-variant/60 overflow-hidden">
             <ChatWindow
               chatId={chatId}
               sender={user?.role === "PHARMACY" ? "pharmacist" : "user"}

@@ -91,15 +91,15 @@ export default function VerifyLicensePage() {
 
   if (checkingStatus) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 via-purple-50 to-pink-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-soft-aqua animate-spin" />
       </div>
     );
   }
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY"]}>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 via-purple-50 to-pink-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark">
         <Navigation title="License Verification" userRole="pharmacy" />
 
         <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -108,10 +108,10 @@ export default function VerifyLicensePage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-3xl font-bold text-on-surface mb-2">
               Pharmacist License Verification
             </h1>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-on-surface-variant">
               Submit your pharmacy license for verification by our admin team.
             </p>
           </motion.div>
@@ -140,11 +140,11 @@ export default function VerifyLicensePage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 mb-6"
+              className="bg-green-50 dark:bg-green-900/20 border border-secondary/30 rounded-xl p-6 mb-6"
             >
               <div className="flex items-center gap-3 mb-2">
-                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
-                <h2 className="text-lg font-semibold text-green-800 dark:text-green-300">
+                <CheckCircle className="h-6 w-6 text-secondary" />
+                <h2 className="text-lg font-semibold text-on-secondary-container dark:text-on-secondary-container">
                   Verified
                 </h2>
               </div>
@@ -159,15 +159,15 @@ export default function VerifyLicensePage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 mb-6"
+              className="bg-error-container/60 dark:bg-red-900/20 border border-error/30 rounded-xl p-6 mb-6"
             >
               <div className="flex items-center gap-3 mb-2">
-                <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
-                <h2 className="text-lg font-semibold text-red-800 dark:text-red-300">
+                <XCircle className="h-6 w-6 text-error" />
+                <h2 className="text-lg font-semibold text-on-error-container dark:text-on-error-container">
                   Verification Rejected
                 </h2>
               </div>
-              <p className="text-red-700 dark:text-red-400 text-sm">
+              <p className="text-red-700 dark:text-error text-sm">
                 Your license verification was not approved. Please contact
                 support for more information.
               </p>
@@ -181,29 +181,29 @@ export default function VerifyLicensePage() {
           >
             <form
               onSubmit={handleSubmit}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700 space-y-5"
+              className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-xl p-8 border border-outline-variant/60 space-y-5"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1">
                   License Number *
                 </label>
                 <input
                   type="text"
                   value={licenseNumber}
                   onChange={(e) => setLicenseNumber(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest dark:bg-surface-container-high text-on-surface focus:ring-2 focus:ring-soft-aqua focus:border-transparent outline-none"
                   placeholder="Enter your pharmacy license number"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1">
                   License Type *
                 </label>
                 <select
                   value={licenseType}
                   onChange={(e) => setLicenseType(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest dark:bg-surface-container-high text-on-surface focus:ring-2 focus:ring-soft-aqua focus:border-transparent outline-none"
                 >
                   <option value="">Select license type</option>
                   <option value="PHARMACIST">Pharmacist</option>
@@ -213,26 +213,26 @@ export default function VerifyLicensePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1">
                   Issuing Body / State *
                 </label>
                 <input
                   type="text"
                   value={issuingBody}
                   onChange={(e) => setIssuingBody(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest dark:bg-surface-container-high text-on-surface focus:ring-2 focus:ring-soft-aqua focus:border-transparent outline-none"
                   placeholder="e.g. Pharmacy Council of Ghana"
                 />
               </div>
 
               {error && (
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                <p className="text-sm text-error">{error}</p>
               )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 bg-medical-teal hover:bg-secondary disabled:bg-gray-400 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>

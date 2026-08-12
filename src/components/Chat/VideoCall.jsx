@@ -317,9 +317,9 @@ export default function VideoCall({
         <div className="flex-1 flex flex-col items-center justify-center p-6">
           <div className="relative mb-8">
             {/* Animated Pulsing Rings */}
-            <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping" />
-            <div className="absolute -inset-4 rounded-full bg-blue-500/10 animate-pulse" />
-            <div className="w-32 h-32 bg-gradient-to-tr from-blue-500 via-indigo-600 to-purple-600 rounded-full flex items-center justify-center border-4 border-white/20 relative shadow-2xl">
+            <div className="absolute inset-0 rounded-full bg-soft-aqua/20 animate-ping" />
+            <div className="absolute -inset-4 rounded-full bg-soft-aqua/10 animate-pulse" />
+            <div className="w-32 h-32 bg-gradient-to-tr from-primary-fixed/300 via-indigo-600 to-purple-600 rounded-full flex items-center justify-center border-4 border-white/20 relative shadow-2xl">
               <span className="text-5xl">👩‍⚕️</span>
             </div>
           </div>
@@ -328,9 +328,9 @@ export default function VideoCall({
             SECURE CONSULTATION CALLING...
           </p>
 
-          <div className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2.5 flex items-center gap-2 mb-16 max-w-sm text-center">
+          <div className="bg-surface-container-lowest/5 border border-white/10 rounded-2xl px-4 py-2.5 flex items-center gap-2 mb-16 max-w-sm text-center">
             <Lock className="w-4 h-4 text-green-400" />
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-outline">
               Connection secured with peer-to-peer end-to-end encryption.
             </span>
           </div>
@@ -340,7 +340,7 @@ export default function VideoCall({
             whileTap={{ scale: 0.9 }}
             onClick={handleEndCall}
             aria-label="Cancel call"
-            className="w-16 h-16 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+            className="w-16 h-16 bg-error hover:opacity-90 rounded-full flex items-center justify-center shadow-lg cursor-pointer"
           >
             <PhoneOff className="w-7 h-7 text-white" />
           </motion.button>
@@ -352,7 +352,7 @@ export default function VideoCall({
         <div className="flex-1 flex flex-col items-center justify-center p-6">
           <Loader2 className="w-16 h-16 text-indigo-500 animate-spin mb-6" />
           <h3 className="text-xl font-bold mb-2">Connecting...</h3>
-          <p className="text-sm text-gray-400 animate-pulse">
+          <p className="text-sm text-outline animate-pulse">
             Establishing secure WebRTC media tunnel
           </p>
         </div>
@@ -365,17 +365,17 @@ export default function VideoCall({
           {/* Top Bar Overlay */}
           <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center no-print">
             <div className="bg-black/50 backdrop-blur-md px-4 py-2 rounded-xl flex items-center gap-3 border border-white/10">
-              <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-ping" />
+              <div className="w-2.5 h-2.5 rounded-full bg-secondary animate-ping" />
               <div className="text-sm font-semibold tracking-wider">
                 LIVE CONSULTATION
               </div>
-              <span className="text-xs text-gray-400">|</span>
+              <span className="text-xs text-outline">|</span>
               <div className="text-xs font-mono font-bold text-gray-300">
                 {formatDuration(callDuration)}
               </div>
             </div>
 
-            <div className="bg-green-600/90 text-white px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 font-medium shadow-md">
+            <div className="bg-secondary/90 text-white px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 font-medium shadow-md">
               <Lock className="w-3.5 h-3.5" />
               <span>HIPAA Compliant</span>
             </div>
@@ -451,14 +451,14 @@ export default function VideoCall({
             {isVideoOff ? (
               <div className="w-full h-full flex flex-col items-center justify-center bg-gray-950 text-center p-3 select-none">
                 <span className="text-2xl mb-1">👤</span>
-                <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">
+                <span className="text-[10px] text-on-surface-variant font-semibold uppercase tracking-wider">
                   Camera Off
                 </span>
               </div>
             ) : cameraError ? (
               <div className="w-full h-full flex flex-col items-center justify-center bg-gray-950 text-center p-3 select-none">
                 <AlertCircle className="w-6 h-6 text-yellow-500 mb-1" />
-                <span className="text-[9px] text-gray-400">No Camera</span>
+                <span className="text-[9px] text-outline">No Camera</span>
               </div>
             ) : (
               <video
@@ -483,7 +483,7 @@ export default function VideoCall({
               aria-label={isMuted ? "Unmute microphone" : "Mute microphone"}
               aria-pressed={isMuted}
               className={`w-12 h-12 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                isMuted ? "bg-red-600 text-white" : "bg-white/10 text-white hover:bg-white/20 border border-white/15"
+                isMuted ? "bg-red-600 text-white" : "bg-surface-container-lowest/10 text-white hover:bg-surface-container-lowest/20 border border-white/15"
               }`}
             >
               {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
@@ -496,7 +496,7 @@ export default function VideoCall({
               aria-label={isVideoOff ? "Turn camera on" : "Turn camera off"}
               aria-pressed={isVideoOff}
               className={`w-12 h-12 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                isVideoOff ? "bg-red-600 text-white" : "bg-white/10 text-white hover:bg-white/20 border border-white/15"
+                isVideoOff ? "bg-red-600 text-white" : "bg-surface-container-lowest/10 text-white hover:bg-surface-container-lowest/20 border border-white/15"
               }`}
             >
               {isVideoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
@@ -509,7 +509,7 @@ export default function VideoCall({
               aria-label={isScreenSharing ? "Stop screen share" : "Share screen"}
               aria-pressed={isScreenSharing}
               className={`w-12 h-12 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                isScreenSharing ? "bg-blue-600 text-white" : "bg-white/10 text-white hover:bg-white/20 border border-white/15"
+                isScreenSharing ? "bg-medical-teal text-white" : "bg-surface-container-lowest/10 text-white hover:bg-surface-container-lowest/20 border border-white/15"
               }`}
             >
               <Monitor className="w-5 h-5" />
@@ -520,7 +520,7 @@ export default function VideoCall({
               whileTap={{ scale: 0.9 }}
               onClick={handleEndCall}
               aria-label="End call"
-              className="w-14 h-14 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-red-600/30 cursor-pointer"
+              className="w-14 h-14 bg-error hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-red-600/30 cursor-pointer"
             >
               <PhoneOff className="w-6 h-6" />
             </motion.button>
@@ -536,7 +536,7 @@ export default function VideoCall({
             <AlertCircle className="w-10 h-10" />
           </div>
           <h2 className="text-2xl font-bold mb-2">No pharmacist available</h2>
-          <p className="text-sm text-gray-500 max-w-sm mb-8">
+          <p className="text-sm text-on-surface-variant max-w-sm mb-8">
             We couldn&apos;t reach a pharmacist for a live video consultation right now.
             Please try again shortly or continue your consultation via chat.
           </p>
@@ -544,7 +544,7 @@ export default function VideoCall({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleEndCall}
-            className="bg-white/10 hover:bg-white/20 border border-white/15 px-6 py-2.5 rounded-xl text-sm font-medium"
+            className="bg-surface-container-lowest/10 hover:bg-surface-container-lowest/20 border border-white/15 px-6 py-2.5 rounded-xl text-sm font-medium"
           >
             Close
           </motion.button>
@@ -554,11 +554,11 @@ export default function VideoCall({
       {/* 5. ENDED STATE VIEW */}
       {callState === "ended" && (
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mb-6">
+          <div className="w-20 h-20 bg-error-container/600/10 rounded-full flex items-center justify-center text-red-500 mb-6">
             <PhoneOff className="w-10 h-10" />
           </div>
           <h2 className="text-2xl font-bold mb-2">Call Disconnected</h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-on-surface-variant">
             Secure video consultation has successfully closed.
           </p>
         </div>

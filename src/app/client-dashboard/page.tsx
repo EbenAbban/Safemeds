@@ -12,7 +12,7 @@ export default function ClientDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["CLIENT"]}>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
         {/* Navigation */}
         <Navigation title="Client Dashboard" userRole="client" />
 
@@ -23,43 +23,43 @@ export default function ClientDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-8 border border-blue-200 dark:border-gray-700"
+            className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-lg p-6 mb-8 border border-primary-fixed dark:border-outline-variant/40"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+                <h2 className="text-xl font-semibold text-on-surface mb-2">
                   Account Information
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-600 dark:text-gray-400">
+                    <span className="text-on-surface-variant">
                       Name:
                     </span>
-                    <span className="ml-2 font-medium text-slate-700 dark:text-slate-300">
+                    <span className="ml-2 font-medium text-on-surface-variant">
                       {user?.name || "N/A"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-600 dark:text-gray-400">
+                    <span className="text-on-surface-variant">
                       Email:
                     </span>
-                    <span className="ml-2 font-medium text-slate-700 dark:text-slate-300">
+                    <span className="ml-2 font-medium text-on-surface-variant">
                       {user?.email || "N/A"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-600 dark:text-gray-400">
+                    <span className="text-on-surface-variant">
                       Username:
                     </span>
-                    <span className="ml-2 font-medium text-slate-700 dark:text-slate-300">
+                    <span className="ml-2 font-medium text-on-surface-variant">
                       {user?.username || "N/A"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-600 dark:text-gray-400">
+                    <span className="text-on-surface-variant">
                       Role:
                     </span>
-                    <span className="ml-2 font-medium text-slate-700 dark:text-slate-300 capitalize">
+                    <span className="ml-2 font-medium text-on-surface-variant capitalize">
                       {user?.role || "N/A"}
                     </span>
                   </div>
@@ -67,7 +67,7 @@ export default function ClientDashboard() {
               </div>
               <div className="text-right">
                 <div className="text-2xl mb-2"></div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Client Account</div>
+                <div className="text-sm text-on-surface-variant">Client Account</div>
               </div>
             </div>
           </motion.div>
@@ -79,19 +79,19 @@ export default function ClientDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0 }}
               whileHover={{ scale: 1.02 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-blue-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
+              className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-primary-fixed dark:border-outline-variant/40 hover:shadow-xl transition-all duration-300"
             >
               <div className="text-3xl mb-4"></div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-on-surface mb-2">
                 Chat with Pharmacist
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+              <p className="text-on-surface-variant text-sm mb-4">
                 Get instant consultation and medication advice from licensed
                 pharmacists.
               </p>
               <button
                 onClick={() => router.push("/chat")}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors"
+                className="bg-soft-aqua text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-medical-teal transition-colors"
               >
                 Start Chat
               </button>
@@ -102,19 +102,19 @@ export default function ClientDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0 }}
               whileHover={{ scale: 1.02 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-blue-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
+              className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-primary-fixed dark:border-outline-variant/40 hover:shadow-xl transition-all duration-300"
             >
               <div className="text-3xl mb-4"></div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-on-surface mb-2">
                 Track Deliveries
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+              <p className="text-on-surface-variant text-sm mb-4">
                 Monitor your medication deliveries in real-time with live
                 tracking.
               </p>
               <button
                 onClick={() => router.push("/delivery")}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
+                className="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-secondary transition-colors"
               >
                 View Deliveries
               </button>
@@ -125,19 +125,19 @@ export default function ClientDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0 }}
               whileHover={{ scale: 1.02 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-blue-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
+              className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-primary-fixed dark:border-outline-variant/40 hover:shadow-xl transition-all duration-300"
             >
               <div className="text-3xl mb-4"></div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-on-surface mb-2">
                 Consultations
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+              <p className="text-on-surface-variant text-sm mb-4">
                 Schedule and manage your healthcare consultations with
                 specialists.
               </p>
               <button
                 onClick={() => router.push("/consult")}
-                className="bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-600 transition-colors"
+                className="bg-tertiary-fixed/400 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-tertiary transition-colors"
               >
                 Book Consultation
               </button>
@@ -148,13 +148,13 @@ export default function ClientDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0 }}
               whileHover={{ scale: 1.02 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-blue-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
+              className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-primary-fixed dark:border-outline-variant/40 hover:shadow-xl transition-all duration-300"
             >
               <div className="text-3xl mb-4">️</div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-on-surface mb-2">
                 Settings
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+              <p className="text-on-surface-variant text-sm mb-4">
                 Configure your account settings and preferences.
               </p>
               <button

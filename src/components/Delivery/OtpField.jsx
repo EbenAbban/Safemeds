@@ -16,12 +16,12 @@ const OtpField = ({ onSubmit }) => {
         value={otp}
         onChange={handleChange}
         maxLength={6}
-        className="border border-gray-300 p-3 rounded text-center tracking-widest text-lg"
+        className="border border-outline-variant p-3 rounded text-center tracking-widest text-lg"
         placeholder="Enter 6-digit OTP"
       />
       <button
         onClick={() => onSubmit(otp)}
-        className="bg-green-600 text-white py-2 px-4 rounded"
+        className="bg-secondary text-white py-2 px-4 rounded"
       >
         Verify
       </button>

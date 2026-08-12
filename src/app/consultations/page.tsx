@@ -59,13 +59,13 @@ export default function ConsultationsPage() {
       case "PENDING":
         return "bg-yellow-100 text-yellow-800";
       case "IN_PROGRESS":
-        return "bg-blue-100 text-blue-800";
+        return "bg-primary-fixed text-on-primary-fixed";
       case "COMPLETED":
-        return "bg-green-100 text-green-800";
+        return "bg-secondary-container text-on-secondary-container";
       case "CANCELLED":
-        return "bg-red-100 text-red-800";
+        return "bg-error-container text-on-error-container";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-surface-container-low text-on-surface";
     }
   };
 
@@ -88,7 +88,7 @@ export default function ConsultationsPage() {
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-gradient-to-br from-tertiary-fixed/30 to-tertiary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
         <Navigation title="Patient Consultations" userRole="pharmacy" />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -98,10 +98,10 @@ export default function ConsultationsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-3xl font-bold text-on-surface mb-2">
               Patient Consultations
             </h1>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-on-surface-variant">
               Manage and respond to patient health inquiries and consultations
             </p>
           </motion.div>
@@ -111,17 +111,17 @@ export default function ConsultationsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8"
+            className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 mb-8"
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Status
                 </label>
                 <select
                   value={filters.status}
                   onChange={(e) => handleFilterChange("status", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
                 >
                   <option value="">All Statuses</option>
                   <option value="PENDING">Pending</option>
@@ -132,13 +132,13 @@ export default function ConsultationsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Type
                 </label>
                 <select
                   value={filters.type}
                   onChange={(e) => handleFilterChange("type", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
                 >
                   <option value="">All Types</option>
                   <option value="general">General</option>
@@ -150,13 +150,13 @@ export default function ConsultationsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Items per page
                 </label>
                 <select
                   value={filters.limit}
                   onChange={(e) => handleFilterChange("limit", parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
                 >
                   <option value={10}>10</option>
                   <option value={20}>20</option>
@@ -171,20 +171,20 @@ export default function ConsultationsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
+            className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg overflow-hidden"
           >
             {loading ? (
               <div className="p-8 text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
-                <p className="mt-4 text-gray-600 dark:text-gray-400">Loading consultations...</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tertiary mx-auto"></div>
+                <p className="mt-4 text-on-surface-variant">Loading consultations...</p>
               </div>
             ) : consultations.length === 0 ? (
               <div className="p-8 text-center">
                 <div className="text-4xl mb-4"></div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-semibold text-on-surface mb-2">
                   No consultations found
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-on-surface-variant">
                   {filters.status || filters.type
                     ? "Try adjusting your filters"
                     : "No consultations have been submitted yet"}
@@ -193,46 +193,46 @@ export default function ConsultationsPage() {
             ) : (
               <>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className="bg-gray-50 dark:bg-gray-700/50">
+                  <table className="min-w-full divide-y divide-outline-variant/60 dark:divide-outline-variant/40">
+                    <thead className="bg-surface dark:bg-surface-container-high/50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Patient
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Type
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Assigned To
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Messages
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Created
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="bg-surface-container-lowest dark:bg-surface-container divide-y divide-outline-variant/60 dark:divide-outline-variant/40">
                       {consultations.map((consultation) => (
                         <motion.tr
                           key={consultation.id}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           whileHover={{ backgroundColor: "#f9fafb" }}
-                          className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                          className="hover:bg-surface-container-high/50"
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
                                 <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                                  <span className="text-sm font-medium text-purple-600">
+                                  <span className="text-sm font-medium text-tertiary">
                                     {consultation.isAnonymous
                                       ? "A"
                                       : consultation.user
@@ -242,14 +242,14 @@ export default function ConsultationsPage() {
                                 </div>
                               </div>
                               <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                <div className="text-sm font-medium text-on-surface dark:text-on-surface">
                                   {consultation.isAnonymous
                                     ? "Anonymous Patient"
                                     : consultation.user
                                     ? `${consultation.user.firstName} ${consultation.user.lastName}`
                                     : "Unknown"}
                                 </div>
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-on-surface-variant">
                                   {consultation.isAnonymous
                                     ? `ID: ${consultation.anonymousId}`
                                     : consultation.user?.email}
@@ -262,7 +262,7 @@ export default function ConsultationsPage() {
                               <span className="text-2xl mr-2">
                                 {getTypeIcon(consultation.type)}
                               </span>
-                              <span className="text-sm text-gray-900 dark:text-gray-100 capitalize">
+                              <span className="text-sm text-on-surface dark:text-on-surface capitalize">
                                 {consultation.type}
                               </span>
                             </div>
@@ -272,27 +272,27 @@ export default function ConsultationsPage() {
                               {consultation.status.replace("_", " ")}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface dark:text-on-surface">
                             {consultation.assignedPharmacist
                               ? `${consultation.assignedPharmacist.firstName} ${consultation.assignedPharmacist.lastName}`
                               : "Unassigned"}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface dark:text-on-surface">
                             {consultation._count?.messages || 0} messages
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
                             {new Date(consultation.createdAt).toLocaleDateString()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <button
                               onClick={() => router.push(`/chat/${consultation.id}`)}
-                              className="text-purple-600 hover:text-purple-900 mr-4"
+                              className="text-tertiary hover:text-purple-900 mr-4"
                             >
                               View Chat
                             </button>
                             <button
                               onClick={() => router.push(`/consultations/${consultation.id}`)}
-                              className="text-blue-600 hover:text-blue-900"
+                              className="text-medical-teal hover:text-primary"
                             >
                               Details
                             </button>
@@ -305,26 +305,26 @@ export default function ConsultationsPage() {
 
                 {/* Pagination */}
                 {pagination.pages > 1 && (
-                  <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                  <div className="bg-surface-container-lowest px-4 py-3 flex items-center justify-between border-t border-outline-variant/60 sm:px-6">
                     <div className="flex-1 flex justify-between sm:hidden">
                       <button
                         onClick={() => handlePageChange(pagination.page - 1)}
                         disabled={pagination.page === 1}
-                        className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="relative inline-flex items-center px-4 py-2 border border-outline-variant text-sm font-medium rounded-md text-on-surface-variant bg-surface-container-lowest hover:bg-surface disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Previous
                       </button>
                       <button
                         onClick={() => handlePageChange(pagination.page + 1)}
                         disabled={pagination.page === pagination.pages}
-                        className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="ml-3 relative inline-flex items-center px-4 py-2 border border-outline-variant text-sm font-medium rounded-md text-on-surface-variant bg-surface-container-lowest hover:bg-surface disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Next
                       </button>
                     </div>
                     <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                       <div>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-on-surface-variant">
                           Showing{" "}
                           <span className="font-medium">
                             {(pagination.page - 1) * pagination.limit + 1}
@@ -345,8 +345,8 @@ export default function ConsultationsPage() {
                               onClick={() => handlePageChange(page)}
                               className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                                 page === pagination.page
-                                  ? "z-10 bg-purple-50 border-purple-500 text-purple-600"
-                                  : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                                  ? "z-10 bg-tertiary-fixed/40 border-tertiary text-tertiary"
+                                  : "bg-surface-container-lowest border-outline-variant text-on-surface-variant hover:bg-surface"
                               }`}
                             >
                               {page}
