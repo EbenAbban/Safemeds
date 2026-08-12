@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import SiteHeader from "@/components/Common/SiteHeader";
 import Footer from "@/components/Common/Footer";
-import LiquidEtherBackground from "@/components/effects/LiquidEtherBackground";
 import { DROP_POINTS } from "@/lib/dropPoints";
 import {
   Accordion,
@@ -30,7 +30,6 @@ import {
   MessageCircle,
   Pill,
   ShieldCheck,
-  Sparkles,
   Stethoscope,
   Truck,
 } from "lucide-react";
@@ -38,19 +37,23 @@ import {
 /**
  * The public landing page.
  *
- * Redesigned against docs/superpowers (SafeMeds Vital design system). Two
- * deliberate departures from the previous version, both required by the
- * design brief rather than optional polish:
+ * Redesigned against docs/superpowers (SafeMeds Vital design system).
+ * Structure — utility bar, header, hero, trust rail, footer — follows the
+ * design system's hero mockup exactly, including its hero photo and
+ * pharmacist portrait (the design tool's own generated assets, no
+ * third-party stock-agency branding — unlike the Getty-watermarked clip
+ * removed from the previous version of this page). Sections the mockup
+ * doesn't cover (stats, services, the anonymous-flow timeline, FAQ) follow
+ * design.md's fuller spec instead, composed the same way as the rest of
+ * this redesign: real data only, nothing fabricated. Two departures from
+ * the pre-redesign version, both required rather than optional polish:
  *
  * 1. No testimonials with invented names and quotes, and no "thousands of
  *    students trust us" claim — SafeMeds has no real testimonial data yet.
  *    The brief is explicit: "Never fabricate claims and present them as real
  *    patient experiences." The section below is replaced with an honest
  *    "built on" panel instead of a faked social-proof carousel.
- * 2. No hero video. The clip used previously was a Getty Images stock
- *    preview file (visible in its own filename) with no clear commercial
- *    license — inappropriate to ship in a live product regardless of visual
- *    redesign. The ambient LiquidEther background carries the hero instead.
+ * 2. No hero video — see the Getty note above.
  */
 
 const TRUST_ITEMS = [
@@ -221,47 +224,44 @@ export default function Home() {
     <div className="min-h-screen bg-surface dark:bg-surface-dark">
       <SiteHeader />
 
-      {/* Availability strip — honest: pharmacists are reachable, not a live
-          "N online now" count the schema has no way to actually back. */}
-      <div className="flex items-center justify-center gap-2 bg-medical-teal py-2 text-sm font-medium text-white dark:bg-primary-container">
-        <span className="h-2 w-2 rounded-full bg-soft-aqua" aria-hidden="true" />
-        Licensed pharmacists available for anonymous consultations
-      </div>
+      {/* Hero — matches the design system's hero mockup exactly: full-bleed
+          photo behind the copy, faded into the page background so text stays
+          legible, rather than the WebGL backdrop used elsewhere in this
+          redesign. Image is the design system's own generated asset (no
+          third-party stock-agency branding), not a hotlinked external URL. */}
+      <section className="relative flex min-h-[90vh] items-center overflow-hidden pb-20 pt-16 md:pb-28 md:pt-24">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/assets/images/hero-student.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-right opacity-90 md:object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/80 to-transparent dark:from-surface-dark dark:via-surface-dark/80" />
+        </div>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden pb-20 pt-16 md:pb-28 md:pt-24">
-        <LiquidEtherBackground
-          wrapperClassName="absolute inset-0 overflow-hidden pointer-events-none opacity-30 dark:opacity-50 [mask-image:radial-gradient(ellipse_65%_65%_at_50%_35%,black,transparent)]"
-          colors={["#0b5e4d", "#2ab491", "#8dd4bf"]}
-          resolution={0.4}
-          iterationsPoisson={16}
-          mouseForce={16}
-          cursorSize={90}
-          autoDemo
-          autoSpeed={0.35}
-          autoIntensity={1.6}
-        />
-
-        <Container className="relative">
+        <Container className="relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
-            className="mx-auto max-w-2xl text-center"
+            className="max-w-2xl"
           >
             <Badge tone="primary" className="mb-6">
               Anonymous-first care
             </Badge>
-            <h1 className="text-hero text-on-surface">
+            <h1 className="text-hero text-dark-navy dark:text-on-surface">
               Private healthcare,
               <br />
               built for students.
             </h1>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-on-surface-variant">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-on-surface-variant">
               Confidential telepharmacy and secure campus delivery. Get the
               care you need without compromising your privacy.
             </p>
-            <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
               <ButtonLink href="/consult" size="lg">
                 Start Anonymous Consultation
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -325,13 +325,21 @@ export default function Home() {
               className="relative"
             >
               <div className="absolute -inset-6 -z-10 rounded-[2rem] bg-gradient-to-br from-primary-fixed/40 to-transparent blur-2xl dark:from-primary-container/30" />
-              <Card radius="xl" className="p-10">
-                <ShieldCheck className="h-10 w-10 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
-                <p className="mt-6 text-headline-md text-on-surface">Built so nothing about your consultation can be traced back to you.</p>
-                <div className="mt-8 flex items-center gap-3 rounded-lg border border-outline-variant/60 bg-surface-container-lowest px-4 py-3 dark:bg-surface-container-high">
-                  <Sparkles className="h-4 w-4 text-soft-aqua" aria-hidden="true" />
-                  <span className="text-sm text-on-surface-variant">Session-based, not identity-based</span>
-                </div>
+              <div className="relative overflow-hidden rounded-xl shadow-card">
+                <Image
+                  src="/assets/images/pharmacist-portrait.png"
+                  alt="A licensed pharmacist in a campus pharmacy"
+                  width={800}
+                  height={900}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              {/* Floating info card, per design.md's "small floating information
+                  card" — real claim, not a stat. */}
+              <Card radius="lg" className="absolute -bottom-6 -right-4 w-56 sm:-right-8">
+                <ShieldCheck className="h-6 w-6 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+                <p className="mt-2 text-sm font-semibold text-on-surface">Session-based, not identity-based</p>
+                <p className="mt-1 text-xs text-on-surface-variant">Nothing traces back to you.</p>
               </Card>
             </motion.div>
 

@@ -10,21 +10,23 @@ import { ButtonLink, Container } from "@/components/ui";
 /**
  * Public marketing header — SafeMeds Vital.
  *
- * Only links to routes that actually exist (Home, About, Consult, Track,
- * Contact). The design system's reference nav includes marketing pages like
- * "Pharmacy" and "Medications" that have no public route in this app; adding
- * them would violate the redesign brief's "never destroy existing routes, never
- * introduce dead links" instruction, so they're omitted rather than faked.
+ * Nav labels match the design system's hero mockup exactly (Consultations,
+ * Pharmacy, Delivery, About), each mapped to the closest real route rather
+ * than a fictional marketing page: "Pharmacy" -> /auth (the pharmacist portal
+ * entry point), the rest are direct matches. Never a dead link.
  *
  * Per design.md §6: sticky, and on scroll the header tightens — background
  * goes opaque, blur increases, a hairline border and soft shadow appear. Kept
  * subtle; this is a healthcare product; the header should recede, not perform.
+ *
+ * The utility strip above the nav (pulsing dot + availability line) rides in
+ * the same sticky unit, matching the mockup's two-tier fixed header.
  */
 const NAV_LINKS = [
+  { href: "/consult", label: "Consultations" },
+  { href: "/auth", label: "Pharmacy" },
+  { href: "/delivery", label: "Delivery" },
   { href: "/about", label: "About" },
-  { href: "/consult", label: "Consult" },
-  { href: "/track", label: "Track" },
-  { href: "/contact", label: "Contact" },
 ] as const;
 
 export default function SiteHeader() {
@@ -63,14 +65,27 @@ export default function SiteHeader() {
   }, [mobileOpen]);
 
   return (
-    <header
-      className={[
-        "sticky top-0 z-50 w-full transition-all duration-300",
-        scrolled
-          ? "bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-lg shadow-soft border-b border-outline-variant/60"
-          : "bg-surface/60 dark:bg-surface-dark/60 backdrop-blur-md border-b border-transparent",
-      ].join(" ")}
-    >
+    <header className="sticky top-0 z-50 w-full">
+      {/* Utility strip — availability line with a pulsing status dot, per the
+          design system's hero mockup. Copy is deliberately honest: it states
+          pharmacists are reachable, not a live headcount SafeMeds has no way
+          to actually track. */}
+      <div className="flex items-center justify-center gap-2 bg-medical-teal py-2 text-sm font-medium text-white dark:bg-primary-container">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-soft-aqua opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-soft-aqua" />
+        </span>
+        Licensed pharmacists available for anonymous consultations
+      </div>
+
+      <div
+        className={[
+          "w-full transition-all duration-300",
+          scrolled
+            ? "bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-lg shadow-soft border-b border-outline-variant/60"
+            : "bg-surface/60 dark:bg-surface-dark/60 backdrop-blur-md border-b border-transparent",
+        ].join(" ")}
+      >
       <Container>
         <div className={["flex items-center justify-between transition-all duration-300", scrolled ? "h-16" : "h-20"].join(" ")}>
           <Link
@@ -115,6 +130,7 @@ export default function SiteHeader() {
           </button>
         </div>
       </Container>
+      </div>
 
       <AnimatePresence>
         {mobileOpen && (
@@ -123,7 +139,7 @@ export default function SiteHeader() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 top-16 z-40 bg-surface dark:bg-surface-dark md:hidden"
+            className="fixed inset-0 top-[104px] z-40 bg-surface dark:bg-surface-dark md:hidden"
           >
             <nav className="flex h-full flex-col px-6 py-8">
               <div className="flex flex-1 flex-col gap-1">
