@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge, buttonClasses, Input } from "@/components/ui";
 import { Eye, EyeOff, Lock, Mail, ShieldCheck, User } from "lucide-react";
 
@@ -15,10 +16,14 @@ import { Eye, EyeOff, Lock, Mail, ShieldCheck, User } from "lucide-react";
  * Student) — dropping it here would break real login capability for admin
  * accounts, so it stays as a third tab rather than being designed away.
  *
- * No stock photo on the brand panel. The mockup's reference image has no
- * clear license for use in a live product (same reasoning that removed the
- * Getty hero video and the AI-generated staff avatars elsewhere in this
- * redesign) — a plain dark gradient carries the panel instead.
+ * Brand panel image is the landing page's hero photo (the design system's
+ * own generated asset, no third-party stock-agency branding) — not the
+ * watermarked Getty preview clip that was proposed and declined for this
+ * spot; that file has a visible "gettyimages" watermark and is explicitly a
+ * preview-only comp, not licensed for use in a live product. Shown on both
+ * mobile (compact banner above the form) and desktop (full panel), per
+ * request — the desktop-only dark gradient this page shipped with earlier
+ * covered only half of that.
  */
 
 interface FormData {
@@ -129,8 +134,18 @@ export default function AuthPage() {
 
   return (
     <div className="flex min-h-screen bg-surface dark:bg-surface-dark">
-      {/* Brand panel */}
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-dark-navy via-surface-dark to-medical-teal p-margin-desktop md:flex">
+      {/* Brand panel — desktop */}
+      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden p-margin-desktop md:flex">
+        <Image
+          src="/assets/images/hero-student.png"
+          alt=""
+          fill
+          priority
+          sizes="50vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-dark-navy via-dark-navy/70 to-dark-navy/20" />
+
         <div className="relative z-10 flex items-center gap-3">
           <ShieldCheck className="h-8 w-8 text-soft-aqua" aria-hidden="true" />
           <span className="text-headline-md font-bold text-white">SafeMeds</span>
@@ -148,11 +163,26 @@ export default function AuthPage() {
       </div>
 
       {/* Form panel */}
-      <div className="relative flex w-full flex-1 items-center justify-center p-6 md:p-margin-desktop">
-        <Link href="/" className="absolute left-6 top-6 flex items-center gap-2 md:hidden">
+      <div className="relative flex w-full flex-1 flex-col items-center justify-center p-6 md:p-margin-desktop">
+        <Link href="/" className="mb-6 flex items-center gap-2 self-start md:hidden">
           <ShieldCheck className="h-6 w-6 text-medical-teal" aria-hidden="true" />
           <span className="text-lg font-bold text-medical-teal">SafeMeds</span>
         </Link>
+
+        {/* Brand image — mobile only, compact banner above the form */}
+        <div className="relative mb-6 h-40 w-full max-w-md overflow-hidden rounded-lg shadow-soft md:hidden">
+          <Image
+            src="/assets/images/hero-student.png"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark-navy/80 via-dark-navy/10 to-transparent" />
+          <p className="absolute bottom-3 left-4 right-4 text-sm font-semibold text-white">
+            Private healthcare, built for students.
+          </p>
+        </div>
 
         <div className="w-full max-w-md rounded-lg border border-outline-variant/60 bg-surface-container-lowest p-8 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-card dark:bg-surface-container">
           <div className="mb-8 flex rounded-lg bg-surface-container-low p-1 dark:bg-surface-dark">
