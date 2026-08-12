@@ -192,7 +192,7 @@ function LegalContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 via-indigo-50 to-purple-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark transition-colors duration-300">
       {/* Print-only CSS style injection */}
       <style jsx global>{`
         @media print {
@@ -212,17 +212,17 @@ function LegalContent() {
       `}</style>
 
       {/* Header */}
-      <header className="relative border-b border-gray-200/80 dark:border-gray-700/80 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md z-10 no-print">
+      <header className="relative border-b border-outline-variant/60/80 dark:border-outline-variant/40/80 bg-surface-container-lowest/70 dark:bg-gray-800/70 backdrop-blur-md z-10 no-print">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => router.push("/")}>
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 bg-gradient-to-r from-primary-fixed/300 via-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
               <span className="text-xl">️</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white leading-tight">
+              <h1 className="text-xl font-bold text-on-surface leading-tight">
                 SafeMeds
               </h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+              <p className="text-xs text-on-surface-variant font-medium">
                 Trust & Security Hub
               </p>
             </div>
@@ -233,7 +233,7 @@ function LegalContent() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => router.back()}
-              className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              className="bg-surface-container-low hover:bg-surface-container-high dark:bg-surface-container-high dark:hover:bg-gray-600 text-on-surface dark:text-on-surface px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
               Go Back
             </motion.button>
@@ -247,8 +247,8 @@ function LegalContent() {
           
           {/* Navigation Sidebar (No-print) */}
           <div className="lg:col-span-1 space-y-6 no-print">
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-gray-150 dark:border-gray-700/50">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
+            <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-gray-150 dark:border-outline-variant/40/50">
+              <h3 className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-4">
                 Trust Center Sections
               </h3>
               <nav className="space-y-1">
@@ -262,8 +262,8 @@ function LegalContent() {
                     }}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-sm font-medium transition-all ${
                       activeTab === doc.id
-                        ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                        ? "bg-medical-teal text-white shadow-md shadow-indigo-600/10"
+                        : "text-on-surface-variant hover:bg-surface-container-high/50"
                     }`}
                   >
                     <span className="text-lg">{doc.icon}</span>
@@ -286,7 +286,7 @@ function LegalContent() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handlePrint}
-                className="w-full bg-white text-indigo-600 hover:bg-gray-50 font-medium py-2.5 rounded-xl text-sm transition-colors shadow-sm"
+                className="w-full bg-surface-container-lowest text-medical-teal hover:bg-surface font-medium py-2.5 rounded-xl text-sm transition-colors shadow-sm"
               >
                 Print / Save PDF
               </motion.button>
@@ -297,9 +297,9 @@ function LegalContent() {
           <div className="lg:col-span-3 space-y-8 print-area">
             
             {/* Search and Metadata Controls */}
-            <div className="bg-white/85 dark:bg-gray-800/85 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-150 dark:border-gray-700/50 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
+            <div className="bg-surface-container-lowest/85 dark:bg-gray-800/85 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-150 dark:border-outline-variant/40/50 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
               <div className="relative flex-1">
-                <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-400">
+                <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-outline">
                   
                 </span>
                 <input
@@ -307,18 +307,18 @@ function LegalContent() {
                   placeholder={`Search in ${currentDoc.title}...`}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full pl-9 pr-4 py-2.5 bg-surface dark:bg-surface-dark border border-outline-variant/60 rounded-xl text-sm text-on-surface placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-soft-aqua"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600"
+                    className="absolute inset-y-0 right-3 flex items-center text-outline hover:text-on-surface-variant"
                   >
                     
                   </button>
                 )}
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-between md:justify-end gap-3 font-medium">
+              <div className="text-xs text-on-surface-variant flex items-center justify-between md:justify-end gap-3 font-medium">
                 <span>Effective Date: {LEGAL_EFFECTIVE_DATE}</span>
                 <span className="hidden md:inline">•</span>
                 <span>Version {LEGAL_VERSION}</span>
@@ -326,14 +326,14 @@ function LegalContent() {
             </div>
 
             {/* Document Render Panel */}
-            <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border border-gray-150 dark:border-gray-700/30 min-h-[500px]">
-              <div className="flex items-center space-x-3 mb-8 pb-4 border-b border-gray-100 dark:border-gray-700">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-8 shadow-xl border border-gray-150 dark:border-outline-variant/40/30 min-h-[500px]">
+              <div className="flex items-center space-x-3 mb-8 pb-4 border-b border-gray-100 dark:border-outline-variant/40">
                 <span className="text-4xl">{currentDoc.icon}</span>
                 <div>
-                  <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                  <h2 className="text-3xl font-extrabold text-on-surface tracking-tight">
                     {currentDoc.title}
                   </h2>
-                  <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                  <p className="text-sm text-medical-teal dark:text-primary-fixed-dim font-medium">
                     SafeMeds Trust Center Compliance Document
                   </p>
                 </div>
@@ -344,10 +344,10 @@ function LegalContent() {
                 {filteredBlocks.length === 0 ? (
                   <div className="text-center py-16">
                     <span className="text-4xl mb-4 block"></span>
-                    <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-1">
+                    <h4 className="text-lg font-semibold text-on-surface mb-1">
                       No matching sections found
                     </h4>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-on-surface-variant">
                       Try clearing your search query or looking for different keywords.
                     </p>
                   </div>
@@ -360,10 +360,10 @@ function LegalContent() {
                       transition={{ delay: idx * 0.05 }}
                       className="group"
                     >
-                      <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2 pb-1 border-b border-gray-50 dark:border-gray-800 group-hover:border-indigo-500/20 transition-colors">
+                      <h4 className="text-lg font-bold text-on-surface mb-2 pb-1 border-b border-gray-50 dark:border-gray-800 group-hover:border-indigo-500/20 transition-colors">
                         {highlightText(block.title, searchQuery)}
                       </h4>
-                      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+                      <p className="text-on-surface-variant text-sm leading-relaxed whitespace-pre-line">
                         {highlightText(block.text, searchQuery)}
                       </p>
                     </motion.div>
@@ -373,22 +373,22 @@ function LegalContent() {
             </div>
 
             {/* FAQs Accordion Panel (No-print) */}
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-150 dark:border-gray-700/50 no-print">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+            <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-150 dark:border-outline-variant/40/50 no-print">
+              <h3 className="text-2xl font-bold text-on-surface mb-6 flex items-center gap-2">
                 <span></span> Legal & Trust FAQs
               </h3>
               <div className="space-y-3">
                 {faqs.map((faq, index) => (
                   <div
                     key={index}
-                    className="border border-gray-200/60 dark:border-gray-700/60 rounded-2xl overflow-hidden bg-white/40 dark:bg-gray-900/10"
+                    className="border border-outline-variant/60/60 dark:border-outline-variant/40/60 rounded-2xl overflow-hidden bg-surface-container-lowest/40 dark:bg-gray-900/10"
                   >
                     <button
                       onClick={() => setFaqOpen(faqOpen === index ? null : index)}
-                      className="w-full flex items-center justify-between px-6 py-4 text-left font-medium text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-sm"
+                      className="w-full flex items-center justify-between px-6 py-4 text-left font-medium text-on-surface dark:text-on-surface hover:bg-surface dark:hover:bg-gray-800/50 transition-colors text-sm"
                     >
                       <span>{faq.q}</span>
-                      <span className={`text-gray-400 transition-transform duration-200 ${faqOpen === index ? "rotate-180" : ""}`}>
+                      <span className={`text-outline transition-transform duration-200 ${faqOpen === index ? "rotate-180" : ""}`}>
                         ▼
                       </span>
                     </button>
@@ -398,7 +398,7 @@ function LegalContent() {
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
                           exit={{ opacity: 0, height: 0 }}
-                          className="px-6 pb-4 pt-1 text-sm text-gray-600 dark:text-gray-400 bg-gray-50/50 dark:bg-gray-900/20 leading-relaxed"
+                          className="px-6 pb-4 pt-1 text-sm text-on-surface-variant bg-surface/50 dark:bg-gray-900/20 leading-relaxed"
                         >
                           {faq.a}
                         </motion.div>
@@ -415,7 +415,7 @@ function LegalContent() {
       </main>
 
       {/* Trust Footer */}
-      <footer className="border-t border-gray-200/80 dark:border-gray-700/80 bg-white/50 dark:bg-gray-900/50 py-8 text-center text-xs text-gray-500 dark:text-gray-400 no-print">
+      <footer className="border-t border-outline-variant/60/80 dark:border-outline-variant/40/80 bg-surface-container-lowest/50 dark:bg-gray-900/50 py-8 text-center text-xs text-on-surface-variant no-print">
         <div className="max-w-7xl mx-auto px-4 leading-relaxed space-y-1">
           <p>© 2026 SafeMeds Inc. Campus Telepharmacy Platform.</p>
           <p>Compliance audited under federal student privacy regulations and HIPAA standards.</p>
@@ -427,7 +427,7 @@ function LegalContent() {
 
 export default function LegalPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50" />}>
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-indigo-50" />}>
       <LegalContent />
     </Suspense>
   );
