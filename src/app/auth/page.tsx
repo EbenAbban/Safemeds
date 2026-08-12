@@ -16,14 +16,14 @@ import { Eye, EyeOff, Lock, Mail, ShieldCheck, User } from "lucide-react";
  * Student) — dropping it here would break real login capability for admin
  * accounts, so it stays as a third tab rather than being designed away.
  *
- * Brand panel image is the landing page's hero photo (the design system's
- * own generated asset, no third-party stock-agency branding) — not the
+ * Brand panel image is a user-supplied local photo (doctor-on-phone.png,
+ * clean of any visible watermark or stock-agency branding) — not the
  * watermarked Getty preview clip that was proposed and declined for this
- * spot; that file has a visible "gettyimages" watermark and is explicitly a
- * preview-only comp, not licensed for use in a live product. Shown on both
- * mobile (compact banner above the form) and desktop (full panel), per
- * request — the desktop-only dark gradient this page shipped with earlier
- * covered only half of that.
+ * spot earlier; that file has a visible "gettyimages" watermark and is
+ * explicitly a preview-only comp, not licensed for use in a live product.
+ * Shown on both mobile (compact banner above the form) and desktop (full
+ * panel). Source image is 597x335 — soft when stretched to fill the tall
+ * desktop panel; swap for a higher-resolution version if sharper is needed.
  */
 
 interface FormData {
@@ -137,7 +137,7 @@ export default function AuthPage() {
       {/* Brand panel — desktop */}
       <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden p-margin-desktop md:flex">
         <Image
-          src="/assets/images/hero-student.png"
+          src="/assets/images/doctor-on-phone.png"
           alt=""
           fill
           priority
@@ -172,7 +172,7 @@ export default function AuthPage() {
         {/* Brand image — mobile only, compact banner above the form */}
         <div className="relative mb-6 h-40 w-full max-w-md overflow-hidden rounded-lg shadow-soft md:hidden">
           <Image
-            src="/assets/images/hero-student.png"
+            src="/assets/images/doctor-on-phone.png"
             alt=""
             fill
             sizes="100vw"
