@@ -4,32 +4,151 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import SiteHeader from "@/components/Common/SiteHeader";
 import Footer from "@/components/Common/Footer";
 import LiquidEtherBackground from "@/components/effects/LiquidEtherBackground";
-import LightTunnelBackground from "@/components/effects/LightTunnelBackground";
-import WebThreadsBackground from "@/components/effects/WebThreadsBackground";
-import ClickSpark from "@/components/effects/ClickSpark";
+import { DROP_POINTS } from "@/lib/dropPoints";
 import {
+  Accordion,
+  Badge,
+  ButtonLink,
+  Card,
+  Container,
+  CountUp,
+  Section,
+  SectionHeading,
+} from "@/components/ui";
+import {
+  ArrowRight,
+  Check,
+  Clock3,
+  EyeOff,
   GraduationCap,
+  Lock,
+  MapPin,
+  MessageCircle,
   Pill,
   ShieldCheck,
-  Check,
-  CheckCircle2,
-  Lock,
+  Sparkles,
   Stethoscope,
-  Smartphone,
   Truck,
-  MessageCircle,
-  BarChart3,
-  ArrowRight,
-  Star,
 } from "lucide-react";
+
+/**
+ * The public landing page.
+ *
+ * Redesigned against docs/superpowers (SafeMeds Vital design system). Two
+ * deliberate departures from the previous version, both required by the
+ * design brief rather than optional polish:
+ *
+ * 1. No testimonials with invented names and quotes, and no "thousands of
+ *    students trust us" claim — SafeMeds has no real testimonial data yet.
+ *    The brief is explicit: "Never fabricate claims and present them as real
+ *    patient experiences." The section below is replaced with an honest
+ *    "built on" panel instead of a faked social-proof carousel.
+ * 2. No hero video. The clip used previously was a Getty Images stock
+ *    preview file (visible in its own filename) with no clear commercial
+ *    license — inappropriate to ship in a live product regardless of visual
+ *    redesign. The ambient LiquidEther background carries the hero instead.
+ */
+
+const TRUST_ITEMS = [
+  { Icon: EyeOff, label: "Anonymous by Design" },
+  { Icon: Stethoscope, label: "Licensed Pharmacists" },
+  { Icon: Lock, label: "Secure & Encrypted" },
+  { Icon: GraduationCap, label: "Campus Focused" },
+] as const;
+
+const SERVICES = [
+  {
+    Icon: MessageCircle,
+    title: "Anonymous Consultation",
+    description: "Describe your concern and reach a licensed pharmacist without creating an account.",
+    href: "/consult",
+    cta: "Start a consultation",
+    featured: true,
+  },
+  {
+    Icon: Pill,
+    title: "Prescription Management",
+    description: "Track prescriptions issued by your pharmacist from request through to pickup.",
+    href: "/medications",
+    cta: "View medications",
+    featured: false,
+  },
+  {
+    Icon: Truck,
+    title: "Campus Delivery",
+    description: "Prescriptions delivered to real campus drop points, with live status once dispatched.",
+    href: "/delivery",
+    cta: "See delivery",
+    featured: false,
+  },
+  {
+    Icon: MapPin,
+    title: "Track a Consultation",
+    description: "Anonymous sessions stay reachable for 7 days using only your session code — no login.",
+    href: "/track",
+    cta: "Track now",
+    featured: false,
+  },
+] as const;
+
+const CONSULT_STEPS = [
+  { title: "Start a consultation", description: "No account, no personal details required to begin." },
+  { title: "Describe your concern", description: "Share symptoms in your own words, in a private chat." },
+  { title: "Connect with a pharmacist", description: "A license-verified pharmacist reviews your case." },
+  { title: "Receive guidance", description: "Get advice, and a prescription if one is appropriate." },
+  { title: "Track your session", description: "Return anytime within 7 days using your session code." },
+] as const;
+
+const DELIVERY_STEPS = [
+  "Order Confirmed",
+  "Processing",
+  "Packaged",
+  "In Transit",
+  "Out for Delivery",
+  "Delivered",
+] as const;
+
+const FAQ_ITEMS = [
+  {
+    question: "How anonymous is SafeMeds?",
+    answer:
+      "Anonymous consultations are never linked to a name, email, or account. The system stores an opaque session code instead of your identity — there is no record that connects the two.",
+  },
+  {
+    question: "Do I need an account?",
+    answer:
+      "No. You can start, continue, and track a consultation for 7 days using only the session code you're given — no sign-up required.",
+  },
+  {
+    question: "Who can see my consultation?",
+    answer:
+      "Only the pharmacist assigned to your consultation. Anonymous sessions carry no name or contact details for them to see in the first place.",
+  },
+  {
+    question: "How do prescriptions work?",
+    answer:
+      "If your pharmacist determines a prescription is appropriate, it's issued directly to your consultation and can be fulfilled through campus delivery or pickup.",
+  },
+  {
+    question: "How does delivery work?",
+    answer:
+      "Prescriptions are routed to real campus drop points. Once your order ships, you can follow its status — confirmed, packaged, in transit, delivered — from the tracking page.",
+  },
+  {
+    question: "What happens to anonymous consultations after 7 days?",
+    answer:
+      "Anonymous sessions expire automatically 7 days after creation. After that, the session code no longer works and the conversation can't be reopened.",
+  },
+] as const;
 
 export default function Home() {
   const router = useRouter();
   const { isAuthenticated, user, isLoading } = useAuth();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showConsultCta, setShowConsultCta] = useState(false);
 
   useEffect(() => {
     if (!isLoading) {
@@ -47,9 +166,14 @@ export default function Home() {
     }
   }, [isAuthenticated, user, isLoading, router]);
 
+  // Deferred, purely cosmetic — avoids a layout thrash from doing it inline.
+  useEffect(() => {
+    setShowConsultCta(true);
+  }, []);
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-surface dark:bg-surface-dark">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -59,14 +183,10 @@ export default function Home() {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"
+            className="mx-auto mb-4 h-16 w-16 rounded-full border-4 border-medical-teal border-t-transparent"
           />
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
-            Loading SafeMeds...
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300">
-            Preparing your healthcare experience
-          </p>
+          <h2 className="mb-2 text-xl font-semibold text-on-surface">Loading SafeMeds...</h2>
+          <p className="text-on-surface-variant">Preparing your healthcare experience</p>
         </motion.div>
       </div>
     );
@@ -74,7 +194,7 @@ export default function Home() {
 
   if (isAuthenticated && user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-surface dark:bg-surface-dark">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -84,521 +204,362 @@ export default function Home() {
           <motion.div
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4"
+            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary"
           >
-            <CheckCircle2 className="w-8 h-8 text-white" strokeWidth={2} />
+            <Check className="h-8 w-8 text-on-secondary" strokeWidth={2.5} aria-hidden="true" />
           </motion.div>
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+          <h2 className="mb-2 text-xl font-semibold text-on-surface">
             Welcome back, {user.name || user.username}!
           </h2>
-          <p className="text-gray-600 dark:text-gray-300">
-            Redirecting to your {user.role.toLowerCase()} dashboard...
-          </p>
+          <p className="text-on-surface-variant">Redirecting to your {user.role.toLowerCase()} dashboard...</p>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Public Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 overflow-hidden">
-        {/* Glowing woven threads tucked against the nav's right edge —
-            React Bits' WebThreads, faded into the navbar background. */}
-        <WebThreadsBackground
-          wrapperClassName="absolute inset-y-0 right-0 w-40 sm:w-56 pointer-events-none opacity-70 dark:opacity-90 [mask-image:linear-gradient(to_left,black,transparent)]"
-          color1="#3b82f6"
-          color2="#a855f7"
-          color3="#ffffff"
-          speed={0.2}
-          threadCount={5}
-          frequency={4}
-          spread={0.22}
-          fanMode="right"
-          glow={0.02}
-          thickness={1.1}
-          brightness={0.7}
-          mouseInteraction={false}
+    <div className="min-h-screen bg-surface dark:bg-surface-dark">
+      <SiteHeader />
+
+      {/* Availability strip — honest: pharmacists are reachable, not a live
+          "N online now" count the schema has no way to actually back. */}
+      <div className="flex items-center justify-center gap-2 bg-medical-teal py-2 text-sm font-medium text-white dark:bg-primary-container">
+        <span className="h-2 w-2 rounded-full bg-soft-aqua" aria-hidden="true" />
+        Licensed pharmacists available for anonymous consultations
+      </div>
+
+      {/* Hero */}
+      <section className="relative overflow-hidden pb-20 pt-16 md:pb-28 md:pt-24">
+        <LiquidEtherBackground
+          wrapperClassName="absolute inset-0 overflow-hidden pointer-events-none opacity-30 dark:opacity-50 [mask-image:radial-gradient(ellipse_65%_65%_at_50%_35%,black,transparent)]"
+          colors={["#0b5e4d", "#2ab491", "#8dd4bf"]}
+          resolution={0.4}
+          iterationsPoisson={16}
+          mouseForce={16}
+          cursorSize={90}
+          autoDemo
+          autoSpeed={0.35}
+          autoIntensity={1.6}
         />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-          <Link href="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
-            SafeMeds
-          </Link>
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="/about" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-              About
-            </Link>
-            <Link href="/consult" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-              Consult
-            </Link>
-            <Link href="/track" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-              Track
-            </Link>
-            <Link href="/contact" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-              Contact
-            </Link>
-            <Link
-              href="/auth"
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/signup"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-            >
-              Get Started
-            </Link>
-          </div>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Toggle navigation menu"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
-        </div>
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
-            >
-              <div className="px-4 py-3 space-y-2">
-                <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">About</Link>
-                <Link href="/consult" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Consult</Link>
-                <Link href="/track" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Track</Link>
-                <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Contact</Link>
-                <Link href="/auth" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors">Sign In</Link>
-                <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 text-center transition-colors">Get Started</Link>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Hero */}
-        <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 mb-24">
-          {/* Looping ambient footage docked to the right edge of the hero,
-              faded into the page background so the headline stays readable. */}
-          <div className="absolute inset-y-0 right-0 w-1/2 md:w-2/5 overflow-hidden pointer-events-none opacity-30 dark:opacity-40 [mask-image:linear-gradient(to_left,black,transparent)]">
-            <video
-              className="h-full w-full object-cover"
-              src="/assets/videos/doctor-call-hero.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-            />
-          </div>
-
-          {/* Ambient fluid backdrop, adapted from React Bits' LiquidEther —
-              skipped automatically for prefers-reduced-motion users and
-              loaded on demand so it never adds to the initial page JS. */}
-          <LiquidEtherBackground
-            wrapperClassName="absolute inset-0 overflow-hidden pointer-events-none opacity-40 dark:opacity-60 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_40%,black,transparent)]"
-            colors={["#3b82f6", "#a855f7", "#ec4899"]}
-            resolution={0.4}
-            iterationsPoisson={16}
-            mouseForce={16}
-            cursorSize={90}
-            autoDemo
-            autoSpeed={0.4}
-            autoIntensity={1.8}
-          />
+        <Container className="relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative text-center px-4 sm:px-6 lg:px-8 py-16"
+            transition={{ duration: 0.7 }}
+            className="mx-auto max-w-2xl text-center"
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-              Healthcare,{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                anonymized
-              </span>
-              .<br />
-              For students.
+            <Badge tone="primary" className="mb-6">
+              Anonymous-first care
+            </Badge>
+            <h1 className="text-hero text-on-surface">
+              Private healthcare,
+              <br />
+              built for students.
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-              Secure, anonymous healthcare consultations for students. Get
-              professional medical advice from licensed pharmacists in a safe,
-              confidential environment — all from your phone.
+            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-on-surface-variant">
+              Confidential telepharmacy and secure campus delivery. Get the
+              care you need without compromising your privacy.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/signup"
-                className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-lg transition-all hover:shadow-lg"
-              >
-                Create Free Account
-              </Link>
-              <Link
-                href="/consult"
-                className="px-8 py-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-xl font-semibold text-lg border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 transition-colors"
-              >
-                Start Anonymous Consult
-              </Link>
+            <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+              <ButtonLink href="/consult" size="lg">
+                Start Anonymous Consultation
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </ButtonLink>
+              <ButtonLink href="#how-it-works" variant="secondary" size="lg">
+                How it works
+              </ButtonLink>
             </div>
           </motion.div>
-        </div>
+        </Container>
+      </section>
 
-        {/* User Type Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="text-center mb-12"
-        >
-          <span className="inline-block text-xs font-semibold tracking-[0.2em] text-blue-600 dark:text-blue-400 uppercase mb-3">
-            Three roles, one platform
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-            Built for how you use it
-          </h2>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="grid md:grid-cols-3 gap-6 mb-24"
-        >
-          {(
-            [
-              {
-                type: "CLIENT",
-                index: "01",
-                title: "Students",
-                Icon: GraduationCap,
-                description: "Get anonymous medical consultations and advice from licensed pharmacists.",
-                features: ["Anonymous consultations", "Secure messaging", "Prescription delivery", "24/7 support"],
-                accent: "text-blue-600 dark:text-blue-400",
-                gradient: "from-blue-500 to-blue-600",
-                ring: "hover:border-blue-300 dark:hover:border-blue-700",
-                glow: "bg-blue-500/20",
-                spotlight: "rgba(59, 130, 246, 0.16)",
-                href: "/signup",
-                cta: "Get Started",
-              },
-              {
-                type: "PHARMACY",
-                index: "02",
-                title: "Pharmacists",
-                Icon: Pill,
-                description: "Provide professional medical advice and consultations to students.",
-                features: ["License verification", "Professional dashboard", "Consultation management", "Secure payments"],
-                accent: "text-purple-600 dark:text-purple-400",
-                gradient: "from-purple-500 to-purple-600",
-                ring: "hover:border-purple-300 dark:hover:border-purple-700",
-                glow: "bg-purple-500/20",
-                spotlight: "rgba(168, 85, 247, 0.16)",
-                href: "/signup",
-                cta: "Get Started",
-              },
-              {
-                type: "ADMIN",
-                index: "03",
-                title: "Administrators",
-                Icon: ShieldCheck,
-                description: "Manage the platform and oversee all operations and user activities.",
-                features: ["System management", "User oversight", "Analytics dashboard", "Platform control"],
-                accent: "text-red-600 dark:text-red-400",
-                gradient: "from-red-500 to-red-600",
-                ring: "hover:border-red-300 dark:hover:border-red-700",
-                glow: "bg-red-500/20",
-                spotlight: "rgba(239, 68, 68, 0.16)",
-                href: "/auth",
-                cta: "Admin Login",
-              },
-            ] as const
-          ).map((card, index) => (
-            <motion.div
-              key={card.type}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 * index }}
-              whileHover={{ y: -6 }}
-              onMouseMove={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                e.currentTarget.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-                e.currentTarget.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-                e.currentTarget.style.setProperty("--spotlight-color", card.spotlight);
-              }}
-              className={`rb-spotlight group relative overflow-hidden rounded-3xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-8 shadow-lg hover:shadow-2xl transition-all duration-300 ${card.ring}`}
-            >
-              {/* Ambient glow blob */}
-              <div
-                className={`absolute -top-16 -right-16 w-40 h-40 rounded-full ${card.glow} blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-                aria-hidden="true"
-              />
-
-              <div className="relative flex items-start justify-between mb-6">
-                <div className={`w-14 h-14 bg-gradient-to-br ${card.gradient} rounded-2xl flex items-center justify-center shadow-md group-hover:scale-105 group-hover:-rotate-3 transition-transform duration-300`}>
-                  <card.Icon className="w-7 h-7 text-white" strokeWidth={1.75} aria-hidden="true" />
-                </div>
-                <span className={`font-mono text-xs font-semibold tracking-widest ${card.accent} opacity-60`}>
-                  {card.index}
-                </span>
-              </div>
-
-              <h3 className="relative text-xl font-bold text-gray-900 dark:text-white mb-2">
-                {card.title}
-              </h3>
-              <p className="relative text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6">
-                {card.description}
-              </p>
-
-              <ul className="relative space-y-2.5 mb-8">
-                {card.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-center gap-2.5 text-sm text-gray-600 dark:text-gray-300">
-                    <span className={`flex-shrink-0 w-4 h-4 rounded-full bg-gradient-to-br ${card.gradient} flex items-center justify-center`}>
-                      <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} aria-hidden="true" />
-                    </span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href={card.href}
-                className={`relative flex items-center justify-center gap-2 w-full bg-gradient-to-r ${card.gradient} text-white py-3 rounded-xl font-semibold text-sm hover:shadow-lg transition-all duration-300`}
-              >
-                {card.cta}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" strokeWidth={2} aria-hidden="true" />
-              </Link>
-            </motion.div>
+      {/* Trust rail */}
+      <section className="border-y border-outline-variant/60 bg-surface-container-lowest dark:bg-surface-dark">
+        <Container className="flex flex-wrap items-center justify-between gap-8 py-8 md:gap-4">
+          {TRUST_ITEMS.map(({ Icon, label }) => (
+            <div key={label} className="flex items-center gap-3">
+              <Icon className="h-5 w-5 text-soft-aqua" aria-hidden="true" />
+              <span className="text-sm font-medium text-on-surface-variant">{label}</span>
+            </div>
           ))}
-        </motion.div>
+        </Container>
+      </section>
 
-        {/* Features Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mb-24"
-        >
-          <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
-            Everything you need
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {(
-              [
-                {
-                  Icon: Lock,
-                  title: "Privacy First",
-                  description: "All consultations are completely anonymous and encrypted for maximum privacy.",
-                  tint: "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400",
-                },
-                {
-                  Icon: Stethoscope,
-                  title: "Licensed Professionals",
-                  description: "Only verified, licensed pharmacists can provide medical consultations.",
-                  tint: "bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400",
-                },
-                {
-                  Icon: Smartphone,
-                  title: "Easy Access",
-                  description: "Simple, intuitive interface accessible from any device, anywhere.",
-                  tint: "bg-green-50 dark:bg-green-950/50 text-green-600 dark:text-green-400",
-                },
-                {
-                  Icon: Truck,
-                  title: "Delivery Tracking",
-                  description: "Real-time GPS tracking for prescription deliveries straight to your location.",
-                  tint: "bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400",
-                },
-                {
-                  Icon: MessageCircle,
-                  title: "Live Chat",
-                  description: "Real-time messaging with pharmacists for immediate medical advice.",
-                  tint: "bg-pink-50 dark:bg-pink-950/50 text-pink-600 dark:text-pink-400",
-                },
-                {
-                  Icon: BarChart3,
-                  title: "Health Analytics",
-                  description: "Track your consultations, medications, and health trends over time.",
-                  tint: "bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400",
-                },
-              ] as const
-            ).map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
-              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${feature.tint}`}>
-                  <feature.Icon className="w-6 h-6" strokeWidth={1.75} aria-hidden="true" />
+      {/* What SafeMeds is built on — real, verifiable facts, not vanity metrics.
+          Per the design brief: "Do NOT fabricate numbers... If no real number
+          exists, display meaningful labels without fake statistics." */}
+      <Section>
+        <Container>
+          <div className="grid gap-6 sm:grid-cols-3">
+            <Card radius="xl" className="text-center">
+              <div className="text-headline-lg text-medical-teal dark:text-primary-fixed-dim">
+                <CountUp value={DROP_POINTS.length} />
+              </div>
+              <p className="mt-2 text-sm font-medium text-on-surface-variant">Real campus drop points</p>
+            </Card>
+            <Card radius="xl" className="text-center">
+              <div className="text-headline-lg text-medical-teal dark:text-primary-fixed-dim">
+                <CountUp value={7} />
+                <span className="text-2xl">d</span>
+              </div>
+              <p className="mt-2 text-sm font-medium text-on-surface-variant">Anonymous session validity</p>
+            </Card>
+            <Card radius="xl" className="text-center">
+              <div className="text-headline-lg text-medical-teal dark:text-primary-fixed-dim">0</div>
+              <p className="mt-2 text-sm font-medium text-on-surface-variant">Consultations linked to your identity, ever</p>
+            </Card>
+          </div>
+        </Container>
+      </Section>
+
+      {/* About */}
+      <Section className="bg-surface-container-low dark:bg-surface-container">
+        <Container>
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6 }}
+              className="relative"
+            >
+              <div className="absolute -inset-6 -z-10 rounded-[2rem] bg-gradient-to-br from-primary-fixed/40 to-transparent blur-2xl dark:from-primary-container/30" />
+              <Card radius="xl" className="p-10">
+                <ShieldCheck className="h-10 w-10 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+                <p className="mt-6 text-headline-md text-on-surface">Built so nothing about your consultation can be traced back to you.</p>
+                <div className="mt-8 flex items-center gap-3 rounded-lg border border-outline-variant/60 bg-surface-container-lowest px-4 py-3 dark:bg-surface-container-high">
+                  <Sparkles className="h-4 w-4 text-soft-aqua" aria-hidden="true" />
+                  <span className="text-sm text-on-surface-variant">Session-based, not identity-based</span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                  {feature.description}
-                </p>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-medical-teal dark:text-primary-fixed-dim">
+                About SafeMeds
+              </span>
+              <h2 className="mt-3 text-headline-lg text-on-surface">
+                Healthcare that doesn&apos;t require you to explain yourself twice.
+              </h2>
+              <p className="mt-4 leading-relaxed text-on-surface-variant">
+                SafeMeds connects students to licensed pharmacists for private,
+                text-based consultations — with no queue, no waiting room, and
+                no requirement to share who you are.
+              </p>
+              <ul className="mt-6 space-y-3">
+                {["Anonymous consultations", "Licensed pharmacist support", "Private messaging", "Prescription management", "Campus delivery tracking"].map(
+                  (item) => (
+                    <li key={item} className="flex items-center gap-3 text-on-surface">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container">
+                        <Check className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
+                      </span>
+                      {item}
+                    </li>
+                  )
+                )}
+              </ul>
+              <ButtonLink href="/about" variant="ghost" className="mt-8 px-0">
+                Read our story
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </ButtonLink>
+            </motion.div>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Services */}
+      <Section>
+        <Container>
+          <SectionHeading
+            eyebrow="Platform"
+            title="Everything you need to manage your health"
+            description="Every feature below connects to the real, working SafeMeds platform — not a preview."
+          />
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {SERVICES.map(({ Icon, title, description, href, cta, featured }) => (
+              <Card
+                key={title}
+                interactive
+                radius="xl"
+                className={featured ? "lg:col-span-2 lg:row-span-1 bg-primary-fixed/40 dark:bg-primary-container/20" : ""}
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-medical-teal text-white">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </div>
+                <h3 className="mt-5 text-lg font-semibold text-on-surface">{title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">{description}</p>
+                <Link
+                  href={href}
+                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-medical-teal transition-transform hover:translate-x-0.5 dark:text-primary-fixed-dim"
+                >
+                  {cta}
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </Link>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      {/* Anonymous consultation flow */}
+      <Section id="how-it-works" className="bg-dark-navy dark:bg-surface-dim/5">
+        <Container>
+          <SectionHeading
+            eyebrow="The anonymous flow"
+            title={<span className="text-white">You don&apos;t need to reveal who you are to ask for help.</span>}
+            description={<span className="text-cool-gray">Five steps, no account, start to finish inside one private chat.</span>}
+          />
+
+          <div className="mt-14 grid gap-6 md:grid-cols-5">
+            {CONSULT_STEPS.map((step, index) => (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                className="relative"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-soft-aqua text-sm font-bold text-dark-navy">
+                  {index + 1}
+                </div>
+                <h3 className="mt-4 font-semibold text-white">{step.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-cool-gray">{step.description}</p>
               </motion.div>
             ))}
           </div>
-        </motion.div>
 
-        {/* Testimonials */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mb-24"
-        >
-          <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
-            Trusted by students
-          </h2>
+          {showConsultCta && (
+            <div className="mt-12 text-center">
+              <ButtonLink href="/consult" variant="inverse" size="lg">
+                Start Anonymous Consultation
+              </ButtonLink>
+            </div>
+          )}
+        </Container>
+      </Section>
 
-          {(() => {
-            const testimonials = [
-              {
-                quote: "SafeMeds helped me get a prescription refill without leaving my dorm. The pharmacist was professional and the delivery was fast.",
-                author: "Sarah K.",
-                role: "Student, KNUST",
-              },
-              {
-                quote: "I was nervous about asking for help, but the anonymous consultation made it easy. Highly recommend for anyone on campus.",
-                author: "Michael O.",
-                role: "Student, University of Ghana",
-              },
-              {
-                quote: "As a pharmacist, SafeMeds lets me reach students who might otherwise avoid seeking care. The platform is intuitive and secure.",
-                author: "Dr. Amma B.",
-                role: "Licensed Pharmacist",
-              },
-              {
-                quote: "Ordering a refill between classes used to mean skipping a lecture. Now I do it from the library and it shows up at my hall.",
-                author: "Kwame A.",
-                role: "Student, Legon",
-              },
-              {
-                quote: "The chat felt like texting a friend who happens to be a pharmacist. No judgment, just clear answers.",
-                author: "Priya N.",
-                role: "Student, Ashesi University",
-              },
-              {
-                quote: "License verification took minutes and the dashboard makes triaging consultations painless during a full shift.",
-                author: "Dr. Kojo M.",
-                role: "Licensed Pharmacist",
-              },
-              {
-                quote: "Delivery tracking meant I wasn't stuck guessing when my order would show up. It arrived exactly on time.",
-                author: "Ama D.",
-                role: "Student, KNUST",
-              },
-              {
-                quote: "As someone new to the city, not knowing a local pharmacy wasn't a barrier. SafeMeds connected me in minutes.",
-                author: "Daniel O.",
-                role: "Student, University of Ghana",
-              },
-            ];
-
-            // Base pace scales with list length so the loop always reads at a
-            // similar per-card speed, then sped up 1.9x per the requested pace.
-            const MARQUEE_SPEED_MULTIPLIER = 1.9;
-            const baseSecondsPerCard = 5;
-            const durationSeconds = (testimonials.length * baseSecondsPerCard) / MARQUEE_SPEED_MULTIPLIER;
-
-            return (
-              <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
-                <div
-                  className="marquee-track flex w-max gap-6 px-4 sm:px-6 lg:px-8"
-                  style={{ "--marquee-duration": `${durationSeconds}s` } as React.CSSProperties}
-                >
-                  {[...testimonials, ...testimonials].map((testimonial, index) => (
-                    <div
-                      key={index}
-                      className="w-80 flex-shrink-0 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
-                    >
-                      <div className="flex gap-0.5 text-blue-500 mb-3" aria-label="5 out of 5 stars">
-                        {Array.from({ length: 5 }).map((_, starIndex) => (
-                          <Star key={starIndex} className="w-4 h-4 fill-current" aria-hidden="true" />
-                        ))}
-                      </div>
-                      <p className="text-gray-700 dark:text-gray-300 mb-4 italic leading-relaxed">
-                        &ldquo;{testimonial.quote}&rdquo;
-                      </p>
-                      <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
-                        <p className="font-semibold text-gray-900 dark:text-white text-sm">
-                          {testimonial.author}
-                        </p>
-                        <p className="text-gray-500 dark:text-gray-400 text-xs">
-                          {testimonial.role}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })()}
-        </motion.div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-12 text-center"
-        >
-          {/* Animated fibre-tunnel backdrop, adapted from React Bits —
-              skipped for prefers-reduced-motion users. */}
-          <LightTunnelBackground
-            wrapperClassName="absolute inset-0 pointer-events-none opacity-70"
-            cableColor="#c4b5fd"
-            pulseColor="#ffffff"
-            tunnelColor="#5227FF"
-            tunnelOpacity={0}
-            speed={0.15}
-            flowDirection="outward"
-            pulseSpeed={1.5}
-            cableCount={16}
-            mouseInteraction
-            mouseStrength={0.08}
+      {/* Delivery */}
+      <Section>
+        <Container>
+          <SectionHeading
+            eyebrow="Delivery"
+            title="From pharmacy to your campus drop point"
+            description="Real delivery states from the SafeMeds backend — tracking appears automatically once your order ships."
           />
 
-          <ClickSpark sparkColor="#ffffff" sparkCount={10} sparkRadius={20} duration={500}>
-            <div className="relative py-4">
-              <h2 className="text-3xl font-bold text-white mb-4">
-                Ready to Get Started?
-              </h2>
-              <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-                Join thousands of students who trust SafeMeds for their healthcare
-                needs. Get professional medical advice in a safe, anonymous
-                environment.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/signup"
-                  className="px-8 py-4 bg-white text-blue-700 rounded-xl font-semibold text-lg hover:bg-blue-50 transition-colors"
-                >
-                  Create Your Account
-                </Link>
-                <Link
-                  href="/auth"
-                  className="px-8 py-4 bg-blue-500 text-white rounded-xl font-semibold text-lg hover:bg-blue-400 transition-colors"
-                >
-                  Sign In
-                </Link>
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-2 gap-y-6">
+            {DELIVERY_STEPS.map((step, index) => (
+              <div key={step} className="flex items-center gap-2">
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-high text-sm font-semibold text-on-surface-variant dark:bg-surface-container-highest">
+                    {index + 1}
+                  </div>
+                  <span className="w-24 text-xs font-medium text-on-surface-variant">{step}</span>
+                </div>
+                {index < DELIVERY_STEPS.length - 1 && (
+                  <div className="h-px w-6 shrink-0 bg-outline-variant sm:w-10" aria-hidden="true" />
+                )}
               </div>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <ButtonLink href="/track" variant="secondary">
+              Track a delivery
+            </ButtonLink>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Built on — replaces fabricated testimonials. No invented quotes, no
+          invented user counts; see the file-level comment for why. */}
+      <Section className="bg-surface-container-low dark:bg-surface-container">
+        <Container>
+          <SectionHeading eyebrow="Built with intent" title="Built on privacy, not on promises" />
+          <div className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2">
+            <Card radius="xl">
+              <Lock className="h-6 w-6 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+              <h3 className="mt-4 font-semibold text-on-surface">Session-based identity</h3>
+              <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+                Anonymous consultations are tracked by an opaque session code —
+                never a name, email, or account.
+              </p>
+            </Card>
+            <Card radius="xl">
+              <ShieldCheck className="h-6 w-6 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+              <h3 className="mt-4 font-semibold text-on-surface">License-verified pharmacists</h3>
+              <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+                Every pharmacist account goes through a license verification
+                review before it can respond to consultations.
+              </p>
+            </Card>
+            <Card radius="xl">
+              <Clock3 className="h-6 w-6 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+              <h3 className="mt-4 font-semibold text-on-surface">Sessions expire on their own</h3>
+              <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+                Anonymous sessions self-expire 7 days after creation — there&apos;s
+                nothing left to look back at afterward.
+              </p>
+            </Card>
+            <Card radius="xl">
+              <MapPin className="h-6 w-6 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+              <h3 className="mt-4 font-semibold text-on-surface">Real campus infrastructure</h3>
+              <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+                Delivery routes to actual campus drop points — not a generic
+                shipping address.
+              </p>
+            </Card>
+          </div>
+        </Container>
+      </Section>
+
+      {/* FAQ */}
+      <Section>
+        <Container className="max-w-3xl">
+          <SectionHeading eyebrow="Questions" title="Frequently asked questions" />
+          <div className="mt-10">
+            <Accordion items={FAQ_ITEMS} />
+          </div>
+        </Container>
+      </Section>
+
+      {/* Final CTA */}
+      <Section>
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6 }}
+            className="rounded-xl bg-medical-teal px-8 py-16 text-center dark:bg-primary-container"
+          >
+            <h2 className="text-headline-lg text-white">Need help with your health?</h2>
+            <p className="mx-auto mt-4 max-w-xl text-white/85">
+              Start a private consultation with a licensed pharmacist — no
+              account, no waiting room, no judgment.
+            </p>
+            <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+              <ButtonLink href="/consult" variant="inverse" size="lg">
+                Start Anonymous Consultation
+              </ButtonLink>
+              <ButtonLink
+                href="/auth"
+                size="lg"
+                className="border border-white/40 bg-transparent text-white hover:bg-white/10"
+              >
+                Sign In
+              </ButtonLink>
             </div>
-          </ClickSpark>
-        </motion.div>
-      </div>
+          </motion.div>
+        </Container>
+      </Section>
 
       <Footer />
     </div>

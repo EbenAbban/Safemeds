@@ -25,7 +25,7 @@ export default function VerifyPage() {
     <section className="py-10 px-4 max-w-md mx-auto">
       <h1 className="text-xl font-bold mb-6">Delivery Verification</h1>
       {success ? (
-        <p className="text-green-600">OTP Verified ✅</p>
+        <p className="text-secondary">OTP Verified ✅</p>
       ) : (
         <OtpField onSubmit={handleOtpSubmit} />
       )}

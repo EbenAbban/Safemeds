@@ -48,10 +48,10 @@ const WelcomeMessage = () => {
         className="mb-8"
       >
         <div className="text-6xl mb-4">👨‍⚕️</div>
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+        <h2 className="text-2xl font-bold text-on-surface mb-2">
           Welcome to SafeMeds Chat
         </h2>
-        <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto">
+        <p className="text-on-surface-variant max-w-md mx-auto">
           You're now connected to a licensed pharmacist. Feel free to ask any
           questions about medications, side effects, or health concerns.
         </p>
@@ -71,13 +71,13 @@ const WelcomeMessage = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6 + index * 0.1, duration: 0.5 }}
             whileHover={{ scale: 1.05 }}
-            className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 shadow-sm"
+            className="bg-surface-container-lowest dark:bg-surface-container rounded-lg p-4 border border-outline-variant/60 shadow-sm"
           >
             <div className="text-2xl mb-2">{feature.icon}</div>
-            <h3 className="font-semibold text-gray-800 dark:text-gray-100 text-sm mb-1">
+            <h3 className="font-semibold text-on-surface dark:text-on-surface text-sm mb-1">
               {feature.title}
             </h3>
-            <p className="text-xs text-gray-600 dark:text-gray-400">{feature.description}</p>
+            <p className="text-xs text-on-surface-variant">{feature.description}</p>
           </motion.div>
         ))}
       </motion.div>
@@ -87,9 +87,9 @@ const WelcomeMessage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8, duration: 0.6 }}
-        className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-gray-800 dark:to-gray-800 rounded-xl p-6 border border-blue-200 dark:border-gray-700"
+        className="bg-gradient-to-r from-primary-fixed/30 to-green-50 dark:from-gray-800 dark:to-surface-container-high rounded-xl p-6 border border-primary-fixed dark:border-outline-variant/40"
       >
-        <h3 className="font-semibold text-gray-800 dark:text-white mb-4">
+        <h3 className="font-semibold text-on-surface mb-4">
           💡 Common Questions You Can Ask
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -99,7 +99,7 @@ const WelcomeMessage = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1 + index * 0.1, duration: 0.5 }}
-              className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+              className="bg-surface-container-lowest dark:bg-surface-dark rounded-lg p-3 border border-outline-variant/60 text-sm text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer"
             >
               {question}
             </motion.div>
@@ -112,11 +112,11 @@ const WelcomeMessage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.6 }}
-        className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4"
+        className="mt-6 bg-green-50 border border-secondary/30 rounded-lg p-4"
       >
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-green-600">🔒</span>
-          <span className="font-semibold text-green-800">
+          <span className="text-secondary">🔒</span>
+          <span className="font-semibold text-on-secondary-container">
             Privacy Protected
           </span>
         </div>

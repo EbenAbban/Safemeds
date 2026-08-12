@@ -31,9 +31,9 @@
     "lucide-react": "^0.534.0",
     "next": "15.5.9",
     "next-auth": "^5.0.0-beta.29",
-    "ogl": "^1.0.11",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "tailwind-merge": "^3.6.0",
     "three": "^0.185.1",
     "web-push": "^3.6.7",
     "zod": "^4.0.11"

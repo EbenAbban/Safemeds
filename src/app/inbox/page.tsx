@@ -1,92 +1,379 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Info, Paperclip, Pill, Search, Send, Truck } from "lucide-react";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
-import Navigation from "@/components/Common/Navigation";
-import { useAuth } from "@/hooks/useAuth";
-import { subscribeChatRooms, type ChatRoomSummary } from "@/lib/chatService";
+import PharmacyShell from "@/components/pharmacy/PharmacyShell";
+import { Badge, Button, cn } from "@/components/ui";
 
-// Pharmacist inbox: live list of student chat rooms, newest first. Click to open.
-export default function InboxPage() {
-  const router = useRouter();
-  const { user } = useAuth();
-  const [rooms, setRooms] = useState<ChatRoomSummary[]>([]);
-  const [loading, setLoading] = useState(true);
+/**
+ * Pharmacist consultation workspace — SafeMeds Vital design system.
+ *
+ * Built on the Prisma/Postgres consultation + message system (the one push
+ * notifications already depend on), not the pre-existing Firestore-based
+ * /inbox + /chat/[id] flow. That was a deliberate, explicit choice: the
+ * design's context panel needs real consultation status and prescription
+ * linkage that Firestore rooms don't carry, and this endpoint already
+ * received a fix for a severe auth bypass (see the route file) that made it
+ * safe to build on. Trade-off, stated plainly: this is a fresh queue,
+ * disconnected from whatever conversations exist in the old Firestore rooms
+ * today. It does not port them over.
+ *
+ * "Start Video Consult" from the original design is intentionally omitted —
+ * wiring real video into this Postgres-backed thread is a separate, real
+ * integration effort, not something to fake with a button that goes nowhere
+ * or silently reconnects to the other chat system.
+ */
 
-  useEffect(() => {
-    const unsubscribe = subscribeChatRooms((r) => {
-      setRooms(r);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+interface ConsultationSummary {
+  id: string;
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+  type: string;
+  anonymousId: string | null;
+  isAnonymous: boolean;
+  createdAt: string;
+  user: { firstName: string; lastName: string } | null;
+  messages: { content: string; createdAt: string; isFromPharmacist: boolean }[];
+  _count: { messages: number; prescriptions: number };
+}
+
+interface ChatMessage {
+  id: string;
+  content: string;
+  createdAt: string;
+  isFromPharmacist: boolean;
+  userId: string | null;
+}
+
+interface PrescriptionSummary {
+  id: string;
+  status: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  medication: { name: string; strength: string };
+}
+
+const STATUS_LABEL: Record<ConsultationSummary["status"], { label: string; tone: "success" | "neutral" | "danger" }> = {
+  PENDING: { label: "Waiting", tone: "neutral" },
+  IN_PROGRESS: { label: "In Progress", tone: "success" },
+  COMPLETED: { label: "Resolved", tone: "neutral" },
+  CANCELLED: { label: "Cancelled", tone: "danger" },
+};
+
+function patientLabel(c: Pick<ConsultationSummary, "anonymousId" | "isAnonymous" | "user">): string {
+  if (c.isAnonymous || !c.user) {
+    const raw = c.anonymousId ?? "";
+    const tail = raw.replace(/[^a-zA-Z0-9]/g, "").slice(-6).toUpperCase() || "0000";
+    return `ANON-${tail}`;
+  }
+  return `${c.user.firstName} ${c.user.lastName.charAt(0)}.`;
+}
+
+function timeAgo(iso: string): string {
+  const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (seconds < 60) return "Now";
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
+  return `${Math.floor(seconds / 86400)}d`;
+}
+
+const POLL_INTERVAL_MS = 4000;
+
+function WorkspaceContent() {
+  const [consultations, setConsultations] = useState<ConsultationSummary[]>([]);
+  const [loadingList, setLoadingList] = useState(true);
+  const [search, setSearch] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [input, setInput] = useState("");
+  const [sending, setSending] = useState(false);
+  const [prescriptions, setPrescriptions] = useState<PrescriptionSummary[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const loadConsultations = useCallback(async () => {
+    try {
+      const res = await fetch("/api/consultations?limit=50");
+      if (res.ok) {
+        const data = await res.json();
+        setConsultations(data.consultations ?? []);
+      }
+    } finally {
+      setLoadingList(false);
+    }
   }, []);
 
-  const timeAgo = (ts: number) => {
-    if (!ts) return "";
-    const s = Math.floor((Date.now() - ts) / 1000);
-    if (s < 60) return `${s}s ago`;
-    if (s < 3600) return `${Math.floor(s / 60)}m ago`;
-    if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
-    return `${Math.floor(s / 86400)}d ago`;
+  useEffect(() => {
+    loadConsultations();
+  }, [loadConsultations]);
+
+  const loadThread = useCallback(async (consultationId: string) => {
+    const [chatRes, prescriptionRes] = await Promise.all([
+      fetch(`/api/chat/consultation/${consultationId}`),
+      fetch(`/api/prescriptions?consultationId=${consultationId}`),
+    ]);
+    if (chatRes.ok) {
+      const data = await chatRes.json();
+      setMessages(data.messages ?? []);
+    }
+    if (prescriptionRes.ok) {
+      const data = await prescriptionRes.json();
+      setPrescriptions(data.prescriptions ?? []);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    loadThread(selectedId);
+    const interval = setInterval(() => loadThread(selectedId), POLL_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [selectedId, loadThread]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const sendMessage = async () => {
+    if (!input.trim() || !selectedId || sending) return;
+    setSending(true);
+    const content = input;
+    setInput("");
+    try {
+      const res = await fetch(`/api/chat/consultation/${selectedId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      });
+      if (res.ok) {
+        await loadThread(selectedId);
+        loadConsultations();
+      } else {
+        setInput(content);
+      }
+    } finally {
+      setSending(false);
+    }
   };
 
-  return (
-    <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-900 dark:to-gray-800">
-        <Navigation
-          title="Patient Chats"
-          userRole={(user?.role?.toLowerCase() as "pharmacy" | "admin") || "pharmacy"}
-        />
-        <main className="max-w-3xl mx-auto px-4 py-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-            Active Consultation Chats
-          </h1>
+  const filtered = consultations.filter((c) => {
+    if (!search.trim()) return true;
+    const label = patientLabel(c).toLowerCase();
+    return label.includes(search.toLowerCase()) || c.messages[0]?.content.toLowerCase().includes(search.toLowerCase());
+  });
 
-          {loading ? (
-            <p className="text-gray-600 dark:text-gray-400">Loading chats…</p>
-          ) : rooms.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-8 text-center border border-gray-200 dark:border-gray-700">
-              <div className="text-4xl mb-3"></div>
-              <p className="text-gray-600 dark:text-gray-400">
-                No patient chats yet. They appear here as students start consultations.
-              </p>
+  const selected = consultations.find((c) => c.id === selectedId) ?? null;
+
+  return (
+    <div className="flex h-[calc(100vh-64px)] gap-6 p-4 sm:p-6">
+      {/* Queue */}
+      <aside className="hidden w-full max-w-xs flex-col overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-soft lg:flex dark:bg-surface-container">
+        <div className="border-b border-outline-variant/60 bg-surface-bright p-6 dark:bg-surface-dark">
+          <h2 className="text-lg font-bold text-medical-teal dark:text-primary-fixed-dim">Active Consultations</h2>
+          <div className="relative mt-4">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-outline" aria-hidden="true" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search…"
+              className="w-full rounded-lg border-none bg-surface-container-low py-2 pl-10 pr-4 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-soft-aqua"
+            />
+          </div>
+        </div>
+
+        <div className="flex-grow space-y-3 overflow-y-auto p-4">
+          {loadingList && <p className="p-4 text-center text-sm text-on-surface-variant">Loading queue…</p>}
+          {!loadingList && filtered.length === 0 && (
+            <p className="p-4 text-center text-sm text-on-surface-variant">No consultations match.</p>
+          )}
+          {filtered.map((c) => {
+            const status = STATUS_LABEL[c.status];
+            const isActive = c.id === selectedId;
+            return (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setSelectedId(c.id)}
+                className={cn(
+                  "w-full rounded-xl border p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card",
+                  isActive
+                    ? "border-transparent bg-surface-container-low"
+                    : "border-outline-variant/60 bg-surface-container-lowest dark:bg-surface-container"
+                )}
+              >
+                <div className="mb-2 flex items-start justify-between">
+                  <span className="text-sm font-bold text-medical-teal dark:text-primary-fixed-dim">{patientLabel(c)}</span>
+                  <span className="text-xs text-outline">{c.messages[0] ? timeAgo(c.messages[0].createdAt) : timeAgo(c.createdAt)}</span>
+                </div>
+                <p className="mb-3 truncate text-sm text-on-surface-variant">
+                  {c.messages[0]?.content ?? "No messages yet"}
+                </p>
+                <Badge tone={status.tone}>{status.label}</Badge>
+              </button>
+            );
+          })}
+        </div>
+      </aside>
+
+      {/* Thread */}
+      <section className="flex flex-1 flex-col overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-soft dark:bg-surface-container">
+        {!selected ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center text-on-surface-variant">
+            <p className="font-semibold text-on-surface">Select a consultation</p>
+            <p className="text-sm">Choose a conversation from the queue to view its messages.</p>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between border-b border-outline-variant/60 bg-surface-bright p-6 dark:bg-surface-dark">
+              <div>
+                <h2 className="font-bold text-on-surface">{patientLabel(selected)}</h2>
+                <p className="text-sm text-outline">Consultation · {STATUS_LABEL[selected.status].label}</p>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {rooms.map((room) => (
-                <motion.button
-                  key={room.chatId}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  whileHover={{ scale: 1.01 }}
-                  onClick={() => router.push(`/chat/${room.chatId}`)}
-                  className="w-full text-left bg-white dark:bg-gray-800 rounded-xl shadow p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all flex items-center justify-between gap-4"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-green-500 flex items-center justify-center text-white font-medium shrink-0">
-                      
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-semibold text-gray-900 dark:text-white truncate">
-                        Session {room.chatId}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                        {room.lastSender === "pharmacist" ? "You: " : ""}
-                        {room.lastMessage || "No messages yet"}
-                      </p>
-                    </div>
+
+            <div className="flex-grow space-y-6 overflow-y-auto bg-surface-bright/50 p-6 dark:bg-surface-dark/40">
+              <div className="flex justify-center">
+                <span className="rounded-full bg-surface-container px-3 py-1 text-xs text-outline">
+                  Consultation started {new Date(selected.createdAt).toLocaleString()}
+                </span>
+              </div>
+
+              {messages.length === 0 && (
+                <p className="text-center text-sm text-on-surface-variant">No messages yet — say hello.</p>
+              )}
+
+              {messages.map((msg) => (
+                <div key={msg.id} className={cn("flex", msg.isFromPharmacist ? "justify-start" : "justify-end")}>
+                  <div
+                    className={cn(
+                      "max-w-[75%] rounded-2xl px-5 py-3 text-sm shadow-sm",
+                      msg.isFromPharmacist
+                        ? "rounded-tl-sm bg-medical-teal text-white"
+                        : "rounded-tr-sm bg-surface-container-high text-on-surface"
+                    )}
+                  >
+                    <p>{msg.content}</p>
+                    <span className={cn("mt-1 block text-right text-[10px]", msg.isFromPharmacist ? "text-primary-fixed-dim" : "text-outline")}>
+                      {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </span>
                   </div>
-                  <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">
-                    {timeAgo(room.updatedAt)}
-                  </span>
-                </motion.button>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <div className="border-t border-outline-variant/60 p-4">
+              <div className="flex items-center gap-3 rounded-xl bg-surface-container-low p-2 pr-3 focus-within:ring-2 focus-within:ring-soft-aqua">
+                <button type="button" className="rounded-full p-2 text-outline hover:bg-surface-container-high hover:text-medical-teal" aria-label="Attach file" disabled>
+                  <Paperclip className="h-4 w-4" aria-hidden="true" />
+                </button>
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMessage();
+                    }
+                  }}
+                  placeholder="Type your message…"
+                  className="flex-grow border-none bg-transparent py-2 text-sm text-on-surface focus:outline-none focus:ring-0"
+                />
+                <button
+                  type="button"
+                  onClick={sendMessage}
+                  disabled={!input.trim() || sending}
+                  className="rounded-lg bg-medical-teal p-2 text-white transition-colors hover:bg-primary disabled:opacity-50"
+                  aria-label="Send message"
+                >
+                  <Send className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </section>
+
+      {/* Context panel */}
+      {selected && (
+        <aside className="hidden w-full max-w-xs flex-col gap-6 overflow-y-auto xl:flex">
+          <div className="rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-5 shadow-soft dark:bg-surface-container">
+            <h3 className="mb-4 font-bold text-on-surface">Consultation Details</h3>
+            <dl className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-outline">Patient ID</dt>
+                <dd className="font-semibold text-on-surface">{patientLabel(selected)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-outline">Started</dt>
+                <dd className="font-semibold text-on-surface">{new Date(selected.createdAt).toLocaleDateString()}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-outline">Status</dt>
+                <dd>
+                  <Badge tone={STATUS_LABEL[selected.status].tone}>{STATUS_LABEL[selected.status].label}</Badge>
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div className="rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-5 shadow-soft dark:bg-surface-container">
+            <h3 className="mb-4 font-bold text-on-surface">Clinical Actions</h3>
+            <div className="flex flex-col gap-3">
+              <Button variant="secondary" fullWidth onClick={() => window.open("/medications", "_blank")}>
+                <Pill className="h-4 w-4" aria-hidden="true" />
+                View Medications
+              </Button>
+              <Button variant="ghost" fullWidth onClick={() => window.open("/orders", "_blank")}>
+                <Truck className="h-4 w-4" aria-hidden="true" />
+                View Orders &amp; Delivery
+              </Button>
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-soft dark:bg-surface-container">
+            <div className="flex items-center gap-2 border-b border-outline-variant/60 bg-medical-teal/5 p-4">
+              <Pill className="h-4 w-4 text-medical-teal dark:text-primary-fixed-dim" aria-hidden="true" />
+              <h3 className="font-bold text-on-surface">Prescriptions</h3>
+            </div>
+            <div className="space-y-4 p-5">
+              {prescriptions.length === 0 && (
+                <p className="flex items-start gap-2 text-sm text-on-surface-variant">
+                  <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                  No prescription issued for this consultation yet.
+                </p>
+              )}
+              {prescriptions.map((p) => (
+                <div key={p.id}>
+                  <h4 className="text-base font-semibold text-on-surface">{p.medication.name}</h4>
+                  <p className="text-sm text-outline">{p.medication.strength}</p>
+                  <div className="mt-2 rounded-lg border border-outline-variant/60 bg-surface-container-low p-3">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">Dosage</p>
+                    <p className="text-sm text-on-surface">
+                      {p.dosage}, {p.frequency}, for {p.duration}.
+                    </p>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-sm text-outline">Status</span>
+                    <Badge tone={p.status === "DISPENSED" ? "success" : "neutral"}>{p.status}</Badge>
+                  </div>
+                </div>
               ))}
             </div>
-          )}
-        </main>
-      </div>
+          </div>
+        </aside>
+      )}
+    </div>
+  );
+}
+
+export default function InboxPage() {
+  return (
+    <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
+      <PharmacyShell active="consultations" pageTitle="Consultations">
+        <WorkspaceContent />
+      </PharmacyShell>
     </ProtectedRoute>
   );
 }

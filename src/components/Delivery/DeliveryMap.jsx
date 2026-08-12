@@ -108,7 +108,7 @@ const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
     : null;
 
   return (
-    <div className="relative h-72 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+    <div className="relative h-72 rounded-lg overflow-hidden border border-outline-variant/60 bg-surface-container-low dark:bg-gray-900">
       {hasFix ? (
         <iframe
           title="Live delivery location"
@@ -119,23 +119,23 @@ const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
           <span className="text-4xl mb-3">🛰️</span>
-          <p className="font-semibold text-gray-800 dark:text-gray-100">
+          <p className="font-semibold text-on-surface dark:text-on-surface">
             Waiting for courier location
           </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-xs">
+          <p className="text-sm text-on-surface-variant mt-1 max-w-xs">
             The map goes live once the courier starts sharing their GPS for this delivery.
           </p>
         </div>
       )}
 
       {/* Live status badge */}
-      <div className="absolute top-3 left-3 z-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-lg flex items-center gap-2">
+      <div className="absolute top-3 left-3 z-10 bg-surface-container-lowest/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-lg flex items-center gap-2">
         <span
           className={`w-2.5 h-2.5 rounded-full ${
-            isLive ? "bg-green-500 animate-pulse" : "bg-gray-400"
+            isLive ? "bg-secondary animate-pulse" : "bg-gray-400"
           }`}
         />
-        <span className="text-xs font-semibold text-gray-800 dark:text-gray-100">
+        <span className="text-xs font-semibold text-on-surface dark:text-on-surface">
           {isLive
             ? "LIVE"
             : hasFix
@@ -146,11 +146,11 @@ const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
 
       {/* ETA badge */}
       {hasFix && etaInfo && (
-        <div className="absolute top-3 right-3 z-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-lg text-right">
-          <div className="text-xs text-gray-500 dark:text-gray-400">
+        <div className="absolute top-3 right-3 z-10 bg-surface-container-lowest/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-lg text-right">
+          <div className="text-xs text-on-surface-variant">
             ETA {etaInfo.approx ? "~" : ""}{etaInfo.arrival}
           </div>
-          <div className="text-sm font-semibold text-green-600 dark:text-green-400">
+          <div className="text-sm font-semibold text-secondary">
             {etaInfo.mins} min · {etaInfo.km} km
           </div>
         </div>
@@ -158,18 +158,18 @@ const DeliveryMap = ({ deliveryId, dropPoint, dropCoords }) => {
 
       {/* Precision + coordinates readout */}
       {hasFix && (
-        <div className="absolute bottom-3 left-3 right-3 z-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg text-xs">
+        <div className="absolute bottom-3 left-3 right-3 z-10 bg-surface-container-lowest/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg text-xs">
           <div className="flex items-center justify-between gap-3">
-            <span className="font-mono text-gray-700 dark:text-gray-300">
+            <span className="font-mono text-on-surface-variant">
               {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
             </span>
-            <span className="text-gray-500 dark:text-gray-400">
+            <span className="text-on-surface-variant">
               {location.accuracy != null
                 ? `±${Math.round(location.accuracy)} m`
                 : "accuracy n/a"}
             </span>
           </div>
-          <div className="text-gray-500 dark:text-gray-400 mt-0.5">
+          <div className="text-on-surface-variant mt-0.5">
             Drop point: {dropPoint || "Campus Library - North Entrance"}
           </div>
         </div>

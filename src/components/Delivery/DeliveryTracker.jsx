@@ -16,7 +16,7 @@ const DeliveryTracker = ({ status, estimatedDelivery }) => {
       title: "Order Confirmed",
       description: "Your order has been received and confirmed",
       icon: "📝",
-      color: "bg-blue-500",
+      color: "bg-soft-aqua",
     },
     {
       id: "processing",
@@ -30,7 +30,7 @@ const DeliveryTracker = ({ status, estimatedDelivery }) => {
       title: "Packaged",
       description: "Medication packaged with discreet labeling",
       icon: "📦",
-      color: "bg-purple-500",
+      color: "bg-tertiary-fixed/400",
     },
     {
       id: "in_transit",
@@ -44,14 +44,14 @@ const DeliveryTracker = ({ status, estimatedDelivery }) => {
       title: "Out for Delivery",
       description: "Package is being delivered to your drop point",
       icon: "🎯",
-      color: "bg-red-500",
+      color: "bg-error-container/600",
     },
     {
       id: "delivered",
       title: "Delivered",
       description: "Package has been delivered to drop point",
       icon: "✅",
-      color: "bg-green-500",
+      color: "bg-secondary",
     },
   ];
 
@@ -86,16 +86,16 @@ const DeliveryTracker = ({ status, estimatedDelivery }) => {
       {/* Progress Bar */}
       <div className="relative">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-on-surface-variant">
             Delivery Progress
           </span>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-on-surface-variant">
             {Math.round(getProgressPercentage())}%
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-surface-container-high rounded-full h-2">
           <div
-            className="bg-gradient-to-r from-blue-500 via-orange-500 to-green-500 h-2 rounded-full transition-all duration-1000 ease-out"
+            className="bg-gradient-to-r from-primary-fixed/300 via-orange-500 to-green-500 h-2 rounded-full transition-all duration-1000 ease-out"
             style={{ width: `${getProgressPercentage()}%` }}
           />
         </div>
@@ -144,7 +144,7 @@ const DeliveryTracker = ({ status, estimatedDelivery }) => {
                     ? stage.color
                     : isCurrent
                     ? `${stage.color} animate-pulse`
-                    : "bg-gray-300"
+                    : "bg-outline-variant"
                 }`}
               >
                 {stage.icon}
@@ -156,10 +156,10 @@ const DeliveryTracker = ({ status, estimatedDelivery }) => {
                   <h3
                     className={`text-sm font-medium ${
                       isCompleted
-                        ? "text-gray-900"
+                        ? "text-on-surface"
                         : isCurrent
                         ? "text-orange-600"
-                        : "text-gray-500"
+                        : "text-on-surface-variant"
                     }`}
                   >
                     {stage.title}
@@ -172,7 +172,7 @@ const DeliveryTracker = ({ status, estimatedDelivery }) => {
                 </div>
                 <p
                   className={`text-sm ${
-                    isCompleted ? "text-gray-600" : "text-gray-400"
+                    isCompleted ? "text-on-surface-variant" : "text-outline"
                   }`}
                 >
                   {stage.description}
@@ -180,7 +180,7 @@ const DeliveryTracker = ({ status, estimatedDelivery }) => {
 
                 {/* Stage Timestamp */}
                 {isCompleted && (
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-outline mt-1">
                     {new Date(
                       Date.now() -
                         (deliveryStages.length - index) * 30 * 60 * 1000
@@ -196,7 +196,7 @@ const DeliveryTracker = ({ status, estimatedDelivery }) => {
               {index < deliveryStages.length - 1 && (
                 <div
                   className={`absolute left-5 w-0.5 h-8 transition-colors duration-300 ${
-                    isCompleted ? "bg-green-500" : "bg-gray-300"
+                    isCompleted ? "bg-secondary" : "bg-outline-variant"
                   }`}
                   style={{ top: "2.5rem" }}
                 />
@@ -208,18 +208,18 @@ const DeliveryTracker = ({ status, estimatedDelivery }) => {
 
       {/* Current Status Highlight */}
       {status && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-primary-fixed/30 border border-primary-fixed rounded-lg p-4">
           <div className="flex items-center space-x-3">
             <div className="text-2xl">
               {deliveryStages.find((stage) => stage.id === status)?.icon ||
                 "📦"}
             </div>
             <div>
-              <p className="font-semibold text-blue-800">
+              <p className="font-semibold text-primary">
                 {deliveryStages.find((stage) => stage.id === status)?.title ||
                   "Processing"}
               </p>
-              <p className="text-sm text-blue-600">
+              <p className="text-sm text-medical-teal">
                 {deliveryStages.find((stage) => stage.id === status)
                   ?.description || "Your order is being processed"}
               </p>

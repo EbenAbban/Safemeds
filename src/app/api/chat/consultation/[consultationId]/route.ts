@@ -1,10 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/lib/prisma-client";
+import type { Session } from "next-auth";
 import { auth } from "@/app/auth";
 import { notifyConsultationReply } from "@/services/push";
 
 // web-push (reached via notifyConsultationReply) needs Node crypto.
 export const runtime = "nodejs";
+
+/**
+ * Builds the ownership/access filter for a consultation lookup.
+ *
+ * CRITICAL: never write `{ userId: session?.user?.id }` or
+ * `{ anonymousId: anonymousId || undefined }` directly into a `where` clause.
+ * Prisma treats an `undefined` field value as "omit this filter", not "match
+ * nothing" — so `{ userId: undefined }` silently becomes `{}`, an
+ * unconditional match. The code this replaced did exactly that inside an OR,
+ * which meant an unauthenticated request with no query params matched
+ * `OR: [{}, {}]` and returned ANY consultation's full private message
+ * history to anyone who could guess or obtain its id — a full auth bypass on
+ * the one thing this product exists to protect. Returns `null` when no
+ * legitimate identity was presented at all, which callers must treat as a
+ * hard deny rather than fall through to an unfiltered lookup.
+ */
+function buildConsultationAccessWhere(
+  session: Session | null,
+  anonymousId: string | null
+): Prisma.ConsultationWhereInput | null {
+  if (session?.user?.role === "PHARMACY") {
+    return { OR: [{ assignedPharmacistId: session.user.id }, { assignedPharmacistId: null }] };
+  }
+  if (session?.user?.id) {
+    return { userId: session.user.id };
+  }
+  if (anonymousId) {
+    return { anonymousId };
+  }
+  return null;
+}
 
 // GET - Fetch consultation chat messages
 export async function GET(
@@ -17,19 +50,14 @@ export async function GET(
     const anonymousId = searchParams.get("anonymousId");
     const session = await auth();
 
-    if (!session?.user && !anonymousId) {
+    const accessWhere = buildConsultationAccessWhere(session, anonymousId);
+    if (!accessWhere) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Find consultation
     const consultation = await prisma.consultation.findFirst({
-      where: {
-        id: consultationId,
-        OR: [
-          { userId: session?.user?.id },
-          { anonymousId: anonymousId || undefined },
-        ],
-      },
+      where: { id: consultationId, ...accessWhere },
       include: {
         user: {
           select: {
@@ -122,7 +150,8 @@ export async function POST(
     const anonymousId = searchParams.get("anonymousId");
     const session = await auth();
 
-    if (!session?.user && !anonymousId) {
+    const accessWhere = buildConsultationAccessWhere(session, anonymousId);
+    if (!accessWhere) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -138,13 +167,7 @@ export async function POST(
 
     // Find consultation
     const consultation = await prisma.consultation.findFirst({
-      where: {
-        id: consultationId,
-        OR: [
-          { userId: session?.user?.id },
-          { anonymousId: anonymousId || undefined },
-        ],
-      },
+      where: { id: consultationId, ...accessWhere },
     });
 
     if (!consultation) {

@@ -202,7 +202,7 @@ export default function AdminPage() {
       title: "System Analytics",
       description: "View comprehensive system analytics and performance metrics.",
       icon: BarChart3,
-      color: "bg-blue-500 hover:bg-blue-600",
+      color: "bg-soft-aqua hover:bg-medical-teal",
       path: "/admin/analytics",
     },
     {
@@ -210,7 +210,7 @@ export default function AdminPage() {
       title: "Security Settings",
       description: "Configure security policies and access controls.",
       icon: Shield,
-      color: "bg-green-500 hover:bg-green-600",
+      color: "bg-secondary hover:opacity-90",
       path: "/admin/security",
     },
     {
@@ -218,7 +218,7 @@ export default function AdminPage() {
       title: "System Settings",
       description: "Configure system-wide settings and preferences.",
       icon: Settings,
-      color: "bg-purple-500 hover:bg-purple-600",
+      color: "bg-tertiary hover:opacity-90",
       path: "/admin/settings",
     },
     {
@@ -234,14 +234,14 @@ export default function AdminPage() {
       title: "Support Center",
       description: "Access support tools and help documentation.",
       icon: HelpCircle,
-      color: "bg-indigo-500 hover:bg-indigo-600",
+      color: "bg-indigo-500 hover:bg-medical-teal",
       path: "/admin/support",
     },
   ];
 
   return (
     <ProtectedRoute allowedRoles={["ADMIN"]}>
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 dark:from-surface-dark dark:to-surface-container-high">
         <Navigation title="Admin Dashboard" userRole="admin" />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -251,16 +251,16 @@ export default function AdminPage() {
             transition={{ delay: 0 }}
             className="mb-8"
           >
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-3xl font-bold text-on-surface mb-2">
               Admin Dashboard
             </h1>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-on-surface-variant">
               Welcome back, {user?.name || "Administrator"}. Manage your SafeMeds platform.
             </p>
           </motion.div>
 
           {/* Tabs */}
-          <div className="flex flex-wrap gap-2 mb-8 border-b border-gray-200 dark:border-gray-700 pb-2">
+          <div className="flex flex-wrap gap-2 mb-8 border-b border-outline-variant/60 pb-2">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
@@ -269,8 +269,8 @@ export default function AdminPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-t-lg text-sm font-medium transition-colors ${
                     activeTab === tab.id
-                      ? "bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 border-b-2 border-red-500"
-                      : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "bg-surface-container-lowest dark:bg-surface-container text-error border-b-2 border-error"
+                      : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -290,84 +290,84 @@ export default function AdminPage() {
               >
                 {/* Quick Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-red-200 dark:border-gray-700">
+                  <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-error/30 dark:border-outline-variant/40">
                     <div className="flex items-center">
                       <div className="p-2 bg-red-100 rounded-lg">
-                        <Users className="h-6 w-6 text-red-600" />
+                        <Users className="h-6 w-6 text-error" />
                       </div>
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Users</p>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.length || "—"}</p>
+                        <p className="text-sm font-medium text-on-surface-variant">Total Users</p>
+                        <p className="text-2xl font-bold text-on-surface">{users.length || "—"}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-blue-200 dark:border-gray-700">
+                  <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-primary-fixed dark:border-outline-variant/40">
                     <div className="flex items-center">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <MessageSquare className="h-6 w-6 text-blue-600" />
+                      <div className="p-2 bg-primary-fixed/50 rounded-lg">
+                        <MessageSquare className="h-6 w-6 text-medical-teal" />
                       </div>
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Contact Messages</p>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white">{messages.length || "—"}</p>
+                        <p className="text-sm font-medium text-on-surface-variant">Contact Messages</p>
+                        <p className="text-2xl font-bold text-on-surface">{messages.length || "—"}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-green-200 dark:border-gray-700">
+                  <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-secondary/30 dark:border-outline-variant/40">
                     <div className="flex items-center">
                       <div className="p-2 bg-green-100 rounded-lg">
-                        <IdCard className="h-6 w-6 text-green-600" />
+                        <IdCard className="h-6 w-6 text-secondary" />
                       </div>
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">License Verifications</p>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white">{verifications.length || "—"}</p>
+                        <p className="text-sm font-medium text-on-surface-variant">License Verifications</p>
+                        <p className="text-2xl font-bold text-on-surface">{verifications.length || "—"}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-purple-200 dark:border-gray-700">
+                  <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-tertiary-fixed dark:border-outline-variant/40">
                     <div className="flex items-center">
                       <div className="p-2 bg-purple-100 rounded-lg">
-                        <Activity className="h-6 w-6 text-purple-600" />
+                        <Activity className="h-6 w-6 text-tertiary" />
                       </div>
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">System Health</p>
-                        <p className="text-2xl font-bold text-green-600">98%</p>
+                        <p className="text-sm font-medium text-on-surface-variant">System Health</p>
+                        <p className="text-2xl font-bold text-secondary">98%</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Admin Info Card */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-8 border border-red-200 dark:border-gray-700">
+                <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-lg p-6 mb-8 border border-error/30 dark:border-outline-variant/40">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+                      <h2 className="text-xl font-semibold text-on-surface mb-2">
                         Admin Information
                       </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">Admin:</span>
+                          <span className="text-on-surface-variant">Admin:</span>
                           <span className="ml-2 font-medium">{user?.name || "N/A"}</span>
                         </div>
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">Email:</span>
+                          <span className="text-on-surface-variant">Email:</span>
                           <span className="ml-2 font-medium">{user?.email || "N/A"}</span>
                         </div>
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">Username:</span>
+                          <span className="text-on-surface-variant">Username:</span>
                           <span className="ml-2 font-medium">{user?.username || "N/A"}</span>
                         </div>
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">Role:</span>
+                          <span className="text-on-surface-variant">Role:</span>
                           <span className="ml-2 font-medium capitalize">{user?.role || "N/A"}</span>
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-2xl mb-2"></div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Admin Account</div>
+                      <div className="text-sm text-on-surface-variant">Admin Account</div>
                     </div>
                   </div>
                 </div>
@@ -383,15 +383,15 @@ export default function AdminPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0 + index * 0.1 }}
                         whileHover={{ scale: 1.02 }}
-                        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-red-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
+                        className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-error/30 dark:border-outline-variant/40 hover:shadow-xl transition-all duration-300"
                       >
                         <div className="flex items-center mb-4">
                           <div className="p-2 bg-red-100 rounded-lg">
-                            <Icon className="h-6 w-6 text-red-600" />
+                            <Icon className="h-6 w-6 text-error" />
                           </div>
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{feature.title}</h3>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">{feature.description}</p>
+                        <h3 className="text-lg font-semibold text-on-surface mb-2">{feature.title}</h3>
+                        <p className="text-on-surface-variant text-sm mb-4">{feature.description}</p>
                         <button
                           onClick={() => router.push(feature.path)}
                           className={`${feature.color} text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full`}
@@ -404,29 +404,29 @@ export default function AdminPage() {
                 </div>
 
                 {/* Recent Activity */}
-                <div className="mt-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-red-200 dark:border-gray-700">
-                  <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Recent Activity</h3>
+                <div className="mt-8 bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-lg p-6 border border-error/30 dark:border-outline-variant/40">
+                  <h3 className="text-xl font-semibold text-on-surface mb-4">Recent Activity</h3>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-surface dark:bg-surface-container-high/50 rounded-lg">
                       <div className="flex items-center">
-                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                        <span className="text-sm text-gray-600 dark:text-gray-300">New user registration: john.doe@example.com</span>
+                        <div className="w-2 h-2 bg-secondary rounded-full mr-3"></div>
+                        <span className="text-sm text-on-surface-variant">New user registration: john.doe@example.com</span>
                       </div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">2 minutes ago</span>
+                      <span className="text-xs text-on-surface-variant">2 minutes ago</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-surface dark:bg-surface-container-high/50 rounded-lg">
                       <div className="flex items-center">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                        <span className="text-sm text-gray-600 dark:text-gray-300">Consultation completed: #CONS-2024-001</span>
+                        <div className="w-2 h-2 bg-soft-aqua rounded-full mr-3"></div>
+                        <span className="text-sm text-on-surface-variant">Consultation completed: #CONS-2024-001</span>
                       </div>
-                      <span className="text-xs text-gray-500">15 minutes ago</span>
+                      <span className="text-xs text-on-surface-variant">15 minutes ago</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-surface dark:bg-surface-container-high/50 rounded-lg">
                       <div className="flex items-center">
                         <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
-                        <span className="text-sm text-gray-600 dark:text-gray-300">System backup completed successfully</span>
+                        <span className="text-sm text-on-surface-variant">System backup completed successfully</span>
                       </div>
-                      <span className="text-xs text-gray-500">1 hour ago</span>
+                      <span className="text-xs text-on-surface-variant">1 hour ago</span>
                     </div>
                   </div>
                 </div>
@@ -440,42 +440,42 @@ export default function AdminPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-red-200 dark:border-gray-700 overflow-hidden">
-                  <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">User Management</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage all users and their roles</p>
+                <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-lg border border-error/30 dark:border-outline-variant/40 overflow-hidden">
+                  <div className="p-6 border-b border-outline-variant/60">
+                    <h2 className="text-xl font-semibold text-on-surface">User Management</h2>
+                    <p className="text-sm text-on-surface-variant mt-1">Manage all users and their roles</p>
                   </div>
                   {usersLoading ? (
                     <div className="flex justify-center py-12">
-                      <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-8 h-8 border-4 border-error border-t-transparent rounded-full animate-spin" />
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="bg-gray-50 dark:bg-gray-700/50">
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Name</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Email</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Role</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Verified</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Created</th>
-                            <th className="text-right px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Actions</th>
+                          <tr className="bg-surface dark:bg-surface-container-high/50">
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Name</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Email</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Role</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Verified</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Created</th>
+                            <th className="text-right px-6 py-3 font-medium text-on-surface-variant">Actions</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody className="divide-y divide-outline-variant/60 dark:divide-outline-variant/40">
                           {users.map((u) => (
-                            <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
-                              <td className="px-6 py-4 text-gray-900 dark:text-white">
+                            <tr key={u.id} className="hover:bg-surface-container-high/30">
+                              <td className="px-6 py-4 text-on-surface">
                                 {u.firstName} {u.lastName}
                               </td>
-                              <td className="px-6 py-4 text-gray-600 dark:text-gray-300">{u.email}</td>
+                              <td className="px-6 py-4 text-on-surface-variant">{u.email}</td>
                               <td className="px-6 py-4">
                                 <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                   u.role === "ADMIN"
-                                    ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                                    ? "bg-error-container text-on-error-container dark:bg-error-container dark:text-on-error-container"
                                     : u.role === "PHARMACY"
-                                    ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
-                                    : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                                    ? "bg-tertiary-fixed text-on-tertiary-fixed dark:bg-purple-900/30 dark:text-purple-300"
+                                    : "bg-primary-fixed text-on-primary-fixed dark:bg-primary-container dark:text-on-primary-container"
                                 }`}>
                                   {u.role}
                                 </span>
@@ -484,10 +484,10 @@ export default function AdminPage() {
                                 {u.isVerified ? (
                                   <CheckCircle className="h-5 w-5 text-green-500" />
                                 ) : (
-                                  <XCircle className="h-5 w-5 text-red-400" />
+                                  <XCircle className="h-5 w-5 text-error" />
                                 )}
                               </td>
-                              <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs">
+                              <td className="px-6 py-4 text-on-surface-variant text-xs">
                                 {formatDate(u.createdAt)}
                               </td>
                               <td className="px-6 py-4 text-right">
@@ -496,7 +496,7 @@ export default function AdminPage() {
                                     setEditUser(u);
                                     setEditRole(u.role);
                                   }}
-                                  className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
+                                  className="px-3 py-1.5 text-xs font-medium text-medical-teal hover:text-secondary bg-primary-fixed/30 dark:bg-blue-900/30 hover:bg-primary-fixed/60 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
                                 >
                                   Edit
                                 </button>
@@ -505,7 +505,7 @@ export default function AdminPage() {
                           ))}
                           {users.length === 0 && (
                             <tr>
-                              <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">
+                              <td colSpan={6} className="px-6 py-12 text-center text-outline">
                                 No users found
                               </td>
                             </tr>
@@ -525,41 +525,41 @@ export default function AdminPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-red-200 dark:border-gray-700 overflow-hidden">
-                  <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Contact Messages</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Messages from the contact form</p>
+                <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-lg border border-error/30 dark:border-outline-variant/40 overflow-hidden">
+                  <div className="p-6 border-b border-outline-variant/60">
+                    <h2 className="text-xl font-semibold text-on-surface">Contact Messages</h2>
+                    <p className="text-sm text-on-surface-variant mt-1">Messages from the contact form</p>
                   </div>
                   {messagesLoading ? (
                     <div className="flex justify-center py-12">
-                      <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-8 h-8 border-4 border-error border-t-transparent rounded-full animate-spin" />
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="bg-gray-50 dark:bg-gray-700/50">
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Name</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Email</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Subject</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Date</th>
-                            <th className="text-right px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Actions</th>
+                          <tr className="bg-surface dark:bg-surface-container-high/50">
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Name</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Email</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Subject</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Date</th>
+                            <th className="text-right px-6 py-3 font-medium text-on-surface-variant">Actions</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody className="divide-y divide-outline-variant/60 dark:divide-outline-variant/40">
                           {messages.map((msg) => (
                             <tr
                               key={msg.id}
-                              className={`hover:bg-gray-50 dark:hover:bg-gray-700/30 ${
-                                !msg.read ? "bg-blue-50/50 dark:bg-blue-900/10 font-medium" : ""
+                              className={`hover:bg-surface-container-high/30 ${
+                                !msg.read ? "bg-primary-fixed/30/50 dark:bg-blue-900/10 font-medium" : ""
                               }`}
                             >
-                              <td className="px-6 py-4 text-gray-900 dark:text-white">{msg.name}</td>
-                              <td className="px-6 py-4 text-gray-600 dark:text-gray-300">{msg.email}</td>
-                              <td className="px-6 py-4 text-gray-600 dark:text-gray-300 max-w-[200px] truncate">
+                              <td className="px-6 py-4 text-on-surface">{msg.name}</td>
+                              <td className="px-6 py-4 text-on-surface-variant">{msg.email}</td>
+                              <td className="px-6 py-4 text-on-surface-variant max-w-[200px] truncate">
                                 {msg.subject}
                               </td>
-                              <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs whitespace-nowrap">
+                              <td className="px-6 py-4 text-on-surface-variant text-xs whitespace-nowrap">
                                 {formatDate(msg.createdAt)}
                               </td>
                               <td className="px-6 py-4 text-right space-x-2">
@@ -568,7 +568,7 @@ export default function AdminPage() {
                                     setViewMessage(msg);
                                     if (!msg.read) handleMarkRead(msg.id);
                                   }}
-                                  className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
+                                  className="px-3 py-1.5 text-xs font-medium text-medical-teal hover:text-secondary bg-primary-fixed/30 dark:bg-blue-900/30 hover:bg-primary-fixed/60 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
                                 >
                                   View
                                 </button>
@@ -577,7 +577,7 @@ export default function AdminPage() {
                           ))}
                           {messages.length === 0 && (
                             <tr>
-                              <td colSpan={5} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">
+                              <td colSpan={5} className="px-6 py-12 text-center text-outline">
                                 No messages yet
                               </td>
                             </tr>
@@ -597,45 +597,45 @@ export default function AdminPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-red-200 dark:border-gray-700 overflow-hidden">
-                  <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">License Verifications</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Approve or reject pharmacist license verifications</p>
+                <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-lg border border-error/30 dark:border-outline-variant/40 overflow-hidden">
+                  <div className="p-6 border-b border-outline-variant/60">
+                    <h2 className="text-xl font-semibold text-on-surface">License Verifications</h2>
+                    <p className="text-sm text-on-surface-variant mt-1">Approve or reject pharmacist license verifications</p>
                   </div>
                   {verificationsLoading ? (
                     <div className="flex justify-center py-12">
-                      <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-8 h-8 border-4 border-error border-t-transparent rounded-full animate-spin" />
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="bg-gray-50 dark:bg-gray-700/50">
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Pharmacist</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">License #</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Type</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Issuing Body</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Status</th>
-                            <th className="text-left px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Date</th>
-                            <th className="text-right px-6 py-3 font-medium text-gray-600 dark:text-gray-300">Actions</th>
+                          <tr className="bg-surface dark:bg-surface-container-high/50">
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Pharmacist</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">License #</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Type</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Issuing Body</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Status</th>
+                            <th className="text-left px-6 py-3 font-medium text-on-surface-variant">Date</th>
+                            <th className="text-right px-6 py-3 font-medium text-on-surface-variant">Actions</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody className="divide-y divide-outline-variant/60 dark:divide-outline-variant/40">
                           {verifications.map((v) => {
                             const isPending = !v.verified && !v.rejectionReason;
                             const isRejected = !v.verified && v.rejectionReason;
                             const isVerified = v.verified;
                             return (
-                              <tr key={v.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
-                                <td className="px-6 py-4 text-gray-900 dark:text-white">
+                              <tr key={v.id} className="hover:bg-surface-container-high/30">
+                                <td className="px-6 py-4 text-on-surface">
                                   {v.user.firstName} {v.user.lastName}
                                   {v.user.pharmacyName && (
-                                    <span className="block text-xs text-gray-400">{v.user.pharmacyName}</span>
+                                    <span className="block text-xs text-outline">{v.user.pharmacyName}</span>
                                   )}
                                 </td>
-                                <td className="px-6 py-4 text-gray-600 dark:text-gray-300 font-mono text-xs">{v.licenseNumber}</td>
-                                <td className="px-6 py-4 text-gray-600 dark:text-gray-300">{v.licenseType}</td>
-                                <td className="px-6 py-4 text-gray-600 dark:text-gray-300">{v.issuingBody}</td>
+                                <td className="px-6 py-4 text-on-surface-variant font-mono text-xs">{v.licenseNumber}</td>
+                                <td className="px-6 py-4 text-on-surface-variant">{v.licenseType}</td>
+                                <td className="px-6 py-4 text-on-surface-variant">{v.issuingBody}</td>
                                 <td className="px-6 py-4">
                                   {isPending && (
                                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
@@ -643,17 +643,17 @@ export default function AdminPage() {
                                     </span>
                                   )}
                                   {isRejected && (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-error-container text-on-error-container dark:bg-error-container dark:text-on-error-container">
                                       <XCircle className="h-3 w-3" /> Rejected
                                     </span>
                                   )}
                                   {isVerified && (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-container text-on-secondary-container dark:bg-secondary-container dark:text-on-secondary-container">
                                       <CheckCircle className="h-3 w-3" /> Verified
                                     </span>
                                   )}
                                 </td>
-                                <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs whitespace-nowrap">
+                                <td className="px-6 py-4 text-on-surface-variant text-xs whitespace-nowrap">
                                   {formatDate(v.createdAt)}
                                 </td>
                                 <td className="px-6 py-4 text-right space-x-2">
@@ -661,20 +661,20 @@ export default function AdminPage() {
                                     <>
                                       <button
                                         onClick={() => handleVerify(v.id, "approve")}
-                                        className="px-3 py-1.5 text-xs font-medium text-green-600 bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50 rounded-lg transition-colors"
+                                        className="px-3 py-1.5 text-xs font-medium text-secondary bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50 rounded-lg transition-colors"
                                       >
                                         Approve
                                       </button>
                                       <button
                                         onClick={() => handleVerify(v.id, "reject")}
-                                        className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-lg transition-colors"
+                                        className="px-3 py-1.5 text-xs font-medium text-error bg-error-container/60 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-lg transition-colors"
                                       >
                                         Reject
                                       </button>
                                     </>
                                   )}
                                   {!isPending && (
-                                    <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                                    <span className="text-xs text-outline italic">
                                       {isVerified ? "Approved" : "Rejected"}
                                     </span>
                                   )}
@@ -684,7 +684,7 @@ export default function AdminPage() {
                           })}
                           {verifications.length === 0 && (
                             <tr>
-                              <td colSpan={7} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">
+                              <td colSpan={7} className="px-6 py-12 text-center text-outline">
                                 No verification requests yet
                               </td>
                             </tr>
@@ -705,26 +705,26 @@ export default function AdminPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-full max-w-md"
+              className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-2xl p-6 w-full max-w-md"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-lg font-semibold text-on-surface">
                   Edit User Role
                 </h3>
                 <button
                   onClick={() => setEditUser(null)}
-                  className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  className="p-1 text-outline hover:text-on-surface-variant dark:hover:text-on-surface"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-sm text-on-surface-variant mb-4">
                 Changing role for <strong>{editUser.firstName} {editUser.lastName}</strong> ({editUser.email})
               </p>
               <select
                 value={editRole}
                 onChange={(e) => setEditRole(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none mb-4"
+                className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest dark:bg-surface-container-high text-on-surface focus:ring-2 focus:ring-soft-aqua focus:border-transparent outline-none mb-4"
               >
                 <option value="CLIENT">Client</option>
                 <option value="PHARMACY">Pharmacy</option>
@@ -733,14 +733,14 @@ export default function AdminPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setEditUser(null)}
-                  className="flex-1 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="flex-1 py-2.5 border border-outline-variant text-on-surface-variant rounded-lg font-medium hover:bg-surface-container-high transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleRoleUpdate}
                   disabled={roleUpdating}
-                  className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors"
+                  className="flex-1 py-2.5 bg-medical-teal hover:bg-secondary disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors"
                 >
                   {roleUpdating ? "Updating..." : "Save"}
                 </button>
@@ -755,30 +755,30 @@ export default function AdminPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-full max-w-lg"
+              className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-2xl p-6 w-full max-w-lg"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-lg font-semibold text-on-surface">
                   Message from {viewMessage.name}
                 </h3>
                 <button
                   onClick={() => setViewMessage(null)}
-                  className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  className="p-1 text-outline hover:text-on-surface-variant dark:hover:text-on-surface"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mb-4 space-y-1">
-                <p><strong className="text-gray-700 dark:text-gray-300">Email:</strong> {viewMessage.email}</p>
-                <p><strong className="text-gray-700 dark:text-gray-300">Subject:</strong> {viewMessage.subject}</p>
-                <p><strong className="text-gray-700 dark:text-gray-300">Date:</strong> {formatDate(viewMessage.createdAt)}</p>
+              <div className="text-sm text-on-surface-variant mb-4 space-y-1">
+                <p><strong className="text-on-surface-variant">Email:</strong> {viewMessage.email}</p>
+                <p><strong className="text-on-surface-variant">Subject:</strong> {viewMessage.subject}</p>
+                <p><strong className="text-on-surface-variant">Date:</strong> {formatDate(viewMessage.createdAt)}</p>
               </div>
-              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-4">
-                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{viewMessage.message}</p>
+              <div className="bg-surface dark:bg-surface-container-high/50 rounded-lg p-4 mb-4">
+                <p className="text-sm text-on-surface-variant whitespace-pre-wrap">{viewMessage.message}</p>
               </div>
               <button
                 onClick={() => setViewMessage(null)}
-                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                className="w-full py-2.5 bg-medical-teal hover:bg-secondary text-white rounded-lg font-medium transition-colors"
               >
                 Close
               </button>

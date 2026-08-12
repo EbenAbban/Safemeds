@@ -57,11 +57,11 @@ export default function MedicationsPage() {
 
   const getPrescriptionBadge = (isPrescription: boolean) => {
     return isPrescription ? (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-error-container text-on-error-container">
         Prescription Required
       </span>
     ) : (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-container text-on-secondary-container">
         Over the Counter
       </span>
     );
@@ -82,7 +82,7 @@ export default function MedicationsPage() {
       return {
         status: "out-of-stock",
         text: "Out of Stock",
-        color: "text-red-600",
+        color: "text-error",
         bgColor: "bg-red-100",
       };
     }
@@ -94,7 +94,7 @@ export default function MedicationsPage() {
       return {
         status: "out-of-stock",
         text: "Out of Stock",
-        color: "text-red-600",
+        color: "text-error",
         bgColor: "bg-red-100",
       };
     } else if (totalQuantity <= minQuantity) {
@@ -108,7 +108,7 @@ export default function MedicationsPage() {
       return {
         status: "in-stock",
         text: "In Stock",
-        color: "text-green-600",
+        color: "text-secondary",
         bgColor: "bg-green-100",
       };
     }
@@ -116,7 +116,7 @@ export default function MedicationsPage() {
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 dark:from-surface-dark dark:to-surface-container-high">
         <Navigation title="Medication Management" userRole="pharmacy" />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -128,16 +128,16 @@ export default function MedicationsPage() {
           >
             <div className="flex justify-between items-center">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                <h1 className="text-3xl font-bold text-on-surface mb-2">
                   Medication Management
                 </h1>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-on-surface-variant">
                   Manage your pharmacy inventory and medication catalog
                 </p>
               </div>
               <button
                 onClick={() => router.push("/medications/add")}
-                className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                className="bg-secondary text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-colors"
               >
                 Add Medication
               </button>
@@ -149,11 +149,11 @@ export default function MedicationsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8"
+            className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 mb-8"
           >
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Search Medications
                 </label>
                 <input
@@ -161,18 +161,18 @@ export default function MedicationsPage() {
                   value={filters.search}
                   onChange={(e) => handleFilterChange("search", e.target.value)}
                   placeholder="Search by name, generic name..."
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Category
                 </label>
                 <select
                   value={filters.category}
                   onChange={(e) => handleFilterChange("category", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
                 >
                   <option value="">All Categories</option>
                   <option value="antibiotics">Antibiotics</option>
@@ -184,13 +184,13 @@ export default function MedicationsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Type
                 </label>
                 <select
                   value={filters.isPrescription}
                   onChange={(e) => handleFilterChange("isPrescription", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
                 >
                   <option value="">All Types</option>
                   <option value="true">Prescription Only</option>
@@ -199,13 +199,13 @@ export default function MedicationsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Items per page
                 </label>
                 <select
                   value={filters.limit}
                   onChange={(e) => handleFilterChange("limit", parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
                 >
                   <option value={20}>20</option>
                   <option value={50}>50</option>
@@ -224,28 +224,28 @@ export default function MedicationsPage() {
           >
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-pulse">
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                  <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                  <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div key={i} className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 animate-pulse">
+                  <div className="h-4 bg-surface-container-high dark:bg-surface-container-high rounded mb-4"></div>
+                  <div className="h-3 bg-surface-container-high dark:bg-surface-container-high rounded mb-2"></div>
+                  <div className="h-3 bg-surface-container-high dark:bg-surface-container-high rounded mb-4"></div>
+                  <div className="h-6 bg-surface-container-high dark:bg-surface-container-high rounded mb-2"></div>
+                  <div className="h-6 bg-surface-container-high dark:bg-surface-container-high rounded"></div>
                 </div>
               ))
             ) : medications.length === 0 ? (
-              <div className="col-span-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+              <div className="col-span-full bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-8 text-center">
                 <div className="text-4xl mb-4"></div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-semibold text-on-surface mb-2">
                   No medications found
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-on-surface-variant mb-4">
                   {filters.search || filters.category || filters.isPrescription
                     ? "Try adjusting your filters"
                     : "No medications have been added yet"}
                 </p>
                 <button
                   onClick={() => router.push("/medications/add")}
-                  className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                  className="bg-secondary text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition-colors"
                 >
                   Add First Medication
                 </button>
@@ -259,15 +259,15 @@ export default function MedicationsPage() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     whileHover={{ scale: 1.02 }}
-                    className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300"
+                    className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                        <h3 className="text-lg font-semibold text-on-surface mb-1">
                           {medication.name}
                         </h3>
                         {medication.genericName && (
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                          <p className="text-sm text-on-surface-variant mb-2">
                             Generic: {medication.genericName}
                           </p>
                         )}
@@ -276,15 +276,15 @@ export default function MedicationsPage() {
                     </div>
 
                     <div className="space-y-2 mb-4">
-                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                      <div className="flex items-center text-sm text-on-surface-variant">
                         <span className="font-medium mr-2">Strength:</span>
                         {medication.strength}
                       </div>
-                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                      <div className="flex items-center text-sm text-on-surface-variant">
                         <span className="font-medium mr-2">Form:</span>
                         {medication.dosageForm}
                       </div>
-                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                      <div className="flex items-center text-sm text-on-surface-variant">
                         <span className="font-medium mr-2">Manufacturer:</span>
                         {medication.manufacturer}
                       </div>
@@ -301,7 +301,7 @@ export default function MedicationsPage() {
                           {stockStatus.text}
                         </span>
                       </div>
-                      <div className="text-lg font-bold text-gray-900 dark:text-white">
+                      <div className="text-lg font-bold text-on-surface">
                         ${medication.price.toFixed(2)}
                       </div>
                     </div>
@@ -309,13 +309,13 @@ export default function MedicationsPage() {
                     <div className="flex space-x-2">
                       <button
                         onClick={() => router.push(`/medications/${medication.id}`)}
-                        className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                        className="flex-1 bg-medical-teal text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-secondary transition-colors"
                       >
                         View Details
                       </button>
                       <button
                         onClick={() => router.push(`/inventory/add?medicationId=${medication.id}`)}
-                        className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                        className="flex-1 bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
                       >
                         Add Stock
                       </button>
@@ -332,11 +332,11 @@ export default function MedicationsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0 }}
-              className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6"
+              className="mt-8 bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <p className="text-sm text-on-surface-variant">
                     Showing{" "}
                     <span className="font-medium">
                       {(pagination.page - 1) * pagination.limit + 1}
@@ -357,8 +357,8 @@ export default function MedicationsPage() {
                         onClick={() => handlePageChange(page)}
                         className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                           page === pagination.page
-                            ? "z-10 bg-green-50 border-green-500 text-green-600"
-                            : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                            ? "z-10 bg-green-50 border-green-500 text-secondary"
+                            : "bg-surface-container-lowest border-outline-variant text-on-surface-variant hover:bg-surface"
                         }`}
                       >
                         {page}

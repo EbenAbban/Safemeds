@@ -3,7 +3,23 @@
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import ThreadsBackground from "@/components/effects/ThreadsBackground";
+import Link from "next/link";
+import { Badge, buttonClasses, Input } from "@/components/ui";
+import { Eye, EyeOff, Lock, Mail, ShieldCheck, User } from "lucide-react";
+
+/**
+ * SafeMeds Vital sign-in — split-screen layout per design.md §22.
+ *
+ * The design system's mockup shows a two-tab Student/Pharmacy toggle. The
+ * real app also supports ADMIN sign-in (username + password, same shape as
+ * Student) — dropping it here would break real login capability for admin
+ * accounts, so it stays as a third tab rather than being designed away.
+ *
+ * No stock photo on the brand panel. The mockup's reference image has no
+ * clear license for use in a live product (same reasoning that removed the
+ * Getty hero video and the AI-generated staff avatars elsewhere in this
+ * redesign) — a plain dark gradient carries the panel instead.
+ */
 
 interface FormData {
   username: string;
@@ -15,6 +31,12 @@ interface FormData {
 interface FormErrors {
   [key: string]: string;
 }
+
+const ROLES = [
+  { value: "CLIENT", label: "Student" },
+  { value: "PHARMACY", label: "Pharmacy" },
+  { value: "ADMIN", label: "Admin" },
+] as const;
 
 export default function AuthPage() {
   const [formData, setFormData] = useState<FormData>({
@@ -56,10 +78,8 @@ export default function AuthPage() {
       if (!formData.licenseNumber.trim()) {
         newErrors.licenseNumber = "License number is required.";
       }
-    } else {
-      if (!formData.username.trim()) {
-        newErrors.username = "Username is required.";
-      }
+    } else if (!formData.username.trim()) {
+      newErrors.username = "Username is required.";
     }
 
     if (!formData.password) {
@@ -83,17 +103,8 @@ export default function AuthPage() {
     try {
       const loginParams =
         userType === "PHARMACY"
-          ? {
-              email: formData.email,
-              password: formData.password,
-              licenseNumber: formData.licenseNumber,
-              role: userType,
-            }
-          : {
-              username: formData.username,
-              password: formData.password,
-              role: userType,
-            };
+          ? { email: formData.email, password: formData.password, licenseNumber: formData.licenseNumber, role: userType }
+          : { username: formData.username, password: formData.password, role: userType };
 
       const result = await signIn("credentials", { ...loginParams, redirect: false });
 
@@ -112,220 +123,154 @@ export default function AuthPage() {
     setErrors({});
   };
 
-  const roles = [
-    { value: "CLIENT", label: "Student" },
-    { value: "PHARMACY", label: "Pharmacist" },
-    { value: "ADMIN", label: "Admin" },
-  ];
+  const formTitle = userType === "PHARMACY" ? "Pharmacist Portal" : "Welcome Back";
+  const formSubtitle =
+    userType === "PHARMACY" ? "Secure access for verified providers." : "Sign in securely to your account.";
 
   return (
-    <div className="min-h-screen flex bg-white dark:bg-gray-950">
-      {/* Left brand panel */}
-      <div className="relative hidden lg:flex lg:w-2/5 xl:w-1/3 flex-col justify-between overflow-hidden bg-gray-950 dark:bg-black p-10">
-        <ThreadsBackground
-          wrapperClassName="absolute inset-0 pointer-events-none opacity-50"
-          color={[0.36, 0.29, 1]}
-          amplitude={1.2}
-          distance={0.2}
-          enableMouseInteraction
-        />
-        <div className="relative">
-          <span className="text-white text-xl font-semibold tracking-tight">SafeMeds</span>
+    <div className="flex min-h-screen bg-surface dark:bg-surface-dark">
+      {/* Brand panel */}
+      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-dark-navy via-surface-dark to-medical-teal p-margin-desktop md:flex">
+        <div className="relative z-10 flex items-center gap-3">
+          <ShieldCheck className="h-8 w-8 text-soft-aqua" aria-hidden="true" />
+          <span className="text-headline-md font-bold text-white">SafeMeds</span>
         </div>
-        <div className="relative">
-          <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-            Secure healthcare management platform for students and licensed pharmacists.
-            All data is encrypted end-to-end.
-          </p>
-          <p className="text-gray-600 text-xs">
-            &copy; {new Date().getFullYear()} SafeMeds. All rights reserved.
+        <div className="relative z-10 mb-12 max-w-lg">
+          <h1 className="text-hero leading-tight text-white">
+            Private healthcare,
+            <br />
+            built for students.
+          </h1>
+          <p className="mt-4 text-lg text-cool-gray">
+            Secure, anonymous-first consultations and prescription delivery directly to campus.
           </p>
         </div>
       </div>
 
-      {/* Right form panel */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-16 xl:px-24">
-        <div className="w-full max-w-sm mx-auto">
+      {/* Form panel */}
+      <div className="relative flex w-full flex-1 items-center justify-center p-6 md:p-margin-desktop">
+        <Link href="/" className="absolute left-6 top-6 flex items-center gap-2 md:hidden">
+          <ShieldCheck className="h-6 w-6 text-medical-teal" aria-hidden="true" />
+          <span className="text-lg font-bold text-medical-teal">SafeMeds</span>
+        </Link>
 
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Sign in</h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              No account?{" "}
+        <div className="w-full max-w-md rounded-lg border border-outline-variant/60 bg-surface-container-lowest p-8 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-card dark:bg-surface-container">
+          <div className="mb-8 flex rounded-lg bg-surface-container-low p-1 dark:bg-surface-dark">
+            {ROLES.map((role) => (
               <button
-                onClick={() => router.push("/signup")}
-                className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                key={role.value}
+                type="button"
+                onClick={() => {
+                  setUserType(role.value);
+                  resetForm();
+                }}
+                className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-colors duration-200 ${
+                  userType === role.value
+                    ? "bg-surface-container-lowest text-on-surface shadow-sm dark:bg-surface-container"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
               >
-                Create one
+                {role.label}
               </button>
-            </p>
+            ))}
           </div>
 
-          {/* Role tabs */}
-          <div className="mb-6">
-            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
-              Sign in as
-            </label>
-            <div className="flex rounded-lg border border-gray-200 dark:border-gray-700 p-1 bg-gray-50 dark:bg-gray-900 gap-1">
-              {roles.map((role) => (
-                <button
-                  key={role.value}
-                  type="button"
-                  onClick={() => {
-                    setUserType(role.value as "CLIENT" | "PHARMACY" | "ADMIN");
-                    resetForm();
-                  }}
-                  className={`flex-1 py-2 text-xs font-medium rounded-md transition-colors ${
-                    userType === role.value
-                      ? "bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm border border-gray-200 dark:border-gray-700"
-                      : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                  }`}
-                >
-                  {role.label}
-                </button>
-              ))}
-            </div>
+          <div className="mb-8">
+            <h2 className="text-headline-md text-on-surface">{formTitle}</h2>
+            <p className="mt-2 text-on-surface-variant">{formSubtitle}</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Field: email (Pharmacist) or username (Client/Admin) */}
+          <form onSubmit={handleSubmit} className="space-y-6">
             {userType === "PHARMACY" ? (
-              <Field label="Email" error={errors.email} required>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="pharmacist@example.com"
-                  autoComplete="email"
-                  className={inputClass(!!errors.email)}
-                />
-              </Field>
+              <Input
+                label="Work Email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                placeholder="pharmacist@example.com"
+                autoComplete="email"
+                leadingIcon={<Mail className="h-4 w-4" aria-hidden="true" />}
+                error={errors.email}
+              />
             ) : (
-              <Field label="Username" error={errors.username} required>
-                <input
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => handleInputChange("username", e.target.value)}
-                  placeholder="your_username"
-                  autoComplete="username"
-                  className={inputClass(!!errors.username)}
-                />
-              </Field>
+              <Input
+                label="Username / Campus ID"
+                type="text"
+                value={formData.username}
+                onChange={(e) => handleInputChange("username", e.target.value)}
+                placeholder="Enter username"
+                autoComplete="username"
+                leadingIcon={<User className="h-4 w-4" aria-hidden="true" />}
+                error={errors.username}
+              />
             )}
 
-            {/* License number (Pharmacist only) */}
             {userType === "PHARMACY" && (
-              <Field label="License number" error={errors.licenseNumber} required>
-                <input
-                  type="text"
-                  value={formData.licenseNumber}
-                  onChange={(e) => handleInputChange("licenseNumber", e.target.value)}
-                  placeholder="e.g. RPh-123456"
-                  autoComplete="off"
-                  className={inputClass(!!errors.licenseNumber)}
-                />
-                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                  Must match the license number on your account.
-                </p>
-              </Field>
+              <Input
+                label="License Number"
+                type="text"
+                value={formData.licenseNumber}
+                onChange={(e) => handleInputChange("licenseNumber", e.target.value)}
+                placeholder="e.g. RPh-123456"
+                autoComplete="off"
+                hint="Must match the license number on your account."
+                error={errors.licenseNumber}
+              />
             )}
 
-            {/* Password */}
-            <Field label="Password" error={errors.password} required>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
-                  placeholder="Enter your password"
-                  autoComplete="current-password"
-                  className={inputClass(!!errors.password) + " pr-16"}
-                />
+            <Input
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              value={formData.password}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              leadingIcon={<Lock className="h-4 w-4" aria-hidden="true" />}
+              error={errors.password}
+              trailingSlot={
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-3 flex items-center text-xs font-medium text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="p-2 text-on-surface-variant transition-colors hover:text-on-surface"
                   tabIndex={-1}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                 </button>
-              </div>
-            </Field>
+              }
+            />
 
-            {/* Error banner */}
             {errors.general && (
-              <div className="rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+              <div className="rounded-lg border border-error/30 bg-error-container px-4 py-3 text-sm text-on-error-container">
                 {errors.general}
               </div>
             )}
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-2.5 px-4 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 dark:disabled:bg-indigo-800 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed mt-2"
+              className={buttonClasses({ variant: userType === "PHARMACY" ? "inverse" : "primary", size: "lg", fullWidth: true })}
             >
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? "Signing in…" : userType === "PHARMACY" ? "Access Portal" : "Sign In"}
             </button>
           </form>
 
-          {/* What each role needs */}
-          <div className="mt-8 rounded-lg border border-gray-100 dark:border-gray-800 divide-y divide-gray-100 dark:divide-gray-800 text-xs text-gray-500 dark:text-gray-400">
-            <div className="px-4 py-3">
-              <span className="font-medium text-gray-700 dark:text-gray-300">Student</span>
-              &nbsp;&mdash; username + password
-            </div>
-            <div className="px-4 py-3">
-              <span className="font-medium text-gray-700 dark:text-gray-300">Pharmacist</span>
-              &nbsp;&mdash; email + license number + password
-            </div>
-            <div className="px-4 py-3">
-              <span className="font-medium text-gray-700 dark:text-gray-300">Admin</span>
-              &nbsp;&mdash; username + password
-            </div>
+          <div className="mt-8 border-t border-outline-variant/60 pt-6 text-center">
+            <p className="text-on-surface-variant">
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="font-semibold text-medical-teal hover:text-soft-aqua dark:text-primary-fixed-dim">
+                Create Account
+              </Link>
+            </p>
           </div>
+        </div>
 
-          <p className="mt-6 text-xs text-gray-400 dark:text-gray-600 text-center">
-            All data is encrypted and handled in accordance with HIPAA guidelines.
-          </p>
+        <div className="absolute bottom-6">
+          <Badge tone="neutral" icon={<Lock className="h-3.5 w-3.5" aria-hidden="true" />}>
+            End-to-end encrypted. Privacy-first by design.
+          </Badge>
         </div>
       </div>
-    </div>
-  );
-}
-
-// ---- Helpers ----
-
-function inputClass(hasError: boolean): string {
-  return [
-    "w-full px-3 py-2 rounded-lg text-sm border bg-white dark:bg-gray-900",
-    "text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600",
-    "focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors",
-    hasError
-      ? "border-red-400 dark:border-red-600"
-      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600",
-  ].join(" ");
-}
-
-function Field({
-  label,
-  error,
-  required,
-  children,
-}: {
-  label: React.ReactNode;
-  error: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-        {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
-      </label>
-      {children}
-      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
   );
 }

@@ -75,7 +75,7 @@ export default function ChatPage() {
 
   return (
     <ProtectedRoute allowedRoles={["CLIENT", "PHARMACY"]}>
-      <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-purple-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark">
         {/* Navigation */}
         <Navigation
           title="Chat with Pharmacist"
@@ -109,7 +109,7 @@ export default function ChatPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0 }}
-                className="text-gray-600 text-lg font-medium"
+                className="text-on-surface-variant text-lg font-medium"
               >
                 Initializing secure chat session...
               </motion.p>
@@ -123,17 +123,17 @@ export default function ChatPage() {
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
-                    className="w-2 h-2 bg-blue-500 rounded-full"
+                    className="w-2 h-2 bg-soft-aqua rounded-full"
                   />
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                    className="w-2 h-2 bg-blue-500 rounded-full"
+                    className="w-2 h-2 bg-soft-aqua rounded-full"
                   />
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
-                    className="w-2 h-2 bg-blue-500 rounded-full"
+                    className="w-2 h-2 bg-soft-aqua rounded-full"
                   />
                 </div>
               </motion.div>
@@ -159,7 +159,7 @@ export default function ChatPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0, duration: 0.5 }}
-                className="text-gray-600 text-lg max-w-2xl mx-auto"
+                className="text-on-surface-variant text-lg max-w-2xl mx-auto"
               >
                 Get instant consultation and medication advice from licensed
                 pharmacists. Your privacy is our priority.
@@ -171,23 +171,23 @@ export default function ChatPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0, duration: 0.5 }}
-              className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg p-4 mb-6 border border-gray-200 dark:border-gray-700"
+              className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-xl shadow-lg p-4 mb-6 border border-outline-variant/60"
             >
               <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
                 <div className="flex items-center space-x-6">
                   <div className="flex items-center space-x-2">
                     <span className="text-green-500">🟢</span>
-                    <span className="text-gray-700 dark:text-gray-300">Session Active</span>
+                    <span className="text-on-surface-variant">Session Active</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-blue-500">⏱️</span>
-                    <span className="text-gray-700 dark:text-gray-300">
+                    <span className="text-soft-aqua">⏱️</span>
+                    <span className="text-on-surface-variant">
                       Duration: {getSessionDuration()}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-purple-500"></span>
-                    <span className="text-gray-700 dark:text-gray-300">
+                    <span className="text-on-surface-variant">
                       Messages: {sessionInfo.messageCount}
                     </span>
                   </div>
@@ -196,7 +196,7 @@ export default function ChatPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={resetSession}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
+                  className="bg-error-container/600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
                 >
                   Reset Session
                 </motion.button>
@@ -208,7 +208,7 @@ export default function ChatPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0, duration: 0.5 }}
-              className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+              className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-2xl shadow-xl border border-outline-variant/60 overflow-hidden"
             >
               <ChatWindow
                 chatId={anonId?.slice(0, 8) || "default"}
@@ -229,13 +229,13 @@ export default function ChatPage() {
             >
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-green-200 dark:border-gray-700"
+                className="bg-surface-container-lowest/60 dark:bg-surface-container/60 backdrop-blur-sm rounded-xl p-6 border border-secondary/30 dark:border-outline-variant/40"
               >
                 <div className="text-2xl mb-3"></div>
-                <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
+                <h3 className="font-semibold text-on-surface mb-2">
                   Secure & Private
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-on-surface-variant text-sm">
                   End-to-end encrypted conversations with complete privacy
                   protection.
                 </p>
@@ -243,13 +243,13 @@ export default function ChatPage() {
 
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-blue-200 dark:border-gray-700"
+                className="bg-surface-container-lowest/60 dark:bg-surface-container/60 backdrop-blur-sm rounded-xl p-6 border border-primary-fixed dark:border-outline-variant/40"
               >
                 <div className="text-2xl mb-3">‍️</div>
-                <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
+                <h3 className="font-semibold text-on-surface mb-2">
                   Licensed Pharmacists
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-on-surface-variant text-sm">
                   Get advice from certified healthcare professionals with years
                   of experience.
                 </p>
@@ -257,13 +257,13 @@ export default function ChatPage() {
 
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-purple-200 dark:border-gray-700"
+                className="bg-surface-container-lowest/60 dark:bg-surface-container/60 backdrop-blur-sm rounded-xl p-6 border border-tertiary-fixed dark:border-outline-variant/40"
               >
                 <div className="text-2xl mb-3"></div>
-                <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
+                <h3 className="font-semibold text-on-surface mb-2">
                   Instant Response
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-on-surface-variant text-sm">
                   Real-time messaging with quick responses to your health
                   concerns.
                 </p>
