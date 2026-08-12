@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { LEGAL_VERSION } from "@/lib/legal";
-import ThreadsBackground from "@/components/effects/ThreadsBackground";
+import { buttonClasses, Input } from "@/components/ui";
+import { CheckCircle2, Eye, EyeOff, ShieldCheck } from "lucide-react";
 
 interface FormData {
   username: string;
@@ -262,266 +264,207 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-white dark:bg-gray-950">
-      {/* Left brand panel */}
-      <div className="relative hidden lg:flex lg:w-2/5 xl:w-1/3 flex-col justify-between overflow-hidden bg-gray-950 dark:bg-black p-10">
-        <ThreadsBackground
-          wrapperClassName="absolute inset-0 pointer-events-none opacity-50"
-          color={[0.36, 0.29, 1]}
-          amplitude={1.2}
-          distance={0.2}
-          enableMouseInteraction
-        />
-        <div className="relative">
-          <span className="text-white text-xl font-semibold tracking-tight">SafeMeds</span>
-        </div>
-        <div className="relative">
-          <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-            Secure healthcare management platform for students and licensed pharmacists.
-            All data is encrypted end-to-end.
-          </p>
-          <p className="text-gray-600 text-xs">
-            &copy; {new Date().getFullYear()} SafeMeds. All rights reserved.
+    <div className="flex min-h-screen bg-surface dark:bg-surface-dark">
+      {/* Brand panel — no stock photo; same reasoning as /auth. */}
+      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-dark-navy via-surface-dark to-medical-teal p-margin-desktop lg:flex">
+        <Link href="/" className="relative z-10 flex items-center gap-3">
+          <ShieldCheck className="h-8 w-8 text-soft-aqua" aria-hidden="true" />
+          <span className="text-headline-md font-bold text-white">SafeMeds</span>
+        </Link>
+        <div className="relative z-10 mb-12 max-w-md">
+          <div className="mb-4 flex items-center gap-3">
+            <span className="inline-flex rounded-full bg-soft-aqua/20 p-2 text-soft-aqua">
+              <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+            </span>
+            <span className="text-xs font-semibold uppercase tracking-widest text-soft-aqua">
+              Private by Design
+            </span>
+          </div>
+          <h1 className="text-headline-lg text-white">Your health, entirely on your terms.</h1>
+          <p className="mt-4 text-lg text-cool-gray">
+            Experience anonymous-first healthcare. End-to-end encryption and discreet
+            consultation channels, from the first message.
           </p>
         </div>
       </div>
 
-      {/* Right form panel */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-16 xl:px-24 overflow-y-auto">
-        <div className="w-full max-w-lg mx-auto">
+      {/* Form panel */}
+      <div className="flex w-full flex-1 items-center justify-center overflow-y-auto p-6 lg:p-margin-desktop">
+        <div className="w-full max-w-lg py-10">
+          <Link href="/" className="mb-8 flex items-center gap-2 lg:hidden">
+            <ShieldCheck className="h-6 w-6 text-medical-teal" aria-hidden="true" />
+            <span className="text-lg font-bold text-medical-teal">SafeMeds</span>
+          </Link>
 
-          {/* Header */}
           <div className="mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-              Create an account
-            </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <h2 className="text-headline-lg text-on-surface">Create Account</h2>
+            <p className="mt-2 text-on-surface-variant">
               Already have an account?{" "}
-              <button
-                onClick={() => router.push("/auth")}
-                className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
-              >
+              <Link href="/auth" className="font-semibold text-medical-teal hover:text-soft-aqua dark:text-primary-fixed-dim">
                 Sign in
-              </button>
+              </Link>
             </p>
           </div>
 
-          {/* Account type tabs */}
-          <div className="mb-6">
-            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
-              Account type
-            </label>
-            <div className="flex rounded-lg border border-gray-200 dark:border-gray-700 p-1 bg-gray-50 dark:bg-gray-900 gap-1">
-              {[
+          <div className="mb-8 flex rounded-lg bg-surface-container-low p-1 dark:bg-surface-container">
+            {(
+              [
                 { value: "CLIENT", label: "Student" },
                 { value: "PHARMACY", label: "Pharmacist" },
-              ].map((type) => (
-                <button
-                  key={type.value}
-                  type="button"
-                  onClick={() => {
-                    setUserType(type.value as "CLIENT" | "PHARMACY" | "ADMIN");
-                    resetForm();
-                  }}
-                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
-                    userType === type.value
-                      ? "bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm border border-gray-200 dark:border-gray-700"
-                      : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                  }`}
-                >
-                  {type.label}
-                </button>
-              ))}
-            </div>
+              ] as const
+            ).map((type) => (
+              <button
+                key={type.value}
+                type="button"
+                onClick={() => {
+                  setUserType(type.value);
+                  resetForm();
+                }}
+                className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-colors duration-200 ${
+                  userType === type.value
+                    ? "bg-surface-container-lowest text-on-surface shadow-sm dark:bg-surface-container-high"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
+              >
+                {type.label}
+              </button>
+            ))}
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-
-            {/* Name row */}
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
-              <Field label="First name" error={errors.firstName} required>
-                <input
-                  type="text"
-                  value={formData.firstName}
-                  onChange={(e) => handleInputChange("firstName", e.target.value)}
-                  placeholder="Jane"
-                  className={inputClass(!!errors.firstName)}
-                />
-              </Field>
-              <Field label="Last name" error={errors.lastName} required>
-                <input
-                  type="text"
-                  value={formData.lastName}
-                  onChange={(e) => handleInputChange("lastName", e.target.value)}
-                  placeholder="Smith"
-                  className={inputClass(!!errors.lastName)}
-                />
-              </Field>
+              <Input
+                label="First name"
+                value={formData.firstName}
+                onChange={(e) => handleInputChange("firstName", e.target.value)}
+                placeholder="Jane"
+                error={errors.firstName}
+              />
+              <Input
+                label="Last name"
+                value={formData.lastName}
+                onChange={(e) => handleInputChange("lastName", e.target.value)}
+                placeholder="Smith"
+                error={errors.lastName}
+              />
             </div>
 
-            {/* Username */}
-            <Field label="Username" error={errors.username} required>
-              <input
-                type="text"
-                value={formData.username}
-                onChange={(e) => handleInputChange("username", e.target.value)}
-                placeholder="janesmith"
-                className={inputClass(!!errors.username)}
-              />
-            </Field>
+            <Input
+              label="Username"
+              value={formData.username}
+              onChange={(e) => handleInputChange("username", e.target.value)}
+              placeholder="janesmith"
+              error={errors.username}
+            />
 
-            {/* Email */}
-            <Field
-              label={
-                <span>
-                  Email{" "}
-                  {isEmailChecking && (
-                    <span className="text-gray-400 font-normal text-xs ml-1">Checking...</span>
-                  )}
-                </span>
-              }
+            <Input
+              label={isEmailChecking ? "Email (checking…)" : "Email"}
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange("email", e.target.value)}
+              placeholder="jane@example.com"
               error={errors.email}
-              required
-            >
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                placeholder="jane@example.com"
-                className={inputClass(!!errors.email)}
-              />
-            </Field>
+            />
 
-            {/* Pharmacy-specific fields */}
             {userType === "PHARMACY" && (
               <>
-                <Field
-                  label={
-                    <span>
-                      License number{" "}
-                      {isLicenseChecking && (
-                        <span className="text-gray-400 font-normal text-xs ml-1">Verifying...</span>
-                      )}
-                    </span>
-                  }
+                <Input
+                  label={isLicenseChecking ? "License number (verifying…)" : "License number"}
+                  value={formData.licenseNumber}
+                  onChange={(e) => handleInputChange("licenseNumber", e.target.value)}
+                  placeholder="e.g. RPh-123456"
                   error={errors.licenseNumber}
-                  required
-                >
-                  <input
-                    type="text"
-                    value={formData.licenseNumber}
-                    onChange={(e) => handleInputChange("licenseNumber", e.target.value)}
-                    placeholder="e.g. RPh-123456"
-                    className={inputClass(!!errors.licenseNumber)}
-                  />
-                </Field>
+                />
 
                 <div className="grid grid-cols-2 gap-4">
-                  <Field label="Pharmacy name" error={errors.pharmacyName} required>
-                    <input
-                      type="text"
-                      value={formData.pharmacyName}
-                      onChange={(e) => handleInputChange("pharmacyName", e.target.value)}
-                      placeholder="City Pharmacy"
-                      className={inputClass(!!errors.pharmacyName)}
-                    />
-                  </Field>
-                  <Field label="Phone" error={errors.phone} required>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
-                      placeholder="+1 555 000 0000"
-                      className={inputClass(!!errors.phone)}
-                    />
-                  </Field>
+                  <Input
+                    label="Pharmacy name"
+                    value={formData.pharmacyName}
+                    onChange={(e) => handleInputChange("pharmacyName", e.target.value)}
+                    placeholder="City Pharmacy"
+                    error={errors.pharmacyName}
+                  />
+                  <Input
+                    label="Phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    placeholder="+1 555 000 0000"
+                    error={errors.phone}
+                  />
                 </div>
 
-                <Field label="Address" error="">
-                  <input
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) => handleInputChange("address", e.target.value)}
-                    placeholder="123 Main St"
-                    className={inputClass(false)}
-                  />
-                </Field>
+                <Input
+                  label="Address"
+                  value={formData.address}
+                  onChange={(e) => handleInputChange("address", e.target.value)}
+                  placeholder="123 Main St"
+                />
 
                 <div className="grid grid-cols-3 gap-4">
-                  <Field label="City" error="">
-                    <input
-                      type="text"
-                      value={formData.city}
-                      onChange={(e) => handleInputChange("city", e.target.value)}
-                      placeholder="New York"
-                      className={inputClass(false)}
-                    />
-                  </Field>
-                  <Field label="State" error="">
-                    <input
-                      type="text"
-                      value={formData.state}
-                      onChange={(e) => handleInputChange("state", e.target.value)}
-                      placeholder="NY"
-                      className={inputClass(false)}
-                    />
-                  </Field>
-                  <Field label="Zip code" error="">
-                    <input
-                      type="text"
-                      value={formData.zipCode}
-                      onChange={(e) => handleInputChange("zipCode", e.target.value)}
-                      placeholder="10001"
-                      className={inputClass(false)}
-                    />
-                  </Field>
+                  <Input
+                    label="City"
+                    value={formData.city}
+                    onChange={(e) => handleInputChange("city", e.target.value)}
+                    placeholder="New York"
+                  />
+                  <Input
+                    label="State"
+                    value={formData.state}
+                    onChange={(e) => handleInputChange("state", e.target.value)}
+                    placeholder="NY"
+                  />
+                  <Input
+                    label="Zip code"
+                    value={formData.zipCode}
+                    onChange={(e) => handleInputChange("zipCode", e.target.value)}
+                    placeholder="10001"
+                  />
                 </div>
               </>
             )}
 
-            {/* Password row */}
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Password" error={errors.password} required>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={(e) => handleInputChange("password", e.target.value)}
-                    placeholder="Min. 8 characters"
-                    className={inputClass(!!errors.password) + " pr-10"}
-                  />
+              <Input
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={(e) => handleInputChange("password", e.target.value)}
+                placeholder="Min. 8 characters"
+                error={errors.password}
+                trailingSlot={
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs font-medium"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="p-2 text-on-surface-variant transition-colors hover:text-on-surface"
                     tabIndex={-1}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? "Hide" : "Show"}
+                    {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                   </button>
-                </div>
-              </Field>
-              <Field label="Confirm password" error={errors.confirmPassword} required>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                    placeholder="Repeat password"
-                    className={inputClass(!!errors.confirmPassword) + " pr-10"}
-                  />
+                }
+              />
+              <Input
+                label="Confirm password"
+                type={showConfirmPassword ? "text" : "password"}
+                value={formData.confirmPassword}
+                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                placeholder="Repeat password"
+                error={errors.confirmPassword}
+                trailingSlot={
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs font-medium"
+                    onClick={() => setShowConfirmPassword((v) => !v)}
+                    className="p-2 text-on-surface-variant transition-colors hover:text-on-surface"
                     tabIndex={-1}
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                   >
-                    {showConfirmPassword ? "Hide" : "Show"}
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                   </button>
-                </div>
-              </Field>
+                }
+              />
             </div>
 
-            {/* Terms */}
             <div className="flex items-start gap-3 pt-1">
               <input
                 id="agreeToTerms"
@@ -531,117 +474,64 @@ export default function SignupPage() {
                   setAgreeToTerms(e.target.checked);
                   if (errors.agreeToTerms) setErrors((prev) => ({ ...prev, agreeToTerms: "" }));
                 }}
-                className="mt-0.5 h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-gray-800 cursor-pointer flex-shrink-0"
+                className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-outline-variant text-medical-teal focus:ring-soft-aqua"
               />
-              <label htmlFor="agreeToTerms" className="text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
+              <label htmlFor="agreeToTerms" className="cursor-pointer text-sm text-on-surface-variant">
                 I agree to the{" "}
-                <button
-                  type="button"
-                  onClick={() => router.push("/legal?tab=terms")}
-                  className="text-indigo-600 dark:text-indigo-400 hover:underline"
-                >
+                <Link href="/legal?tab=terms" className="text-medical-teal hover:underline dark:text-primary-fixed-dim">
                   Terms of Service
-                </button>
+                </Link>
                 ,{" "}
-                <button
-                  type="button"
-                  onClick={() => router.push("/legal?tab=privacy")}
-                  className="text-indigo-600 dark:text-indigo-400 hover:underline"
-                >
+                <Link href="/legal?tab=privacy" className="text-medical-teal hover:underline dark:text-primary-fixed-dim">
                   Privacy Policy
-                </button>
+                </Link>
                 , and{" "}
-                <button
-                  type="button"
-                  onClick={() => router.push("/legal?tab=hipaa")}
-                  className="text-indigo-600 dark:text-indigo-400 hover:underline"
-                >
+                <Link href="/legal?tab=hipaa" className="text-medical-teal hover:underline dark:text-primary-fixed-dim">
                   HIPAA Statement
-                </button>
+                </Link>
                 .
               </label>
             </div>
-            {errors.agreeToTerms && (
-              <p className="text-red-500 text-xs -mt-2">{errors.agreeToTerms}</p>
-            )}
+            {errors.agreeToTerms && <p className="-mt-2 text-xs text-error">{errors.agreeToTerms}</p>}
 
-            {/* Status messages */}
             {isSuccess && (
-              <div className="rounded-md border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950 px-4 py-3 text-sm text-green-800 dark:text-green-300">
-                Account created. Redirecting to your dashboard&hellip;
-                {userType === "PHARMACY" && (
-                  <p className="mt-1 text-green-700 dark:text-green-400">
-                    Once signed in, please{" "}
-                    <button
-                      type="button"
-                      onClick={() => router.push("/verify-license")}
-                      className="underline font-medium"
-                    >
-                      verify your pharmacy license
-                    </button>{" "}
-                    to start providing consultations.
-                  </p>
-                )}
+              <div className="flex items-start gap-3 rounded-lg border border-secondary/30 bg-secondary-container/40 px-4 py-3 text-sm text-on-secondary-container">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                <div>
+                  Account created. Redirecting to your dashboard…
+                  {userType === "PHARMACY" && (
+                    <p className="mt-1">
+                      Once signed in, please{" "}
+                      <Link href="/verify-license" className="font-medium underline">
+                        verify your pharmacy license
+                      </Link>{" "}
+                      to start providing consultations.
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 
             {errors.general && (
-              <div className="rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+              <div className="rounded-lg border border-error/30 bg-error-container px-4 py-3 text-sm text-on-error-container">
                 {errors.general}
               </div>
             )}
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={isLoading || isEmailChecking || isLicenseChecking || !agreeToTerms}
-              className="w-full py-2.5 px-4 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 dark:disabled:bg-indigo-800 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed mt-2"
+              className={buttonClasses({ size: "lg", fullWidth: true })}
             >
-              {isLoading ? "Creating account..." : "Create account"}
+              {isLoading ? "Creating account…" : "Create account"}
             </button>
           </form>
 
-          <p className="mt-8 text-xs text-gray-400 dark:text-gray-600 text-center">
+          <p className="mt-8 text-center text-xs text-on-surface-variant">
             All data is encrypted and handled in accordance with HIPAA guidelines.
           </p>
         </div>
       </div>
-    </div>
-  );
-}
-
-// ---- Helpers ----
-
-function inputClass(hasError: boolean): string {
-  return [
-    "w-full px-3 py-2 rounded-lg text-sm border bg-white dark:bg-gray-900",
-    "text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600",
-    "focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors",
-    hasError
-      ? "border-red-400 dark:border-red-600"
-      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600",
-  ].join(" ");
-}
-
-function Field({
-  label,
-  error,
-  required,
-  children,
-}: {
-  label: React.ReactNode;
-  error: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-        {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
-      </label>
-      {children}
-      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
   );
 }
