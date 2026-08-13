@@ -48,7 +48,7 @@ export default function SignupPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [userType, setUserType] = useState<"CLIENT" | "PHARMACY" | "ADMIN">("CLIENT");
+  const [userType, setUserType] = useState<"CLIENT" | "PHARMACY" | "COURIER">("CLIENT");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isEmailChecking, setIsEmailChecking] = useState(false);
@@ -65,6 +65,8 @@ export default function SignupPage() {
           ? "/admin"
           : session.user.role === "PHARMACY"
           ? "/pharmacy-dashboard"
+          : session.user.role === "COURIER"
+          ? "/courier-dashboard"
           : "/client-dashboard";
       router.replace(dashboardPath);
     }
@@ -150,6 +152,14 @@ export default function SignupPage() {
         newErrors.phone = "Enter a valid phone number.";
       }
       if (!formData.pharmacyName.trim()) newErrors.pharmacyName = "Pharmacy name is required.";
+    }
+
+    if (userType === "COURIER") {
+      if (!formData.phone.trim()) {
+        newErrors.phone = "Phone number is required.";
+      } else if (!/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/[\s\-\(\)]/g, ""))) {
+        newErrors.phone = "Enter a valid phone number.";
+      }
     }
 
     if (!agreeToTerms) {
@@ -311,6 +321,7 @@ export default function SignupPage() {
               [
                 { value: "CLIENT", label: "Student" },
                 { value: "PHARMACY", label: "Pharmacist" },
+                { value: "COURIER", label: "Courier" },
               ] as const
             ).map((type) => (
               <button
@@ -422,6 +433,18 @@ export default function SignupPage() {
                   />
                 </div>
               </>
+            )}
+
+            {userType === "COURIER" && (
+              <Input
+                label="Phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => handleInputChange("phone", e.target.value)}
+                placeholder="+1 555 000 0000"
+                hint="Used by dispatch to reach you about active deliveries."
+                error={errors.phone}
+              />
             )}
 
             <div className="grid grid-cols-2 gap-4">

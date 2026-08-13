@@ -34,6 +34,8 @@ export default function ProtectedRoute({
             ? "/admin"
             : user.role === "PHARMACY"
             ? "/pharmacy-dashboard"
+            : user.role === "COURIER"
+            ? "/courier-dashboard"
             : "/client-dashboard";
         router.push(dashboardPath);
       }

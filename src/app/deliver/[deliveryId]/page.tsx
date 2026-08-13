@@ -8,8 +8,9 @@ import { publishLocation, stopSharing } from "@/lib/locationTracking";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 
 // Courier-facing page. Opened on the runner's phone for a specific delivery.
-// Streams the device's real GPS to Firestore so the student's tracking map
-// shows the live position. Keep this tab open while delivering.
+// Streams the device's real GPS to the app's own Postgres-backed API (see
+// src/lib/locationTracking.ts) so the student's tracking map shows the live
+// position. Keep this tab open while delivering.
 export default function CourierSharePage() {
   const params = useParams();
   const deliveryId = String(params.deliveryId);
@@ -73,7 +74,7 @@ export default function CourierSharePage() {
   }, []);
 
   return (
-    <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
+    <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN", "COURIER"]}>
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}

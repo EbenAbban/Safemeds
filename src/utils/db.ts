@@ -6,7 +6,7 @@ export interface User {
   email?: string;
   firstName: string;
   lastName: string;
-  role: "ADMIN" | "CLIENT" | "PHARMACY";
+  role: "ADMIN" | "CLIENT" | "PHARMACY" | "COURIER";
   name?: string;
   passwordHash?: string;
   isVerified?: boolean;

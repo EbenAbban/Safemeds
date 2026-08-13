@@ -4,7 +4,10 @@ import { auth } from "@/app/auth";
 
 // Live courier location for a delivery, backed by Postgres (no Firebase needed).
 //
-//   POST /api/delivery/[id]/location   -> courier (PHARMACY/ADMIN) pushes a GPS fix
+//   POST /api/delivery/[id]/location   -> courier pushes a GPS fix. PHARMACY/ADMIN
+//                                          staff may push for any delivery; a COURIER
+//                                          account may only push for a delivery they
+//                                          themselves claimed (see /api/courier/deliveries).
 //   GET  /api/delivery/[id]/location   -> tracking map reads the latest fix
 //
 // The courier device calls POST repeatedly from /deliver/[id]; the student's
@@ -19,12 +22,26 @@ export async function POST(
   const session = await auth();
   if (
     !session?.user ||
-    (session.user.role !== "PHARMACY" && session.user.role !== "ADMIN")
+    (session.user.role !== "PHARMACY" &&
+      session.user.role !== "ADMIN" &&
+      session.user.role !== "COURIER")
   ) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id } = await params;
+
+  // A courier account may only broadcast for a delivery they've claimed —
+  // otherwise any courier could spoof GPS for someone else's delivery.
+  if (session.user.role === "COURIER") {
+    const delivery = await prisma.delivery.findUnique({
+      where: { id },
+      select: { courierId: true },
+    });
+    if (!delivery || delivery.courierId !== session.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
 
   let body: {
     lat?: number;

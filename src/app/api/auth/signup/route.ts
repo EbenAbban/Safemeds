@@ -75,9 +75,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Only clients and pharmacists may self-register. Admin accounts must never
-    // be creatable through the public signup endpoint (privilege-escalation guard).
-    const ALLOWED_SIGNUP_ROLES = ["CLIENT", "PHARMACY"];
+    // Clients, pharmacists, and couriers may self-register. Admin accounts must
+    // never be creatable through the public signup endpoint (privilege-escalation guard).
+    const ALLOWED_SIGNUP_ROLES = ["CLIENT", "PHARMACY", "COURIER"];
     if (!ALLOWED_SIGNUP_ROLES.includes(roleNorm)) {
       return NextResponse.json(
         { error: "Invalid account type" },
@@ -129,6 +129,15 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
+    }
+
+    // Couriers need a reachable phone number — dispatch/support contact them
+    // directly when a delivery needs attention.
+    if (roleNorm === "COURIER" && !phone) {
+      return NextResponse.json(
+        { error: "Phone number is required for courier accounts" },
+        { status: 400 }
+      );
     }
 
     // Check if user already exists
@@ -186,7 +195,7 @@ export async function POST(request: NextRequest) {
         firstName,
         lastName,
         // Safe: roleNorm is validated against ALLOWED_SIGNUP_ROLES above.
-        role: roleNorm as "CLIENT" | "PHARMACY",
+        role: roleNorm as "CLIENT" | "PHARMACY" | "COURIER",
         phone: phone || null,
         licenseNumber: licenseNumber || null,
         pharmacyName: pharmacyName || null,

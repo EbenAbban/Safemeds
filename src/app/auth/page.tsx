@@ -40,6 +40,7 @@ interface FormErrors {
 const ROLES = [
   { value: "CLIENT", label: "Student" },
   { value: "PHARMACY", label: "Pharmacy" },
+  { value: "COURIER", label: "Courier" },
   { value: "ADMIN", label: "Admin" },
 ] as const;
 
@@ -53,7 +54,7 @@ export default function AuthPage() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [userType, setUserType] = useState<"CLIENT" | "PHARMACY" | "ADMIN">("CLIENT");
+  const [userType, setUserType] = useState<"CLIENT" | "PHARMACY" | "ADMIN" | "COURIER">("CLIENT");
   const [showPassword, setShowPassword] = useState(false);
 
   const { data: session, status } = useSession();
@@ -66,6 +67,8 @@ export default function AuthPage() {
           ? "/admin"
           : session.user.role === "PHARMACY"
           ? "/pharmacy-dashboard"
+          : session.user.role === "COURIER"
+          ? "/courier-dashboard"
           : "/client-dashboard";
       router.replace(dashboardPath);
     }

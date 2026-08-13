@@ -9,10 +9,10 @@ import NotificationBell from "./NotificationBell";
 
 interface NavigationProps {
   title: string;
-  userRole: "client" | "pharmacy" | "admin";
+  userRole: "client" | "pharmacy" | "admin" | "courier";
 }
 
-const ROLE_ICON = { client: GraduationCap, pharmacy: Pill, admin: ShieldCheck } as const;
+const ROLE_ICON = { client: GraduationCap, pharmacy: Pill, admin: ShieldCheck, courier: Truck } as const;
 
 /**
  * Authenticated app-shell header — SafeMeds Vital design system.
@@ -58,18 +58,22 @@ export default function Navigation({ title, userRole }: NavigationProps) {
             <button onClick={() => router.push("/about")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
               About
             </button>
-            <button onClick={() => router.push("/chat")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
-              <MessageCircle className="h-4 w-4" aria-hidden="true" />
-              Chat
-            </button>
-            <button onClick={() => router.push("/delivery")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
-              <Truck className="h-4 w-4" aria-hidden="true" />
-              Delivery
-            </button>
-            <button onClick={() => router.push("/consult")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
-              <Stethoscope className="h-4 w-4" aria-hidden="true" />
-              Consult
-            </button>
+            {userRole !== "courier" && (
+              <>
+                <button onClick={() => router.push("/chat")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
+                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  Chat
+                </button>
+                <button onClick={() => router.push("/delivery")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
+                  <Truck className="h-4 w-4" aria-hidden="true" />
+                  Delivery
+                </button>
+                <button onClick={() => router.push("/consult")} className="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:text-medical-teal dark:hover:text-primary-fixed-dim">
+                  <Stethoscope className="h-4 w-4" aria-hidden="true" />
+                  Consult
+                </button>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-4">
@@ -123,24 +127,28 @@ export default function Navigation({ title, userRole }: NavigationProps) {
           className="overflow-hidden md:hidden"
         >
           <div className="space-y-1 border-t border-outline-variant/60 py-4">
-            <button
-              onClick={() => { router.push("/chat"); setIsMenuOpen(false); }}
-              className="block w-full rounded-lg px-4 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
-            >
-              Chat with Pharmacist
-            </button>
-            <button
-              onClick={() => { router.push("/delivery"); setIsMenuOpen(false); }}
-              className="block w-full rounded-lg px-4 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
-            >
-              Track Delivery
-            </button>
-            <button
-              onClick={() => { router.push("/consult"); setIsMenuOpen(false); }}
-              className="block w-full rounded-lg px-4 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
-            >
-              Book Consultation
-            </button>
+            {userRole !== "courier" && (
+              <>
+                <button
+                  onClick={() => { router.push("/chat"); setIsMenuOpen(false); }}
+                  className="block w-full rounded-lg px-4 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+                >
+                  Chat with Pharmacist
+                </button>
+                <button
+                  onClick={() => { router.push("/delivery"); setIsMenuOpen(false); }}
+                  className="block w-full rounded-lg px-4 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+                >
+                  Track Delivery
+                </button>
+                <button
+                  onClick={() => { router.push("/consult"); setIsMenuOpen(false); }}
+                  className="block w-full rounded-lg px-4 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+                >
+                  Book Consultation
+                </button>
+              </>
+            )}
             <div className="border-t border-outline-variant/60 px-4 py-2">
               <p className="text-sm text-on-surface-variant">{user?.email || user?.username}</p>
               <p className="text-xs capitalize text-on-surface-variant/70">{userRole} Account</p>

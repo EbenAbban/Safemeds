@@ -32,6 +32,7 @@ model User {
   assignedConsultations Consultation[]  @relation("PharmacistConsultations")
   consultations         Consultation[]
   deliveries            Delivery[]
+  courierDeliveries     Delivery[]      @relation("CourierDeliveries")
   inventoryItems        InventoryItem[]
   messages              Message[]
   orders                Order[]
@@ -135,8 +136,12 @@ model Delivery {
   courierSpeed      Float?
   courierActive     Boolean        @default(false)
   courierUpdatedAt  DateTime?
+  // The courier account that claimed this delivery (self-service pool — a
+  // COURIER user claims an unassigned, packaged delivery from their dashboard).
+  courierId         String?
   order             Order?         @relation(fields: [orderId], references: [id])
   user              User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courier           User?          @relation("CourierDeliveries", fields: [courierId], references: [id])
 
   @@map("deliveries")
 }
@@ -417,6 +422,7 @@ enum UserRole {
   CLIENT
   PHARMACY
   ADMIN
+  COURIER
 }
 
 enum ConsultationStatus {
