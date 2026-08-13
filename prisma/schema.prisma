@@ -96,6 +96,16 @@ model Consultation {
   messages             Message[]
   prescriptions        Prescription[]
 
+  // Postgres does not index foreign keys automatically, and none of these had
+  // an index. Every one is a documented access path:
+  //   anonymousId          — anonymous student opening their own thread
+  //   userId               — a signed-in student's consultations
+  //   assignedPharmacistId — the pharmacist inbox queue filter
+  //   status/createdAt     — queue ordering and status filtering
+  @@index([anonymousId])
+  @@index([userId])
+  @@index([assignedPharmacistId])
+  @@index([status, createdAt])
   @@map("consultations")
 }
 
@@ -111,6 +121,12 @@ model Message {
   consultation     Consultation @relation(fields: [chatId], references: [id], onDelete: Cascade)
   user             User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // The hottest read in the product: the consultation chat polls
+  // `where: { chatId } orderBy: { createdAt }` every 4 seconds, for every open
+  // conversation on both the student and pharmacist sides. Without this it is
+  // a sequential scan of the whole messages table each time. Composite rather
+  // than two single-column indexes so the sort is satisfied by the index too.
+  @@index([chatId, createdAt])
   @@map("messages")
 }
 
@@ -156,6 +172,13 @@ model Delivery {
   user              User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
   courier           User?          @relation("CourierDeliveries", fields: [courierId], references: [id])
 
+  // anonymousId backs both the OTP lookup and anonymous delivery tracking;
+  // courierId backs the courier's "my deliveries" list; status backs the
+  // unassigned-pool query on the courier dashboard.
+  @@index([anonymousId])
+  @@index([userId])
+  @@index([courierId])
+  @@index([status])
   @@map("deliveries")
 }
 
@@ -246,6 +269,9 @@ model Order {
   prescription        Prescription? @relation(fields: [prescriptionId], references: [id])
   user                User?         @relation(fields: [userId], references: [id])
 
+  @@index([userId])
+  @@index([anonymousId])
+  @@index([status, createdAt])
   @@map("orders")
 }
 
@@ -260,6 +286,8 @@ model Notification {
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // The notification bell polls this per user on every authenticated page.
+  @@index([userId, createdAt])
   @@map("notifications")
 }
 
