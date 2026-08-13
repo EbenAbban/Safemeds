@@ -52,10 +52,15 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    if (!delivery?.otpHash || !delivery.otpExpiresAt) return invalid();
+    if (!delivery) return invalid();
 
     // Already confirmed — treat as success so a double-tap on the Verify
     // button doesn't read as a failure to the recipient.
+    //
+    // This MUST come before the otpHash check below: a successful verification
+    // nulls otpHash to burn the code, so testing the hash first would send
+    // every replay down the failure path and report "invalid code" to someone
+    // whose delivery was in fact confirmed. Ordering matters here.
     if (delivery.otpVerifiedAt) {
       return NextResponse.json({
         verified: true,
@@ -63,6 +68,8 @@ export async function POST(request: NextRequest) {
         verifiedAt: delivery.otpVerifiedAt,
       });
     }
+
+    if (!delivery.otpHash || !delivery.otpExpiresAt) return invalid();
 
     if (delivery.otpExpiresAt < new Date()) return invalid();
 
