@@ -1,10 +1,59 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { MessageCircle, Truck, Stethoscope, Settings as SettingsIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
+import { SlideUp, StaggerContainer, StaggerItem } from "@/components/animations";
+import { buttonClasses } from "@/components/ui";
+
+/**
+ * Migrated off hand-rolled Framer props onto the shared motion primitives.
+ * The previous markup repeated `initial/animate/transition={{ delay: 0 }}` on
+ * every card, which meant: no reduced-motion handling, a delay of literally
+ * zero, and entrances that played on mount rather than on scroll. The cards
+ * now stagger in as a group.
+ *
+ * `whileHover={{ scale: 1.02 }}` was replaced with the `lift` utility from
+ * globals.css — §43 rules out aggressive scaling in favour of a small
+ * translateY, and `lift` is already reduced-motion gated in CSS, so hover
+ * costs no JS at all.
+ */
+
+const FEATURES = [
+  {
+    icon: MessageCircle,
+    title: "Chat with Pharmacist",
+    description:
+      "Get instant consultation and medication advice from licensed pharmacists.",
+    action: "Start Chat",
+    href: "/chat",
+  },
+  {
+    icon: Truck,
+    title: "Track Deliveries",
+    description:
+      "Monitor your medication deliveries in real-time with live tracking.",
+    action: "View Deliveries",
+    href: "/delivery",
+  },
+  {
+    icon: Stethoscope,
+    title: "Consultations",
+    description:
+      "Schedule and manage your healthcare consultations with specialists.",
+    action: "Book Consultation",
+    href: "/consult",
+  },
+  {
+    icon: SettingsIcon,
+    title: "Settings",
+    description: "Configure your account settings and preferences.",
+    action: "Open Settings",
+    href: "/settings",
+  },
+] as const;
 
 export default function ClientDashboard() {
   const router = useRouter();
@@ -13,158 +62,59 @@ export default function ClientDashboard() {
   return (
     <ProtectedRoute allowedRoles={["CLIENT"]}>
       <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
-        {/* Navigation */}
         <Navigation title="Client Dashboard" userRole="client" />
 
-        {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* User Info Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0 }}
-            className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-lg p-6 mb-8 border border-primary-fixed dark:border-outline-variant/40"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-semibold text-on-surface mb-2">
-                  Account Information
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-on-surface-variant">
-                      Name:
-                    </span>
-                    <span className="ml-2 font-medium text-on-surface-variant">
-                      {user?.name || "N/A"}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-on-surface-variant">
-                      Email:
-                    </span>
-                    <span className="ml-2 font-medium text-on-surface-variant">
-                      {user?.email || "N/A"}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-on-surface-variant">
-                      Username:
-                    </span>
-                    <span className="ml-2 font-medium text-on-surface-variant">
-                      {user?.username || "N/A"}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-on-surface-variant">
-                      Role:
-                    </span>
-                    <span className="ml-2 font-medium text-on-surface-variant capitalize">
-                      {user?.role || "N/A"}
-                    </span>
-                  </div>
+        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <SlideUp className="mb-8 rounded-2xl border border-primary-fixed bg-surface-container-lowest p-6 shadow-lg dark:border-outline-variant/40 dark:bg-surface-container">
+            <h2 className="mb-2 text-xl font-semibold text-on-surface">
+              Account Information
+            </h2>
+            <dl className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
+              {[
+                ["Name", user?.name],
+                ["Email", user?.email],
+                ["Username", user?.username],
+                ["Role", user?.role],
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <dt className="inline text-on-surface-variant">{label}:</dt>{" "}
+                  <dd
+                    className={`inline font-medium text-on-surface-variant${
+                      label === "Role" ? " capitalize" : ""
+                    }`}
+                  >
+                    {value || "N/A"}
+                  </dd>
                 </div>
-              </div>
-              <div className="text-right">
-                <div className="text-2xl mb-2"></div>
-                <div className="text-sm text-on-surface-variant">Client Account</div>
-              </div>
-            </div>
-          </motion.div>
+              ))}
+            </dl>
+          </SlideUp>
 
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0 }}
-              whileHover={{ scale: 1.02 }}
-              className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-primary-fixed dark:border-outline-variant/40 hover:shadow-xl transition-all duration-300"
-            >
-              <div className="text-3xl mb-4"></div>
-              <h3 className="text-lg font-semibold text-on-surface mb-2">
-                Chat with Pharmacist
-              </h3>
-              <p className="text-on-surface-variant text-sm mb-4">
-                Get instant consultation and medication advice from licensed
-                pharmacists.
-              </p>
-              <button
-                onClick={() => router.push("/chat")}
-                className="bg-soft-aqua text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-medical-teal transition-colors"
+          <StaggerContainer
+            count={FEATURES.length}
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          >
+            {FEATURES.map(({ icon: Icon, title, description, action, href }) => (
+              <StaggerItem
+                key={href}
+                className="lift rounded-xl border border-primary-fixed bg-surface-container-lowest p-6 shadow-lg dark:border-outline-variant/40 dark:bg-surface-container"
               >
-                Start Chat
-              </button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0 }}
-              whileHover={{ scale: 1.02 }}
-              className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-primary-fixed dark:border-outline-variant/40 hover:shadow-xl transition-all duration-300"
-            >
-              <div className="text-3xl mb-4"></div>
-              <h3 className="text-lg font-semibold text-on-surface mb-2">
-                Track Deliveries
-              </h3>
-              <p className="text-on-surface-variant text-sm mb-4">
-                Monitor your medication deliveries in real-time with live
-                tracking.
-              </p>
-              <button
-                onClick={() => router.push("/delivery")}
-                className="bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-secondary transition-colors"
-              >
-                View Deliveries
-              </button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0 }}
-              whileHover={{ scale: 1.02 }}
-              className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-primary-fixed dark:border-outline-variant/40 hover:shadow-xl transition-all duration-300"
-            >
-              <div className="text-3xl mb-4"></div>
-              <h3 className="text-lg font-semibold text-on-surface mb-2">
-                Consultations
-              </h3>
-              <p className="text-on-surface-variant text-sm mb-4">
-                Schedule and manage your healthcare consultations with
-                specialists.
-              </p>
-              <button
-                onClick={() => router.push("/consult")}
-                className="bg-tertiary-fixed/400 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-tertiary transition-colors"
-              >
-                Book Consultation
-              </button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0 }}
-              whileHover={{ scale: 1.02 }}
-              className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 border border-primary-fixed dark:border-outline-variant/40 hover:shadow-xl transition-all duration-300"
-            >
-              <div className="text-3xl mb-4">️</div>
-              <h3 className="text-lg font-semibold text-on-surface mb-2">
-                Settings
-              </h3>
-              <p className="text-on-surface-variant text-sm mb-4">
-                Configure your account settings and preferences.
-              </p>
-              <button
-                onClick={() => router.push("/settings")}
-                className="bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-600 transition-colors"
-              >
-                Open Settings
-              </button>
-            </motion.div>
-          </div>
+                <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-primary-fixed/60 text-medical-teal dark:bg-surface-container-high dark:text-primary">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <h3 className="mb-2 text-lg font-semibold text-on-surface">
+                  {title}
+                </h3>
+                <p className="mb-4 text-sm text-on-surface-variant">{description}</p>
+                <button
+                  onClick={() => router.push(href)}
+                  className={buttonClasses({ variant: "primary", size: "sm" })}
+                >
+                  {action}
+                </button>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
         </main>
       </div>
     </ProtectedRoute>

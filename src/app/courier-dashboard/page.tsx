@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { StaggerContainer, StaggerItem } from "@/components/animations";
 import { MapPin, Package, PackageCheck, RefreshCw } from "lucide-react";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
@@ -105,7 +105,7 @@ export default function CourierDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["COURIER"]}>
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
         <Navigation title="Courier Dashboard" userRole="courier" />
 
         <main className="mx-auto max-w-5xl px-4 py-8">
@@ -153,9 +153,12 @@ export default function CourierDashboard() {
                     You haven&apos;t claimed any deliveries yet — pick one up from the pool below.
                   </p>
                 ) : (
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <StaggerContainer
+                    count={assigned.length}
+                    className="grid grid-cols-1 gap-4 sm:grid-cols-2"
+                  >
                     {assigned.map((d) => (
-                      <motion.div key={d.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                      <StaggerItem key={d.id}>
                         <DeliveryCard
                           delivery={d}
                           action={
@@ -168,9 +171,9 @@ export default function CourierDashboard() {
                             </Link>
                           }
                         />
-                      </motion.div>
+                      </StaggerItem>
                     ))}
-                  </div>
+                  </StaggerContainer>
                 )}
               </section>
 
@@ -184,9 +187,12 @@ export default function CourierDashboard() {
                     No packaged deliveries are waiting for a courier right now.
                   </p>
                 ) : (
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <StaggerContainer
+                    count={available.length}
+                    className="grid grid-cols-1 gap-4 sm:grid-cols-2"
+                  >
                     {available.map((d) => (
-                      <motion.div key={d.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                      <StaggerItem key={d.id}>
                         <DeliveryCard
                           delivery={d}
                           action={
@@ -199,9 +205,9 @@ export default function CourierDashboard() {
                             </button>
                           }
                         />
-                      </motion.div>
+                      </StaggerItem>
                     ))}
-                  </div>
+                  </StaggerContainer>
                 )}
               </section>
             </div>

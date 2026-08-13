@@ -362,6 +362,42 @@ body {
   }
 }
 
+/* Skeleton shimmer.
+ *
+ * A travelling highlight rather than a pulsing opacity: pulse reads as "this
+ * element is disabled", sweep reads as "content is on its way". The gradient
+ * is tinted with the surface tokens so skeletons sit correctly in both themes
+ * instead of showing grey boxes on a dark background. */
+@keyframes skeleton-sweep {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton {
+  background-color: var(--sm-surface-container-high);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--sm-surface-container-lowest) 55%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-sweep 1.6s ease-in-out infinite;
+}
+
+/* Reduced motion keeps the placeholder shape but drops the travelling
+   highlight — the layout still communicates "loading" without movement. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background-image: none;
+  }
+}
+
 /* PWA install gate.
  *
  * The overlay ships in the server-rendered HTML so gated users see it without
