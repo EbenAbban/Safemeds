@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { Reveal } from "@/components/animations";
 import Link from "next/link";
 import { Mail, MapPin, Phone, CheckCircle2 } from "lucide-react";
 import SiteHeader from "@/components/Common/SiteHeader";
@@ -35,25 +35,15 @@ export default function ContactPage() {
 
       <Section className="pb-0">
         <Container className="max-w-3xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-12 text-center"
-          >
+          <Reveal variant="up" className="mb-12 text-center">
             <h1 className="text-hero text-on-surface">Contact Us</h1>
             <p className="mt-4 text-lg text-on-surface-variant">
               Have a question, concern, or feedback? We&apos;d love to hear from you.
             </p>
-          </motion.div>
+          </Reveal>
 
           <div className="mb-20 grid gap-8 md:grid-cols-2">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="space-y-6"
-            >
+            <Reveal variant="left" className="space-y-6" delay={0.1}>
               <Card>
                 <h2 className="text-lg font-semibold text-on-surface">Get in touch</h2>
                 <ul className="mt-4 space-y-4">
@@ -95,13 +85,9 @@ export default function ContactPage() {
                   Start an anonymous consultation →
                 </Link>
               </Card>
-            </motion.div>
+            </Reveal>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
+            <Reveal variant="right" delay={0.2}>
               {sent ? (
                 <Card className="text-center">
                   <CheckCircle2 className="mx-auto h-12 w-12 text-secondary" aria-hidden="true" />
@@ -157,7 +143,7 @@ export default function ContactPage() {
                   </Button>
                 </Card>
               )}
-            </motion.div>
+            </Reveal>
           </div>
         </Container>
       </Section>

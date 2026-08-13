@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { SlideUp } from "@/components/animations";
 import { Lock, ShieldCheck, Smartphone } from "lucide-react";
 import SiteHeader from "@/components/Common/SiteHeader";
 import Footer from "@/components/Common/Footer";
@@ -34,12 +34,7 @@ export default function AboutPage() {
 
       <Section className="pb-0">
         <Container className="max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-16 text-center"
-          >
+          <SlideUp className="mb-16 text-center">
             <h1 className="text-hero text-on-surface">About SafeMeds</h1>
             <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-on-surface-variant">
               SafeMeds is a secure telepharmacy platform built for university
@@ -47,13 +42,9 @@ export default function AboutPage() {
               for anonymous medical consultations, prescription management,
               and medication delivery.
             </p>
-          </motion.div>
+          </SlideUp>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
+          <SlideUp delay={0.1}>
             <Card radius="xl" className="mb-8">
               <h2 className="text-headline-md text-on-surface">Our Mission</h2>
               <p className="mt-4 leading-relaxed text-on-surface-variant">
@@ -63,13 +54,9 @@ export default function AboutPage() {
                 inconvenience, or fear of stigma.
               </p>
             </Card>
-          </motion.div>
+          </SlideUp>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          <SlideUp delay={0.2}>
             <Card radius="xl" className="mb-8">
               <h2 className="text-headline-md text-on-surface">Our Story</h2>
               <p className="mt-4 leading-relaxed text-on-surface-variant">
@@ -86,14 +73,9 @@ export default function AboutPage() {
                 delivery into one seamless platform.
               </p>
             </Card>
-          </motion.div>
+          </SlideUp>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-8 grid gap-6 md:grid-cols-3"
-          >
+          <SlideUp className="mb-8 grid gap-6 md:grid-cols-3" delay={0.3}>
             {VALUES.map(({ Icon, title, description }) => (
               <Card key={title} radius="lg">
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-primary-fixed text-primary dark:bg-primary-container dark:text-on-primary-container">
@@ -105,18 +87,13 @@ export default function AboutPage() {
                 </p>
               </Card>
             ))}
-          </motion.div>
+          </SlideUp>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="pb-20 text-center"
-          >
+          <SlideUp className="pb-20 text-center" delay={0.4}>
             <ButtonLink href="/signup" size="lg">
               Join SafeMeds
             </ButtonLink>
-          </motion.div>
+          </SlideUp>
         </Container>
       </Section>
 

@@ -1,7 +1,9 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import { verifyPassword } from "@/utils/password";
 import { getUserByUsername } from "@/utils/db";
+import { linkOrCreateGoogleUser } from "@/utils/googleAuth";
 import { prisma } from "@/lib/prisma";
 
 // Extend the built-in session types
@@ -30,6 +32,14 @@ export const { handlers, auth } = NextAuth({
   trustHost: true,
   debug: false,
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      // Ask Google to prefer an already-verified address on multi-account
+      // profiles, and always show the chooser rather than silently reusing
+      // whichever session the browser happens to hold.
+      authorization: { params: { prompt: "select_account" } },
+    }),
     Credentials({
       name: "credentials",
       credentials: {
@@ -84,9 +94,15 @@ export const { handlers, auth } = NextAuth({
             throw new Error("Invalid credentials");
           }
 
+          // Google-provisioned accounts have no local password; they must go
+          // through the Google button rather than this form.
+          if (!dbUser.passwordHash) {
+            throw new Error("Invalid credentials");
+          }
+
           const isValidPassword = await verifyPassword(
             trimmedPassword,
-            dbUser.passwordHash!
+            dbUser.passwordHash
           );
 
           if (!isValidPassword) {
@@ -150,9 +166,15 @@ export const { handlers, auth } = NextAuth({
             throw new Error("Invalid credentials");
           }
 
+          // Google-provisioned accounts have no local password; they must go
+          // through the Google button rather than this form.
+          if (!dbUser.passwordHash) {
+            throw new Error("Invalid credentials");
+          }
+
           const isValidPassword = await verifyPassword(
             trimmedPassword,
-            dbUser.passwordHash!
+            dbUser.passwordHash
           );
 
           if (!isValidPassword) {
@@ -186,7 +208,50 @@ export const { handlers, auth } = NextAuth({
     maxAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
-    async jwt({ token, user }) {
+    // Google is trusted for identity only after it says the address is
+    // verified. Without this check an attacker could register an unverified
+    // Google account bearing someone else's address and take over the
+    // SafeMeds account that email maps to.
+    async signIn({ account, profile }) {
+      if (account?.provider !== "google") return true;
+
+      if (!profile?.email || profile.email_verified !== true) {
+        console.warn("Rejected Google sign-in with unverified email");
+        return false;
+      }
+
+      try {
+        await linkOrCreateGoogleUser({
+          sub: profile.sub as string,
+          email: profile.email,
+          given_name: profile.given_name as string | undefined,
+          family_name: profile.family_name as string | undefined,
+          name: profile.name as string | undefined,
+        });
+        return true;
+      } catch (error) {
+        console.error("Google account provisioning failed:", error);
+        return false;
+      }
+    },
+    async jwt({ token, user, account }) {
+      if (account?.provider === "google") {
+        // The `user` handed to this callback is Google's profile, not a
+        // SafeMeds row — it has no id, username or role. Read the record
+        // signIn just created or linked.
+        const dbUser = await prisma.user.findUnique({
+          where: { email: (token.email ?? user?.email ?? "").toLowerCase() },
+          select: { id: true, username: true, role: true },
+        });
+
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.username = dbUser.username;
+          token.role = dbUser.role;
+        }
+        return token;
+      }
+
       if (user) {
         token.id = user.id;
         token.username = user.username;

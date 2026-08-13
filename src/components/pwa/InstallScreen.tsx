@@ -16,17 +16,17 @@ interface InstallScreenProps {
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 dark:bg-blue-500/15 dark:text-blue-300">
+      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-fixed text-xs font-bold text-on-primary-fixed dark:bg-primary-container dark:text-on-primary-container">
         {n}
       </span>
-      <span className="text-sm text-gray-700 dark:text-gray-200">{children}</span>
+      <span className="text-sm text-on-surface-variant">{children}</span>
     </div>
   );
 }
 
 function Panel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="w-full space-y-2.5 rounded-xl border border-gray-200 bg-white/70 p-4 text-left dark:border-gray-700 dark:bg-gray-800/60">
+    <div className="w-full space-y-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest/70 p-4 text-left dark:bg-surface-container/60">
       {children}
     </div>
   );
@@ -51,9 +51,9 @@ function CopyLinkButton() {
     <button
       type="button"
       onClick={copy}
-      className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-gray-300 px-6 py-3.5 font-semibold text-gray-800 transition-colors hover:border-blue-500 dark:border-gray-600 dark:text-white"
+      className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-outline-variant px-6 py-3.5 font-semibold text-on-surface transition-colors hover:border-soft-aqua"
     >
-      {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+      {copied ? <Check className="h-4 w-4 text-secondary" /> : <Copy className="h-4 w-4" />}
       {copied ? "Link copied" : "Copy link"}
     </button>
   );
@@ -73,7 +73,7 @@ export default function InstallScreen({ mode, onInstall, onDismiss }: InstallScr
   return (
     <div
       data-pwa-install-overlay
-      className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
+      className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high"
     >
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -90,11 +90,11 @@ export default function InstallScreen({ mode, onInstall, onDismiss }: InstallScr
           priority
         />
 
-        <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="mb-2 text-2xl font-bold text-on-surface">
           {isWebview ? "Open SafeMeds in your browser" : "Install SafeMeds"}
         </h1>
 
-        <p className="mb-7 text-[15px] leading-relaxed text-gray-600 dark:text-gray-300">
+        <p className="mb-7 text-[15px] leading-relaxed text-on-surface-variant">
           {isWebview
             ? "You're viewing this inside another app, which can't install SafeMeds. Open it in Safari or Chrome to continue."
             : "Add SafeMeds to your home screen to start your confidential consultation."}
@@ -103,7 +103,7 @@ export default function InstallScreen({ mode, onInstall, onDismiss }: InstallScr
         {mode === "ios-instructions" && (
           <Panel>
             <Step n={1}>
-              Tap <Share className="mx-0.5 inline h-4 w-4 -translate-y-0.5 text-blue-600 dark:text-blue-400" />{" "}
+              Tap <Share className="mx-0.5 inline h-4 w-4 -translate-y-0.5 text-medical-teal dark:text-primary-fixed-dim" />{" "}
               <strong>Share</strong> in the toolbar below
             </Step>
             <Step n={2}>
@@ -131,8 +131,8 @@ export default function InstallScreen({ mode, onInstall, onDismiss }: InstallScr
           <div className="w-full space-y-4">
             <ul className="space-y-2.5 text-left">
               {BENEFITS.map(({ Icon, label }) => (
-                <li key={label} className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-200">
-                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" />
+                <li key={label} className="flex items-start gap-3 text-sm text-on-surface-variant">
+                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-medical-teal dark:text-primary-fixed-dim" />
                   {label}
                 </li>
               ))}
@@ -140,7 +140,7 @@ export default function InstallScreen({ mode, onInstall, onDismiss }: InstallScr
             <button
               type="button"
               onClick={onInstall}
-              className="w-full rounded-xl bg-blue-600 px-6 py-4 text-lg font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg"
+              className="w-full rounded-xl bg-medical-teal px-6 py-4 text-lg font-semibold text-white transition-all hover:bg-secondary hover:shadow-card"
             >
               Install app
             </button>
@@ -164,7 +164,7 @@ export default function InstallScreen({ mode, onInstall, onDismiss }: InstallScr
         <button
           type="button"
           onClick={onDismiss}
-          className="mt-8 text-sm text-gray-500 underline underline-offset-4 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          className="mt-8 text-sm text-outline underline underline-offset-4 transition-colors hover:text-on-surface-variant"
         >
           Continue in browser
         </button>

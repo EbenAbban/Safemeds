@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Search, Pill, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui";
 
 interface Medication {
   id: string;
@@ -51,8 +52,8 @@ export default function SearchPage() {
   }, [query]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 via-purple-50 to-pink-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark">
-      <nav className="sticky top-0 z-50 bg-surface-container-lowest/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-outline-variant/60">
+    <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
+      <nav className="sticky top-0 z-50 bg-surface-container-lowest/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-outline-variant/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <Link href="/" className="text-xl font-bold text-medical-teal dark:text-primary-fixed-dim">
             SafeMeds
@@ -108,7 +109,7 @@ export default function SearchPage() {
             animate={{ opacity: 1 }}
             className="text-center py-12"
           >
-            <Pill className="h-16 w-16 text-gray-300 dark:text-on-surface-variant mx-auto mb-4" />
+            <Pill className="h-16 w-16 text-outline-variant dark:text-on-surface-variant mx-auto mb-4" />
             <p className="text-xl font-medium text-on-surface-variant">
               No medications found
             </p>
@@ -124,7 +125,7 @@ export default function SearchPage() {
             animate={{ opacity: 1 }}
             className="text-center py-12"
           >
-            <Search className="h-16 w-16 text-gray-300 dark:text-on-surface-variant mx-auto mb-4" />
+            <Search className="h-16 w-16 text-outline-variant dark:text-on-surface-variant mx-auto mb-4" />
             <p className="text-lg text-outline">
               Type above to search for medications
             </p>
@@ -159,17 +160,9 @@ export default function SearchPage() {
                       </p>
                     )}
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-fixed/50 dark:bg-blue-900/30 text-primary dark:text-blue-300">
-                        {med.dosageForm}
-                      </span>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-on-tertiary-container dark:text-purple-300">
-                        {med.strength}
-                      </span>
-                      {med.isPrescription && (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300">
-                          Rx Required
-                        </span>
-                      )}
+                      <Badge tone="primary">{med.dosageForm}</Badge>
+                      <Badge tone="info">{med.strength}</Badge>
+                      {med.isPrescription && <Badge tone="warning">Rx Required</Badge>}
                     </div>
                   </div>
                   <div className="text-right">

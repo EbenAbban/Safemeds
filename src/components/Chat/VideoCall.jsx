@@ -310,7 +310,7 @@ export default function VideoCall({
   };
 
   return (
-    <div className="absolute inset-0 bg-gray-900 z-50 flex flex-col justify-between overflow-hidden text-white font-sans">
+    <div className="absolute inset-0 bg-dark-navy z-50 flex flex-col justify-between overflow-hidden text-white font-sans">
 
       {/* 1. RINGING STATE VIEW */}
       {callState === "ringing" && (
@@ -319,17 +319,17 @@ export default function VideoCall({
             {/* Animated Pulsing Rings */}
             <div className="absolute inset-0 rounded-full bg-soft-aqua/20 animate-ping" />
             <div className="absolute -inset-4 rounded-full bg-soft-aqua/10 animate-pulse" />
-            <div className="w-32 h-32 bg-gradient-to-tr from-primary-fixed/300 via-indigo-600 to-purple-600 rounded-full flex items-center justify-center border-4 border-white/20 relative shadow-2xl">
+            <div className="w-32 h-32 bg-gradient-to-tr from-medical-teal via-secondary to-soft-aqua rounded-full flex items-center justify-center border-4 border-white/20 relative shadow-2xl">
               <span className="text-5xl">👩‍⚕️</span>
             </div>
           </div>
           <h2 className="text-2xl font-bold mb-2">{pharmacistName}</h2>
-          <p className="text-blue-400 font-medium mb-8 animate-pulse text-sm tracking-wider">
+          <p className="text-primary-fixed-dim font-medium mb-8 animate-pulse text-sm tracking-wider">
             SECURE CONSULTATION CALLING...
           </p>
 
           <div className="bg-surface-container-lowest/5 border border-white/10 rounded-2xl px-4 py-2.5 flex items-center gap-2 mb-16 max-w-sm text-center">
-            <Lock className="w-4 h-4 text-green-400" />
+            <Lock className="w-4 h-4 text-soft-aqua" />
             <span className="text-xs text-outline">
               Connection secured with peer-to-peer end-to-end encryption.
             </span>
@@ -350,7 +350,7 @@ export default function VideoCall({
       {/* 2. CONNECTING STATE VIEW */}
       {callState === "connecting" && (
         <div className="flex-1 flex flex-col items-center justify-center p-6">
-          <Loader2 className="w-16 h-16 text-indigo-500 animate-spin mb-6" />
+          <Loader2 className="w-16 h-16 text-soft-aqua animate-spin mb-6" />
           <h3 className="text-xl font-bold mb-2">Connecting...</h3>
           <p className="text-sm text-outline animate-pulse">
             Establishing secure WebRTC media tunnel
@@ -370,7 +370,7 @@ export default function VideoCall({
                 LIVE CONSULTATION
               </div>
               <span className="text-xs text-outline">|</span>
-              <div className="text-xs font-mono font-bold text-gray-300">
+              <div className="text-xs font-mono font-bold text-cool-gray">
                 {formatDuration(callDuration)}
               </div>
             </div>
@@ -382,16 +382,16 @@ export default function VideoCall({
           </div>
 
           {/* Main Remote Feed */}
-          <div className="flex-1 relative bg-gradient-to-tr from-gray-950 via-gray-900 to-indigo-950 flex items-center justify-center overflow-hidden">
+          <div className="flex-1 relative bg-gradient-to-tr from-surface-dark via-dark-navy to-medical-teal/40 flex items-center justify-center overflow-hidden">
 
             {/* Screen Share Preview (real getDisplayMedia output) */}
             {isScreenSharing ? (
-              <div className="absolute inset-0 bg-gray-950 z-10 flex flex-col p-6 pt-16">
+              <div className="absolute inset-0 bg-surface-dark z-10 flex flex-col p-6 pt-16">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-semibold text-indigo-300 flex items-center gap-2">
+                  <span className="text-sm font-semibold text-primary-fixed-dim flex items-center gap-2">
                     <Monitor className="w-4 h-4" /> You are sharing your screen
                   </span>
-                  <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-semibold">
+                  <span className="bg-error-container text-on-error-container px-2 py-1 rounded text-xs font-semibold">
                     SHARING
                   </span>
                 </div>
@@ -400,7 +400,7 @@ export default function VideoCall({
                   autoPlay
                   playsInline
                   muted
-                  className="flex-1 w-full rounded-2xl border-4 border-indigo-500 bg-black object-contain"
+                  className="flex-1 w-full rounded-2xl border-4 border-soft-aqua bg-black object-contain"
                 />
               </div>
             ) : null}
@@ -416,12 +416,12 @@ export default function VideoCall({
             ) : (
               <div className="flex flex-col items-center justify-center p-6 text-center select-none">
                 <div className="relative mb-6">
-                  <div className="w-40 h-40 bg-gradient-to-tr from-green-500 via-indigo-600 to-purple-600 rounded-full flex items-center justify-center border-4 border-indigo-500/30 shadow-2xl relative">
+                  <div className="w-40 h-40 bg-gradient-to-tr from-medical-teal via-secondary to-soft-aqua rounded-full flex items-center justify-center border-4 border-soft-aqua/30 shadow-2xl relative">
                     <span className="text-6xl">👩‍⚕️</span>
                   </div>
                   {/* Voice visualizer */}
                   <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 flex items-end justify-center space-x-1 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-                    <Volume2 className="w-3.5 h-3.5 text-blue-400 mr-1" />
+                    <Volume2 className="w-3.5 h-3.5 text-primary-fixed-dim mr-1" />
                     {[...Array(5)].map((_, i) => (
                       <motion.div
                         key={i}
@@ -432,14 +432,14 @@ export default function VideoCall({
                           ease: "easeInOut",
                           delay: i * 0.1
                         }}
-                        className="w-1 bg-blue-400 rounded-full"
+                        className="w-1 bg-soft-aqua rounded-full"
                         style={{ height: "6px" }}
                       />
                     ))}
                   </div>
                 </div>
                 <h3 className="text-xl font-bold mb-1">{pharmacistName}</h3>
-                <p className="text-xs text-blue-400 font-semibold tracking-wider">
+                <p className="text-xs text-primary-fixed-dim font-semibold tracking-wider">
                   ACTIVE VOICE CHANNEL
                 </p>
               </div>
@@ -447,17 +447,17 @@ export default function VideoCall({
           </div>
 
           {/* Picture-in-Picture Local Feed (real camera) */}
-          <div className="absolute right-4 bottom-24 w-32 h-44 sm:w-40 sm:h-52 bg-gray-950 rounded-2xl overflow-hidden border border-white/20 shadow-2xl z-20">
+          <div className="absolute right-4 bottom-24 w-32 h-44 sm:w-40 sm:h-52 bg-surface-dark rounded-2xl overflow-hidden border border-white/20 shadow-2xl z-20">
             {isVideoOff ? (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-gray-950 text-center p-3 select-none">
+              <div className="w-full h-full flex flex-col items-center justify-center bg-surface-dark text-center p-3 select-none">
                 <span className="text-2xl mb-1">👤</span>
                 <span className="text-[10px] text-on-surface-variant font-semibold uppercase tracking-wider">
                   Camera Off
                 </span>
               </div>
             ) : cameraError ? (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-gray-950 text-center p-3 select-none">
-                <AlertCircle className="w-6 h-6 text-yellow-500 mb-1" />
+              <div className="w-full h-full flex flex-col items-center justify-center bg-surface-dark text-center p-3 select-none">
+                <AlertCircle className="w-6 h-6 text-amber-300 mb-1" />
                 <span className="text-[9px] text-outline">No Camera</span>
               </div>
             ) : (
@@ -475,7 +475,7 @@ export default function VideoCall({
           </div>
 
           {/* Bottom Toolbar Control Panel */}
-          <div className="bg-gray-950/80 backdrop-blur-md border-t border-white/10 p-6 flex justify-center items-center gap-4 sm:gap-6 z-20 no-print">
+          <div className="bg-dark-navy/80 backdrop-blur-md border-t border-white/10 p-6 flex justify-center items-center gap-4 sm:gap-6 z-20 no-print">
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -483,7 +483,7 @@ export default function VideoCall({
               aria-label={isMuted ? "Unmute microphone" : "Mute microphone"}
               aria-pressed={isMuted}
               className={`w-12 h-12 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                isMuted ? "bg-red-600 text-white" : "bg-surface-container-lowest/10 text-white hover:bg-surface-container-lowest/20 border border-white/15"
+                isMuted ? "bg-error text-on-error" : "bg-surface-container-lowest/10 text-white hover:bg-surface-container-lowest/20 border border-white/15"
               }`}
             >
               {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
@@ -496,7 +496,7 @@ export default function VideoCall({
               aria-label={isVideoOff ? "Turn camera on" : "Turn camera off"}
               aria-pressed={isVideoOff}
               className={`w-12 h-12 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                isVideoOff ? "bg-red-600 text-white" : "bg-surface-container-lowest/10 text-white hover:bg-surface-container-lowest/20 border border-white/15"
+                isVideoOff ? "bg-error text-on-error" : "bg-surface-container-lowest/10 text-white hover:bg-surface-container-lowest/20 border border-white/15"
               }`}
             >
               {isVideoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
@@ -520,7 +520,7 @@ export default function VideoCall({
               whileTap={{ scale: 0.9 }}
               onClick={handleEndCall}
               aria-label="End call"
-              className="w-14 h-14 bg-error hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-red-600/30 cursor-pointer"
+              className="w-14 h-14 bg-error hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-error/30 cursor-pointer"
             >
               <PhoneOff className="w-6 h-6" />
             </motion.button>
@@ -532,7 +532,7 @@ export default function VideoCall({
       {/* 4. UNAVAILABLE STATE VIEW (live mode, no pharmacist answered) */}
       {callState === "unavailable" && (
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center text-yellow-500 mb-6">
+          <div className="w-20 h-20 bg-amber-300/10 rounded-full flex items-center justify-center text-amber-300 mb-6">
             <AlertCircle className="w-10 h-10" />
           </div>
           <h2 className="text-2xl font-bold mb-2">No pharmacist available</h2>
@@ -554,7 +554,7 @@ export default function VideoCall({
       {/* 5. ENDED STATE VIEW */}
       {callState === "ended" && (
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-20 h-20 bg-error-container/600/10 rounded-full flex items-center justify-center text-red-500 mb-6">
+          <div className="w-20 h-20 bg-error/10 rounded-full flex items-center justify-center text-error mb-6">
             <PhoneOff className="w-10 h-10" />
           </div>
           <h2 className="text-2xl font-bold mb-2">Call Disconnected</h2>

@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
 import { getAnalytics, type AnalyticsData } from "@/services/analyticsService";
+import { Banknote, ClipboardList, MessageCircle, Pill } from "lucide-react";
 
 export default function AnalyticsPage() {
   useAuth(); // keep auth/redirect side-effect
@@ -42,7 +43,7 @@ export default function AnalyticsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PENDING":
-        return "text-yellow-600";
+        return "text-amber-700 dark:text-amber-300";
       case "IN_PROGRESS":
         return "text-medical-teal";
       case "COMPLETED":
@@ -57,11 +58,11 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 dark:from-surface-dark dark:to-surface-container-high">
+        <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
           <Navigation title="Analytics" userRole="pharmacy" />
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-soft-aqua mx-auto"></div>
               <p className="mt-4 text-on-surface-variant">Loading analytics...</p>
             </div>
           </main>
@@ -72,7 +73,7 @@ export default function AnalyticsPage() {
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 dark:from-surface-dark dark:to-surface-container-high">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
         <Navigation title="Analytics Dashboard" userRole="pharmacy" />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -94,7 +95,7 @@ export default function AnalyticsPage() {
               <select
                 value={period}
                 onChange={(e) => setPeriod(e.target.value)}
-                className="px-4 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="px-4 py-2 border border-outline-variant bg-surface-container-lowest dark:bg-surface-container-high text-on-surface rounded-lg focus:ring-2 focus:ring-soft-aqua focus:border-transparent"
               >
                 <option value="7">Last 7 days</option>
                 <option value="30">Last 30 days</option>
@@ -116,8 +117,8 @@ export default function AnalyticsPage() {
                 <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                        <span className="text-secondary text-lg"></span>
+                      <div className="w-8 h-8 bg-secondary-container rounded-lg flex items-center justify-center">
+                        <Banknote className="h-4 w-4 text-on-secondary-container" aria-hidden />
                       </div>
                     </div>
                     <div className="ml-4">
@@ -132,8 +133,8 @@ export default function AnalyticsPage() {
                 <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-primary-fixed/50 rounded-lg flex items-center justify-center">
-                        <span className="text-medical-teal text-lg"></span>
+                      <div className="w-8 h-8 bg-primary-fixed rounded-lg flex items-center justify-center">
+                        <ClipboardList className="h-4 w-4 text-on-primary-fixed" aria-hidden />
                       </div>
                     </div>
                     <div className="ml-4">
@@ -148,8 +149,8 @@ export default function AnalyticsPage() {
                 <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <span className="text-tertiary text-lg"></span>
+                      <div className="w-8 h-8 bg-tertiary-fixed rounded-lg flex items-center justify-center">
+                        <MessageCircle className="h-4 w-4 text-on-tertiary-fixed" aria-hidden />
                       </div>
                     </div>
                     <div className="ml-4">
@@ -164,8 +165,8 @@ export default function AnalyticsPage() {
                 <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <span className="text-orange-600 text-lg"></span>
+                      <div className="w-8 h-8 bg-surface-container-high rounded-lg flex items-center justify-center">
+                        <Pill className="h-4 w-4 text-on-surface-variant" aria-hidden />
                       </div>
                     </div>
                     <div className="ml-4">
@@ -194,7 +195,7 @@ export default function AnalyticsPage() {
                     {analytics.sales.dailySales.map((day, index) => (
                       <div key={index} className="flex-1 flex flex-col items-center">
                         <div
-                          className="w-full bg-orange-500 rounded-t"
+                          className="w-full bg-medical-teal dark:bg-primary-fixed-dim rounded-t"
                           style={{
                             height: `${(day.revenue / Math.max(...analytics.sales.dailySales.map((d) => d.revenue))) * 200}px`,
                           }}
@@ -306,7 +307,7 @@ export default function AnalyticsPage() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-on-surface-variant">Low Stock Items</span>
-                      <span className="text-sm font-semibold text-orange-600">
+                      <span className="text-sm font-semibold text-amber-700 dark:text-amber-300">
                         {analytics.inventory.lowStockItems}
                       </span>
                     </div>

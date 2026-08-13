@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
 import { getMedications, Medication } from "@/services/medicationService";
+import { EmptyState, MedicationSkeleton } from "@/components/ui";
+import { PillBottle } from "lucide-react";
 
 export default function MedicationsPage() {
   const router = useRouter();
@@ -116,7 +118,7 @@ export default function MedicationsPage() {
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 dark:from-surface-dark dark:to-surface-container-high">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
         <Navigation title="Medication Management" userRole="pharmacy" />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -223,33 +225,28 @@ export default function MedicationsPage() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {loading ? (
-              Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 animate-pulse">
-                  <div className="h-4 bg-surface-container-high dark:bg-surface-container-high rounded mb-4"></div>
-                  <div className="h-3 bg-surface-container-high dark:bg-surface-container-high rounded mb-2"></div>
-                  <div className="h-3 bg-surface-container-high dark:bg-surface-container-high rounded mb-4"></div>
-                  <div className="h-6 bg-surface-container-high dark:bg-surface-container-high rounded mb-2"></div>
-                  <div className="h-6 bg-surface-container-high dark:bg-surface-container-high rounded"></div>
-                </div>
-              ))
-            ) : medications.length === 0 ? (
-              <div className="col-span-full bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-8 text-center">
-                <div className="text-4xl mb-4"></div>
-                <h3 className="text-lg font-semibold text-on-surface mb-2">
-                  No medications found
-                </h3>
-                <p className="text-on-surface-variant mb-4">
-                  {filters.search || filters.category || filters.isPrescription
-                    ? "Try adjusting your filters"
-                    : "No medications have been added yet"}
-                </p>
-                <button
-                  onClick={() => router.push("/medications/add")}
-                  className="bg-secondary text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition-colors"
-                >
-                  Add First Medication
-                </button>
+              <div className="col-span-full">
+                <MedicationSkeleton items={6} />
               </div>
+            ) : medications.length === 0 ? (
+              <EmptyState
+                className="col-span-full"
+                icon={PillBottle}
+                title="No medications found"
+                description={
+                  filters.search || filters.category || filters.isPrescription
+                    ? "No medication matches these filters. Try clearing the search or category."
+                    : "No medications have been added to the catalogue yet."
+                }
+                action={
+                  // Only offer the add action when the catalogue is genuinely
+                  // empty — suggesting "add a medication" to someone whose
+                  // filter simply matched nothing is the wrong next step.
+                  filters.search || filters.category || filters.isPrescription
+                    ? undefined
+                    : { label: "Add first medication", href: "/medications/add" }
+                }
+              />
             ) : (
               medications.map((medication) => {
                 const stockStatus = getStockStatus(medication.inventoryItems ?? []);

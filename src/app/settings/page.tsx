@@ -653,8 +653,8 @@ export default function SettingsPage() {
               <div className="flex gap-2">
                 <button className="w-8 h-8 rounded-full bg-soft-aqua ring-2 ring-blue-500 ring-offset-2"></button>
                 <button className="w-8 h-8 rounded-full bg-secondary hover:ring-2 hover:ring-green-500 hover:ring-offset-2"></button>
-                <button className="w-8 h-8 rounded-full bg-tertiary-fixed/400 hover:ring-2 hover:ring-purple-500 hover:ring-offset-2"></button>
-                <button className="w-8 h-8 rounded-full bg-error-container/600 hover:ring-2 hover:ring-red-500 hover:ring-offset-2"></button>
+                <button className="w-8 h-8 rounded-full bg-tertiary hover:ring-2 hover:ring-purple-500 hover:ring-offset-2"></button>
+                <button className="w-8 h-8 rounded-full bg-error hover:ring-2 hover:ring-red-500 hover:ring-offset-2"></button>
               </div>
             </div>
           </div>

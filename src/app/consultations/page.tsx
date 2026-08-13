@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { MessagesSquare } from "lucide-react";
+import { SlideUp } from "@/components/animations";
+import { EmptyState, TableSkeleton } from "@/components/ui";
 import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
@@ -93,26 +95,17 @@ export default function ConsultationsPage() {
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
+          <SlideUp className="mb-8">
             <h1 className="text-3xl font-bold text-on-surface mb-2">
               Patient Consultations
             </h1>
             <p className="text-on-surface-variant">
               Manage and respond to patient health inquiries and consultations
             </p>
-          </motion.div>
+          </SlideUp>
 
           {/* Filters */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0 }}
-            className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 mb-8"
-          >
+          <SlideUp className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 mb-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-on-surface-variant mb-2">
@@ -164,32 +157,25 @@ export default function ConsultationsPage() {
                 </select>
               </div>
             </div>
-          </motion.div>
+          </SlideUp>
 
           {/* Consultations List */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0 }}
-            className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg overflow-hidden"
-          >
+          <SlideUp className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg overflow-hidden">
             {loading ? (
-              <div className="p-8 text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tertiary mx-auto"></div>
-                <p className="mt-4 text-on-surface-variant">Loading consultations...</p>
+              <div className="p-4">
+                <TableSkeleton rows={filters.limit ?? 10} columns={5} />
               </div>
             ) : consultations.length === 0 ? (
-              <div className="p-8 text-center">
-                <div className="text-4xl mb-4"></div>
-                <h3 className="text-lg font-semibold text-on-surface mb-2">
-                  No consultations found
-                </h3>
-                <p className="text-on-surface-variant">
-                  {filters.status || filters.type
-                    ? "Try adjusting your filters"
-                    : "No consultations have been submitted yet"}
-                </p>
-              </div>
+              <EmptyState
+                className="border-0"
+                icon={MessagesSquare}
+                title="No consultations found"
+                description={
+                  filters.status || filters.type
+                    ? "No consultation matches these filters. Try widening the status or type."
+                    : "No consultations have been submitted yet. New patient inquiries appear here as they arrive."
+                }
+              />
             ) : (
               <>
                 <div className="overflow-x-auto">
@@ -221,17 +207,19 @@ export default function ConsultationsPage() {
                     </thead>
                     <tbody className="bg-surface-container-lowest dark:bg-surface-container divide-y divide-outline-variant/60 dark:divide-outline-variant/40">
                       {consultations.map((consultation) => (
-                        <motion.tr
+                        // Hover is a CSS class, not a Framer `whileHover`. The
+                        // previous inline `backgroundColor: "#f9fafb"` won over
+                        // the class below and painted a near-white row in dark
+                        // mode; a token-based class themes correctly and keeps
+                        // row hover off the main thread.
+                        <tr
                           key={consultation.id}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          whileHover={{ backgroundColor: "#f9fafb" }}
-                          className="hover:bg-surface-container-high/50"
+                          className="transition-colors hover:bg-surface-container-high/50"
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
-                                <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-tertiary-container">
                                   <span className="text-sm font-medium text-tertiary">
                                     {consultation.isAnonymous
                                       ? "A"
@@ -297,7 +285,7 @@ export default function ConsultationsPage() {
                               Details
                             </button>
                           </td>
-                        </motion.tr>
+                        </tr>
                       ))}
                     </tbody>
                   </table>
@@ -359,7 +347,7 @@ export default function ConsultationsPage() {
                 )}
               </>
             )}
-          </motion.div>
+          </SlideUp>
         </main>
       </div>
     </ProtectedRoute>

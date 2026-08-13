@@ -7,6 +7,7 @@ import OrderStatus from "@/components/Delivery/OrderStatus";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { AlertTriangle, BadgeCheck, Clock3, Lock, Package } from "lucide-react";
 
 export default function DeliveryPage() {
   const [deliveryData, setDeliveryData] = useState(null);
@@ -67,7 +68,7 @@ export default function DeliveryPage() {
 
   return (
     <ProtectedRoute allowedRoles={["CLIENT", "PHARMACY"]}>
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
         {/* Navigation */}
         <Navigation
           title="Delivery Tracking"
@@ -77,7 +78,7 @@ export default function DeliveryPage() {
         {loading ? (
           <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-soft-aqua mx-auto mb-4"></div>
               <p className="text-on-surface-variant">
                 🔍 Loading your delivery information...
               </p>
@@ -86,7 +87,9 @@ export default function DeliveryPage() {
         ) : error ? (
           <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
             <div className="text-center max-w-md mx-auto p-6">
-              <div className="text-red-500 text-4xl mb-4">⚠️</div>
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-error-container/60">
+                <AlertTriangle className="h-7 w-7 text-error" aria-hidden />
+              </div>
               <h2 className="text-xl font-semibold text-on-surface mb-2">
                 Delivery Unavailable
               </h2>
@@ -101,7 +104,7 @@ export default function DeliveryPage() {
           <div className="max-w-7xl mx-auto px-4 py-8">
             {/* Header */}
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-orange-800 dark:text-orange-300 mb-2">
+              <h1 className="text-4xl font-bold text-on-surface mb-2">
                 🚚 Secure Delivery Tracking
               </h1>
               <p className="text-on-surface-variant max-w-2xl mx-auto">
@@ -111,14 +114,14 @@ export default function DeliveryPage() {
             </div>
 
             {/* Privacy Notice */}
-            <div className="bg-surface-container-lowest/70 dark:bg-gray-800/70 backdrop-blur-sm border border-orange-200 dark:border-outline-variant/40 rounded-xl p-4 mb-6 max-w-4xl mx-auto">
+            <div className="bg-surface-container-lowest/70 dark:bg-surface-container/70 backdrop-blur-sm border border-outline-variant/60 rounded-xl p-4 mb-6 max-w-4xl mx-auto">
               <div className="flex items-start space-x-3">
-                <span className="text-orange-600 text-xl">🔒</span>
+                <Lock className="h-5 w-5 flex-shrink-0 text-medical-teal dark:text-primary-fixed-dim" aria-hidden />
                 <div>
-                  <h3 className="font-semibold text-orange-800 mb-1">
+                  <h3 className="font-semibold text-on-surface mb-1">
                     Privacy Protected
                   </h3>
-                  <p className="text-sm text-orange-700">
+                  <p className="text-sm text-on-surface-variant">
                     Your delivery is handled with complete discretion. No
                     personal information is visible on the package.
                   </p>
@@ -131,8 +134,8 @@ export default function DeliveryPage() {
               {/* Left Column - Map and Tracker */}
               <div className="space-y-6">
                 {/* Delivery Map */}
-                <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-xl shadow-lg border border-orange-200 dark:border-outline-variant/40 overflow-hidden">
-                  <div className="p-4 border-b border-orange-100 dark:border-outline-variant/40">
+                <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-xl shadow-lg border border-outline-variant/60 overflow-hidden">
+                  <div className="p-4 border-b border-outline-variant/60">
                     <h2 className="text-lg font-semibold text-on-surface">
                       Live Location
                     </h2>
@@ -155,7 +158,7 @@ export default function DeliveryPage() {
                         href={`/deliver/${deliveryData.deliveryId}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-3 inline-block text-xs text-orange-700 dark:text-orange-300 underline"
+                        className="mt-3 inline-block text-xs text-medical-teal dark:text-primary-fixed-dim underline"
                       >
                         Courier: open GPS sharing for this delivery →
                       </a>
@@ -164,8 +167,8 @@ export default function DeliveryPage() {
                 </div>
 
                 {/* Delivery Tracker */}
-                <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-xl shadow-lg border border-orange-200 dark:border-outline-variant/40 overflow-hidden">
-                  <div className="p-4 border-b border-orange-100 dark:border-outline-variant/40">
+                <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-xl shadow-lg border border-outline-variant/60 overflow-hidden">
+                  <div className="p-4 border-b border-outline-variant/60">
                     <h2 className="text-lg font-semibold text-on-surface">
                       Delivery Progress
                     </h2>
@@ -181,8 +184,8 @@ export default function DeliveryPage() {
 
               {/* Right Column - Order Status */}
               <div className="space-y-6">
-                <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-xl shadow-lg border border-orange-200 dark:border-outline-variant/40 overflow-hidden">
-                  <div className="p-4 border-b border-orange-100 dark:border-outline-variant/40">
+                <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-xl shadow-lg border border-outline-variant/60 overflow-hidden">
+                  <div className="p-4 border-b border-outline-variant/60">
                     <h2 className="text-lg font-semibold text-on-surface">
                       Order Details
                     </h2>
@@ -203,13 +206,13 @@ export default function DeliveryPage() {
                 </div>
 
                 {/* Additional Info */}
-                <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-xl shadow-lg border border-orange-200 dark:border-outline-variant/40 p-6">
+                <div className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-xl shadow-lg border border-outline-variant/60 p-6">
                   <h3 className="text-lg font-semibold text-on-surface mb-4">
                     Delivery Instructions
                   </h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex items-start space-x-3">
-                      <span className="text-orange-500 text-lg">📦</span>
+                      <Package className="h-5 w-5 flex-shrink-0 text-medical-teal dark:text-primary-fixed-dim" aria-hidden />
                       <div>
                         <p className="font-medium text-on-surface dark:text-on-surface">
                           Package Collection
@@ -220,7 +223,7 @@ export default function DeliveryPage() {
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
-                      <span className="text-orange-500 text-lg">🆔</span>
+                      <BadgeCheck className="h-5 w-5 flex-shrink-0 text-medical-teal dark:text-primary-fixed-dim" aria-hidden />
                       <div>
                         <p className="font-medium text-on-surface dark:text-on-surface">
                           Identification
@@ -231,7 +234,7 @@ export default function DeliveryPage() {
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
-                      <span className="text-orange-500 text-lg">⏰</span>
+                      <Clock3 className="h-5 w-5 flex-shrink-0 text-medical-teal dark:text-primary-fixed-dim" aria-hidden />
                       <div>
                         <p className="font-medium text-on-surface dark:text-on-surface">
                           Collection Window

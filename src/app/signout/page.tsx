@@ -34,7 +34,7 @@ export default function SignOutPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -60,7 +60,7 @@ export default function SignOutPage() {
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 1, repeat: Infinity }}
-                    className="w-2 h-2 bg-error-container/600 rounded-full"
+                    className="w-2 h-2 bg-error rounded-full"
                   />
                   <span>Ending your session</span>
                 </div>

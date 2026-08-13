@@ -91,7 +91,7 @@ export default function VerifyLicensePage() {
 
   if (checkingStatus) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 via-purple-50 to-pink-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high flex items-center justify-center">
         <Loader2 className="h-8 w-8 text-soft-aqua animate-spin" />
       </div>
     );
@@ -99,7 +99,7 @@ export default function VerifyLicensePage() {
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY"]}>
-      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 via-purple-50 to-pink-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
         <Navigation title="License Verification" userRole="pharmacy" />
 
         <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -120,15 +120,15 @@ export default function VerifyLicensePage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-6 mb-6"
+              className="bg-amber-100/60 dark:bg-amber-500/15 border border-amber-200 dark:border-amber-500/30 rounded-xl p-6 mb-6"
             >
               <div className="flex items-center gap-3 mb-2">
-                <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-                <h2 className="text-lg font-semibold text-amber-800 dark:text-amber-300">
+                <Clock className="h-6 w-6 text-amber-700 dark:text-amber-200" />
+                <h2 className="text-lg font-semibold text-amber-900 dark:text-amber-200">
                   Verification Pending
                 </h2>
               </div>
-              <p className="text-amber-700 dark:text-amber-400 text-sm">
+              <p className="text-amber-900/80 dark:text-amber-200/80 text-sm">
                 Your license has been submitted for review. An admin will review
                 your credentials shortly. You will be notified once the
                 verification is complete.
@@ -140,7 +140,7 @@ export default function VerifyLicensePage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-green-50 dark:bg-green-900/20 border border-secondary/30 rounded-xl p-6 mb-6"
+              className="bg-secondary-container/40 dark:bg-secondary-container/30 border border-secondary/30 rounded-xl p-6 mb-6"
             >
               <div className="flex items-center gap-3 mb-2">
                 <CheckCircle className="h-6 w-6 text-secondary" />
@@ -148,7 +148,7 @@ export default function VerifyLicensePage() {
                   Verified
                 </h2>
               </div>
-              <p className="text-green-700 dark:text-green-400 text-sm">
+              <p className="text-on-secondary-container/80 text-sm">
                 Your pharmacy license has been verified. You can now provide
                 consultations on the platform.
               </p>
@@ -159,7 +159,7 @@ export default function VerifyLicensePage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-error-container/60 dark:bg-red-900/20 border border-error/30 rounded-xl p-6 mb-6"
+              className="bg-error-container/60 dark:bg-error-container/30 border border-error/30 rounded-xl p-6 mb-6"
             >
               <div className="flex items-center gap-3 mb-2">
                 <XCircle className="h-6 w-6 text-error" />
@@ -167,7 +167,7 @@ export default function VerifyLicensePage() {
                   Verification Rejected
                 </h2>
               </div>
-              <p className="text-red-700 dark:text-error text-sm">
+              <p className="text-on-error-container/80 text-sm">
                 Your license verification was not approved. Please contact
                 support for more information.
               </p>
@@ -232,7 +232,7 @@ export default function VerifyLicensePage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-medical-teal hover:bg-secondary disabled:bg-gray-400 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 bg-medical-teal hover:bg-secondary disabled:bg-outline disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>

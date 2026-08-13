@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { SlideUp } from "@/components/animations";
 import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
@@ -121,26 +121,17 @@ export default function OrdersPage() {
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
+          <SlideUp className="mb-8">
             <h1 className="text-3xl font-bold text-on-surface mb-2">
               Order Management
             </h1>
             <p className="text-on-surface-variant">
               Process and track medication orders and deliveries
             </p>
-          </motion.div>
+          </SlideUp>
 
           {/* Statistics Cards */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-          >
+          <SlideUp className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -188,15 +179,10 @@ export default function OrdersPage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </SlideUp>
 
           {/* Filters */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0 }}
-            className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 mb-8"
-          >
+          <SlideUp className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg p-6 mb-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm font-medium text-on-surface-variant mb-2">
@@ -259,15 +245,10 @@ export default function OrdersPage() {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </SlideUp>
 
           {/* Orders Table */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0 }}
-            className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg overflow-hidden"
-          >
+          <SlideUp className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg overflow-hidden">
             {loading ? (
               <div className="p-8 text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-soft-aqua mx-auto"></div>
@@ -319,12 +300,12 @@ export default function OrdersPage() {
                     </thead>
                     <tbody className="bg-surface-container-lowest dark:bg-surface-container divide-y divide-outline-variant/60 dark:divide-outline-variant/40">
                       {orders.map((order) => (
-                        <motion.tr
+                        // Hover stays in CSS. The previous Framer `whileHover`
+                        // set a literal #f9fafb, which beat the class below and
+                        // painted a near-white row in dark mode.
+                        <tr
                           key={order.id}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          whileHover={{ backgroundColor: "#f9fafb" }}
-                          className="hover:bg-surface-container-high/50"
+                          className="transition-colors hover:bg-surface-container-high/50"
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div>
@@ -403,7 +384,7 @@ export default function OrdersPage() {
                               </button>
                             )}
                           </td>
-                        </motion.tr>
+                        </tr>
                       ))}
                     </tbody>
                   </table>
@@ -465,7 +446,7 @@ export default function OrdersPage() {
                 )}
               </>
             )}
-          </motion.div>
+          </SlideUp>
         </main>
       </div>
     </ProtectedRoute>

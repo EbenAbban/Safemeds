@@ -8,7 +8,8 @@ export interface User {
   lastName: string;
   role: "ADMIN" | "CLIENT" | "PHARMACY" | "COURIER";
   name?: string;
-  passwordHash?: string;
+  // Null for OAuth-provisioned accounts, which have no local password.
+  passwordHash?: string | null;
   isVerified?: boolean;
 }
 

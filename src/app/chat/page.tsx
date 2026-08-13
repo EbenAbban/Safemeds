@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { Clock3, MessageCircle } from "lucide-react";
 
 export default function ChatPage() {
   const [anonId, setAnonId] = useState<string | null>(null);
@@ -75,7 +76,7 @@ export default function ChatPage() {
 
   return (
     <ProtectedRoute allowedRoles={["CLIENT", "PHARMACY"]}>
-      <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-purple-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
         {/* Navigation */}
         <Navigation
           title="Chat with Pharmacist"
@@ -151,9 +152,9 @@ export default function ChatPage() {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0, duration: 0.5 }}
-                className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-4"
+                className="text-headline-lg text-gradient-brand mb-4"
               >
-                 Chat with Pharmacist
+                Chat with Pharmacist
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0 }}
@@ -174,29 +175,29 @@ export default function ChatPage() {
               className="bg-surface-container-lowest/80 dark:bg-surface-container/80 backdrop-blur-sm rounded-xl shadow-lg p-4 mb-6 border border-outline-variant/60"
             >
               <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
-                <div className="flex items-center space-x-6">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-green-500">🟢</span>
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                  <div className="flex items-center gap-2">
+                    <span aria-hidden className="h-2 w-2 rounded-full bg-secondary" />
                     <span className="text-on-surface-variant">Session Active</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-soft-aqua">⏱️</span>
+                  <div className="flex items-center gap-2">
+                    <Clock3 aria-hidden className="h-4 w-4 text-soft-aqua" />
                     <span className="text-on-surface-variant">
                       Duration: {getSessionDuration()}
                     </span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-purple-500"></span>
+                  <div className="flex items-center gap-2">
+                    <MessageCircle aria-hidden className="h-4 w-4 text-soft-aqua" />
                     <span className="text-on-surface-variant">
                       Messages: {sessionInfo.messageCount}
                     </span>
                   </div>
                 </div>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.99 }}
                   onClick={resetSession}
-                  className="bg-error-container/600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
+                  className="bg-error text-on-error px-4 py-2 rounded-lg text-sm font-medium hover:bg-error/90 transition-colors"
                 >
                   Reset Session
                 </motion.button>

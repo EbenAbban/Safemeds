@@ -23,6 +23,11 @@ Last updated: 2026-08-10 · Reflects `main` @ `7c5eda8`
 14. [Build and deployment](#14-build-and-deployment)
 15. [Known issues and technical debt](#15-known-issues-and-technical-debt)
 
+> **Building UI?** Tokens, primitives, motion, loading and empty states, and the
+> rules that govern them live in **[`DESIGN-SYSTEM.md`](DESIGN-SYSTEM.md)**.
+> Sections 10 and 11 below are the architectural summary; that document is the
+> working reference.
+
 ---
 
 ## 1. What SafeMeds is
@@ -58,13 +63,13 @@ coordinates for the library, student centre, health services building, and main 
 | Language | **TypeScript 5** | `strict` via `tsconfig.json` |
 | Styling | **Tailwind CSS v4** | CSS-first config in `globals.css` (see §10) |
 | Database | **PostgreSQL** via **Prisma 6.16** | Client generated to `src/lib/prisma-client` |
-| Auth | **NextAuth v5 (beta)** | Credentials provider, JWT sessions |
+| Auth | **NextAuth v5 (beta)** | Credentials + Google OAuth, JWT sessions |
 | Realtime | **Firebase / Firestore** | WebRTC signalling + Remote Config only |
-| Animation | **Framer Motion 12** + **OGL** + **Three.js** | 28 files use Framer Motion |
+| Animation | **Framer Motion 12** | Via `components/animations` primitives (§11). No WebGL: `ogl` and `three` are **not** dependencies, despite earlier revisions of this table. |
 | Icons | **lucide-react** | Tree-shaken via `optimizePackageImports` |
 | Push | **web-push** (VAPID) | Node runtime only |
 | Validation | **Zod 4** | Used on newer API routes |
-| Testing | **Vitest 4** | Node environment, 77 tests |
+| Testing | **Vitest 4** | Node environment, 100 tests |
 | Hosting | **Vercel** | `bun install`, 30 s function ceiling |
 
 **Two databases, deliberately.** Postgres is the system of record for everything.
@@ -436,44 +441,93 @@ class rather than `prefers-color-scheme`:
 it resolves in `useEffect`, there is a brief light-then-dark flash on load. (The PWA
 gate deliberately avoids this pattern — see §12.)
 
-Only two design tokens exist: `--background` and `--foreground`. Everything else uses
-Tailwind's stock palette directly — predominantly `blue-600` → `purple-600` gradients,
-with `gray-50…900` for surfaces.
+The app runs on a **full Material Design 3 role-token set** defined in `:root` and
+`.dark`, then bridged to Tailwind utilities through `@theme inline`. See
+[`DESIGN-SYSTEM.md`](DESIGN-SYSTEM.md) for the complete token reference.
+
+Summary of what exists:
+
+| Group | Examples |
+|---|---|
+| Surfaces | `--sm-surface`, `--sm-surface-container-{lowest…highest}`, `--sm-on-surface` |
+| Brand | `--sm-medical-teal`, `--sm-soft-aqua`, `--sm-dark-navy`, `--sm-cool-gray` |
+| MD3 roles | `primary`, `secondary`, `tertiary`, `error` + their `-container` / `on-` pairs |
+| Shape | `--radius-sm` … `--radius-xl` |
+| Elevation | `--shadow-soft`, `--shadow-card`, `--shadow-floating` |
+| Motion | `--motion-fast` (150ms), `--motion-normal` (280ms), `--motion-slow` (520ms) |
+| Layout | `--container-content` (1280px), `--container-wide` (1440px) |
+
+`--background` / `--foreground` still exist but are now **aliases** onto the token set,
+kept so pre-migration markup renders correctly rather than unstyled.
 
 ### Recurring visual patterns
 
-- **Gradient page shell** — `bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50`, dark: `from-gray-900 via-gray-800 to-gray-900`
-- **Glass navigation** — `bg-white/80 backdrop-blur-md` with a hairline border
-- **Gradient headline text** — `text-transparent bg-clip-text bg-gradient-to-r`
-- **Card** — `rounded-xl` / `rounded-2xl`, subtle border, hover elevation
-- **Primary action** — `bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold`
-
-### Spotlight cards
-
-`.rb-spotlight` (globals.css) implements a cursor-tracking radial glow. The mouse
-position is written to CSS custom properties via `onMouseMove` **rather than React
-state**, so the glow never triggers a re-render — a deliberate performance choice,
-documented inline.
+- **Page surface** — `bg-surface` / `dark:bg-surface-dark`; the old
+  `blue-50 → purple-50 → pink-50` shell is gone
+- **Header** — `bg-surface/90` + `backdrop-blur-lg`, applied only once scrolled
+- **Gradient headline text** — `.text-gradient-brand`, reserved for high-impact
+  headings, never decoration
+- **Card** — `rounded-lg`, `border-outline-variant/60`, `shadow-soft`
+- **Hover lift** — the `.lift` utility: `translateY(-4px)` into `--shadow-card`,
+  disabled under `prefers-reduced-motion`
+- **Primary action** — `buttonClasses({ variant: "primary" })`, never a raw colour
 
 ---
 
 ## 11. Animation and motion system
 
-Four distinct tiers, ordered by cost.
+> **Historical note.** Earlier revisions of this document described five tiers,
+> including Canvas 2D (`ClickSpark`), four WebGL shader backgrounds
+> (`LiquidEther`, `LightTunnel`, `Threads`, `WebThreads`) and a looping hero
+> video. **None of these exist in the codebase.** `ogl` and `three` are not
+> dependencies; the video was removed for asset-licensing reasons recorded in
+> [`page.tsx`](../src/app/page.tsx). That stale section caused real downstream
+> confusion, so it is corrected rather than deleted.
 
-### Tier 1 — Framer Motion (28 files)
+Two tiers remain, ordered by cost.
 
-The workhorse. Standard vocabulary across the app:
+### Tier 1 — Framer Motion
+
+Driven through the shared primitives in
+[`components/animations/`](../src/components/animations/) — `Reveal` (with
+`FadeIn` / `SlideUp` / `ScaleIn` presets) and `StaggerContainer` / `StaggerItem`.
+Full API in [`DESIGN-SYSTEM.md`](DESIGN-SYSTEM.md).
+
+The primitives exist because the previous approach — repeating raw props on every
+element — had four systemic faults:
 
 ```tsx
+// The old pattern, ~99 occurrences. Do not reintroduce.
 initial={{ opacity: 0, y: 20 }}
 animate={{ opacity: 1, y: 0 }}
-transition={{ duration: 0.8, delay: 0.15 }}
+transition={{ delay: 0 }}
+whileHover={{ scale: 1.02 }}
 ```
 
-`AnimatePresence` drives mobile-menu collapse, the onboarding wizard, the push
-permission prompt, and modal exits. Staggering is done with incremental `delay` values
-rather than variants.
+1. **No reduced-motion handling.** Not one of them honoured the preference.
+2. **`animate` fires on mount, not on scroll** — below-fold content animated
+   while invisible and was already spent by the time it was reached.
+3. **`transition={{ delay: 0 }}`** is inert copy-paste residue.
+4. **`whileHover={{ scale: 1.02 }}`** contradicts the design rule against
+   aggressive scaling; hover belongs in CSS (`.lift`), not on the main thread.
+
+A fifth fault was worse than cosmetic: two tables used
+`whileHover={{ backgroundColor: "#f9fafb" }}`, whose inline style **overrode** the
+token-based class beside it and painted a near-white row in dark mode.
+
+`AnimatePresence` is still used directly for enter/exit — mobile-menu collapse,
+onboarding wizard, push permission prompt, modal exits. It has no primitive
+wrapper because exit animations need the component to control its own unmount.
+
+### Migration status
+
+| | Files |
+|---|---|
+| Migrated to primitives | `client-dashboard`, `courier-dashboard`, `consultations`, `orders`, `about`, `contact` |
+| Still on raw props | 22 files — see the table in [`DESIGN-SYSTEM.md`](DESIGN-SYSTEM.md) |
+
+`components/animations/*` import `framer-motion` directly by design; they are the
+abstraction boundary.
 
 ### Tier 2 — CSS keyframes
 
@@ -482,50 +536,24 @@ list twice back-to-back and translates exactly `-50%` — one full copy's width 
 loop point is seamless regardless of card count. It pauses on hover and is disabled
 entirely under `prefers-reduced-motion`.
 
-### Tier 3 — Canvas 2D
+Two named animations live here:
 
-**`ClickSpark`** — radial spark burst on click. Plain canvas, no WebGL, negligible
-cost. Wraps interactive regions.
+- **Testimonial marquee** (described above).
+- **Skeleton shimmer** — `.skeleton` sweeps a translucent highlight across a
+  surface-tinted background. A sweep is used rather than an opacity pulse
+  because pulsing reads as "this control is disabled" rather than "content is
+  loading". Under `prefers-reduced-motion` the placeholder keeps its shape and
+  drops the highlight entirely.
 
-### Tier 4 — WebGL shader backgrounds
+### On reintroducing WebGL
 
-Four effects, adapted from [React Bits](https://reactbits.dev):
-
-| Effect | Renderer | What it does | Used on |
-|---|---|---|---|
-| **LiquidEther** | Three.js | Navier–Stokes fluid simulation driven by pointer velocity | Landing hero |
-| **LightTunnel** | OGL | Fibre-optic tunnel with pulses travelling along cables | Landing CTA |
-| **Threads** | OGL | Perlin-noise line threads | Auth / signup |
-| **WebThreads** | OGL | Woven glowing strands, mouse-reactive pinch point | Landing navbar |
-
-Every one of these follows the same three-part discipline:
-
-**1. A `*Background` wrapper that gates on motion preference.**
-`LiquidEtherBackground`, `LightTunnelBackground`, `ThreadsBackground`, and
-`WebThreadsBackground` are near-identical: they check
-`prefers-reduced-motion`, return `null` if set, and `next/dynamic({ ssr: false })` the
-heavy component so **it never enters the initial page bundle**.
-
-**2. Lifecycle guards inside the effect.** Each uses an `IntersectionObserver` plus a
-`visibilitychange` listener, and cancels its `requestAnimationFrame` loop whenever the
-canvas is off-screen or the tab is hidden. No effect burns GPU for something nobody
-can see.
-
-**3. Explicit teardown.** Observers disconnected, listeners removed, canvas removed,
-and `WEBGL_lose_context` called to release the GPU context.
-
-`Threads.tsx` adds one more optimisation worth noting: because its fragment shader
-runs per-pixel Perlin noise across 40 lines, it **caps internal render resolution at
-1920px on the longest side**, scaling DPR down on large or high-DPI displays. The
-effect is soft enough that the downscale is invisible.
-
-Props are mutated through a `propsRef` so changing a colour updates live shader
-uniforms instead of tearing down and rebuilding the WebGL context.
-
-### Tier 5 — Video
-
-A looping, muted, `playsInline` clip sits behind the landing hero, docked right at
-`w-1/2 md:w-2/5`, faded in with a `linear-gradient` mask so the headline stays legible.
+The removed shader backgrounds are not missed, and the bar for bringing anything
+like them back should be high: they are the single easiest way to make a
+healthcare product read as a developer portfolio. If one is ever justified, the
+non-negotiable discipline is a motion-preference gate, `next/dynamic({ ssr: false })`
+so it stays out of the initial bundle, an `IntersectionObserver` +
+`visibilitychange` guard so it never burns GPU off-screen, explicit teardown
+including `WEBGL_lose_context`, and a static fallback.
 
 ---
 

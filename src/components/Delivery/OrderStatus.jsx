@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ClipboardList, Lock, Receipt, Share2 } from "lucide-react";
 
 const OrderStatus = ({ deliveryData }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -26,16 +27,18 @@ const OrderStatus = ({ deliveryData }) => {
         text: "Confirmed",
       },
       processing: {
-        color: "bg-yellow-100 text-yellow-800",
+        color: "bg-amber-100 text-amber-900 dark:bg-amber-500/15 dark:text-amber-200",
         text: "Processing",
       },
       packaged: { color: "bg-tertiary-fixed text-on-tertiary-fixed", text: "Packaged" },
       in_transit: {
-        color: "bg-orange-100 text-orange-800",
+        color: "bg-primary-container text-on-primary-container",
         text: "In Transit",
       },
+      // Not an error state — it is the last step before delivery, so it uses
+      // the brand progression rather than the error tokens it used to.
       out_for_delivery: {
-        color: "bg-error-container text-on-error-container",
+        color: "bg-secondary-container/70 text-on-secondary-container",
         text: "Out for Delivery",
       },
       delivered: { color: "bg-secondary-container text-on-secondary-container", text: "Delivered" },
@@ -147,21 +150,21 @@ const OrderStatus = ({ deliveryData }) => {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">
-        <button className="flex items-center justify-center space-x-2 bg-primary-fixed/30 hover:bg-primary-fixed/60 text-primary py-2 px-3 rounded-lg transition-colors text-sm">
-          <span>📋</span>
+        <button className="flex items-center justify-center gap-2 bg-primary-fixed/30 hover:bg-primary-fixed/60 text-on-primary-fixed dark:text-on-primary-container py-2 px-3 rounded-lg transition-colors text-sm">
+          <Receipt className="h-4 w-4" aria-hidden />
           <span>View Receipt</span>
         </button>
-        <button className="flex items-center justify-center space-x-2 bg-green-50 hover:bg-green-100 text-green-700 py-2 px-3 rounded-lg transition-colors text-sm">
-          <span>📱</span>
+        <button className="flex items-center justify-center gap-2 bg-secondary-container/50 hover:bg-secondary-container text-on-secondary-container py-2 px-3 rounded-lg transition-colors text-sm">
+          <Share2 className="h-4 w-4" aria-hidden />
           <span>Share Status</span>
         </button>
       </div>
 
       {/* Privacy Notice */}
       <div className="bg-primary-fixed/30 border border-primary-fixed rounded-lg p-3">
-        <div className="flex items-start space-x-2">
-          <span className="text-medical-teal text-sm">🔒</span>
-          <div className="text-xs text-primary">
+        <div className="flex items-start gap-2">
+          <Lock className="h-4 w-4 flex-shrink-0 text-medical-teal dark:text-primary-fixed-dim" aria-hidden />
+          <div className="text-xs text-on-primary-fixed dark:text-on-primary-container">
             <p className="font-medium mb-1">Privacy Protected</p>
             <p>
               Your package uses discreet packaging with no medical labels or
@@ -173,14 +176,14 @@ const OrderStatus = ({ deliveryData }) => {
 
       {/* Delivery Instructions */}
       {deliveryData.status === "out_for_delivery" && (
-        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-          <div className="flex items-start space-x-3">
-            <div className="text-orange-600 text-xl">📋</div>
+        <div className="bg-amber-100/60 dark:bg-amber-500/15 border border-amber-200 dark:border-amber-500/30 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <ClipboardList className="h-5 w-5 flex-shrink-0 text-amber-700 dark:text-amber-200" aria-hidden />
             <div>
-              <h4 className="font-semibold text-orange-800 mb-2">
+              <h4 className="font-semibold text-amber-900 dark:text-amber-200 mb-2">
                 Pickup Instructions
               </h4>
-              <ul className="text-sm text-orange-700 space-y-1">
+              <ul className="text-sm text-amber-900/80 dark:text-amber-200/80 space-y-1">
                 <li>• Bring your student ID for verification</li>
                 <li>• Use the OTP code sent to your device</li>
                 <li>• Package will be in a secure locker</li>

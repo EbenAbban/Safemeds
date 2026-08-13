@@ -192,7 +192,7 @@ function LegalContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 via-indigo-50 to-purple-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high transition-colors duration-300">
       {/* Print-only CSS style injection */}
       <style jsx global>{`
         @media print {
@@ -215,7 +215,7 @@ function LegalContent() {
       <header className="relative border-b border-outline-variant/60/80 dark:border-outline-variant/40/80 bg-surface-container-lowest/70 dark:bg-gray-800/70 backdrop-blur-md z-10 no-print">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => router.push("/")}>
-            <div className="w-10 h-10 bg-gradient-to-r from-primary-fixed/300 via-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 bg-gradient-to-r from-primary-fixed via-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
               <span className="text-xl">️</span>
             </div>
             <div>
@@ -427,7 +427,7 @@ function LegalContent() {
 
 export default function LegalPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-indigo-50" />}>
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high" />}>
       <LegalContent />
     </Suspense>
   );
