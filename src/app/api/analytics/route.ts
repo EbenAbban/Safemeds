@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Sales Analytics
-    const salesData = await prisma.order.aggregate({
+    const salesData$ = prisma.order.aggregate({
       where: {
         ...dateFilter,
         status: {
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Daily sales for chart
-    const dailySales = await prisma.order.groupBy({
+    const dailySales$ = prisma.order.groupBy({
       by: ["createdAt"],
       where: {
         ...dateFilter,
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Consultation Analytics
-    const consultationStats = await prisma.consultation.aggregate({
+    const consultationStats$ = prisma.consultation.aggregate({
       where: {
         ...dateFilter,
         assignedPharmacistId:
@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const consultationStatusBreakdown = await prisma.consultation.groupBy({
+    const consultationStatusBreakdown$ = prisma.consultation.groupBy({
       by: ["status"],
       where: {
         ...dateFilter,
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Prescription Analytics
-    const prescriptionStats = await prisma.prescription.aggregate({
+    const prescriptionStats$ = prisma.prescription.aggregate({
       where: {
         ...dateFilter,
         consultation:
@@ -123,7 +123,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const prescriptionStatusBreakdown = await prisma.prescription.groupBy({
+    const prescriptionStatusBreakdown$ = prisma.prescription.groupBy({
       by: ["status"],
       where: {
         ...dateFilter,
@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Inventory Analytics
-    const inventoryStats = await prisma.inventoryItem.aggregate({
+    const inventoryStats$ = prisma.inventoryItem.aggregate({
       where: {
         pharmacyId: session.user.id,
         isActive: true,
@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const lowStockItems = await prisma.inventoryItem.count({
+    const lowStockItems$ = prisma.inventoryItem.count({
       where: {
         pharmacyId: session.user.id,
         isActive: true,
@@ -163,7 +163,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const expiringItems = await prisma.inventoryItem.count({
+    const expiringItems$ = prisma.inventoryItem.count({
       where: {
         pharmacyId: session.user.id,
         isActive: true,
@@ -174,7 +174,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Top Medications
-    const topMedications = await prisma.prescription.groupBy({
+    const topMedications$ = prisma.prescription.groupBy({
       by: ["medicationId"],
       where: {
         ...dateFilter,
@@ -196,28 +196,8 @@ export async function GET(request: NextRequest) {
       take: 10,
     });
 
-    // Get medication details for top medications
-    const topMedicationsWithDetails = await Promise.all(
-      topMedications.map(async (med) => {
-        const medication = await prisma.medication.findUnique({
-          where: { id: med.medicationId },
-          select: {
-            id: true,
-            name: true,
-            genericName: true,
-            dosageForm: true,
-            strength: true,
-          },
-        });
-        return {
-          ...med,
-          medication,
-        };
-      })
-    );
-
     // Anonymous vs Authenticated Users
-    const anonymousStats = await prisma.consultation.aggregate({
+    const anonymousStats$ = prisma.consultation.aggregate({
       where: {
         ...dateFilter,
         isAnonymous: true,
@@ -229,7 +209,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const authenticatedStats = await prisma.consultation.aggregate({
+    const authenticatedStats$ = prisma.consultation.aggregate({
       where: {
         ...dateFilter,
         isAnonymous: false,
@@ -240,6 +220,53 @@ export async function GET(request: NextRequest) {
         id: true,
       },
     });
+
+    // All twelve queries above are independent, so they are issued together
+    // rather than awaited one at a time. Sequentially this route paid twelve
+    // round trips to a pooled remote database before it could send a byte.
+    const [
+      salesData,
+      dailySales,
+      consultationStats,
+      consultationStatusBreakdown,
+      prescriptionStats,
+      prescriptionStatusBreakdown,
+      inventoryStats,
+      lowStockItems,
+      expiringItems,
+      topMedications,
+      anonymousStats,
+      authenticatedStats,
+    ] = await Promise.all([
+      salesData$,
+      dailySales$,
+      consultationStats$,
+      consultationStatusBreakdown$,
+      prescriptionStats$,
+      prescriptionStatusBreakdown$,
+      inventoryStats$,
+      lowStockItems$,
+      expiringItems$,
+      topMedications$,
+      anonymousStats$,
+      authenticatedStats$,
+    ]);
+
+    // Medication details for the top medications.
+    //
+    // Previously a findUnique per row inside Promise.all — a textbook N+1
+    // issuing ten queries for ten medications. One findMany with an `in`
+    // filter returns the same data in a single query.
+    const medications = await prisma.medication.findMany({
+      where: { id: { in: topMedications.map((m) => m.medicationId) } },
+      select: { id: true, name: true, genericName: true, dosageForm: true, strength: true },
+    });
+    const medicationById = new Map(medications.map((m) => [m.id, m]));
+    const topMedicationsWithDetails = topMedications.map((med) => ({
+      ...med,
+      // Preserve the previous shape: an unmatched id yielded null, not undefined.
+      medication: medicationById.get(med.medicationId) ?? null,
+    }));
 
     return NextResponse.json({
       period: {
