@@ -157,7 +157,15 @@ export const createConsultation = async (
 
 export const createAnonymousConsultation = async (
   data: CreateConsultationData
-): Promise<{ consultation: Consultation; sessionId: string } | null> => {
+  // `anonymousId` is what later authorises the anonymous student to read and
+  // post to their own consultation thread (sent as ?anonymousId= to the chat
+  // API). The endpoint has always returned it; the type simply omitted it,
+  // which is part of why the student side was never wired to the real thread.
+): Promise<{
+  consultation: Consultation;
+  sessionId: string;
+  anonymousId: string;
+} | null> => {
   try {
     const response = await axios.post("/api/consultations/anonymous", data);
     return response.data;

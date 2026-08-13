@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rateLimit";
-
-// Validate pharmacist license format
-function validateLicenseFormat(licenseNumber: string): boolean {
-  // Supports common US license formats: 2 letters + 6 digits, or 1 letter + 7 digits
-  const licenseRegex = /^[A-Za-z]{1,2}\d{6,7}$/;
-  return licenseRegex.test(licenseNumber);
-}
+// Format rules live in licenseService. This route previously kept its own,
+// slightly different regex, so the same number could pass one check and fail
+// the other depending on which path the caller took.
+import {
+  validateLicenseFormat,
+  formatLicenseNumber,
+} from "@/services/licenseService";
 
 // External license verification via NABP (National Association of Boards of Pharmacy)
 // Falls back to format validation if external API is unavailable
@@ -24,7 +24,7 @@ async function verifyPharmacistLicense(
   };
   error?: string;
 }> {
-  if (!validateLicenseFormat(licenseNumber)) {
+  if (!validateLicenseFormat(formatLicenseNumber(licenseNumber))) {
     return {
       isValid: false,
       error: "Invalid license number format",
@@ -43,7 +43,7 @@ async function verifyPharmacistLicense(
           "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          licenseNumber: licenseNumber.toUpperCase(),
+          licenseNumber: formatLicenseNumber(licenseNumber),
           state: state || "NY",
         }),
       });
@@ -190,7 +190,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    if (!validateLicenseFormat(licenseNumber)) {
+    if (!validateLicenseFormat(formatLicenseNumber(licenseNumber))) {
       return NextResponse.json({
         isValid: false,
         available: false,

@@ -31,7 +31,20 @@ function buildConsultationAccessWhere(
     return { OR: [{ assignedPharmacistId: session.user.id }, { assignedPharmacistId: null }] };
   }
   if (session?.user?.id) {
-    return { userId: session.user.id };
+    // A signed-in viewer may also hold the anonymousId for a consultation they
+    // started before they had an account — SafeMeds is anonymous-first, so
+    // that is the normal path, not an edge case. Returning `userId` alone here
+    // masked the anonymous credential entirely and locked students out of
+    // their own thread the moment they signed in: the pharmacist could still
+    // reply, and the student could never read it.
+    //
+    // Both clauses are built from values already proven non-null, never from a
+    // possibly-`undefined` field — an `undefined` value inside a Prisma filter
+    // is treated as "no filter", which is precisely the auth bypass described
+    // above. Keep it that way.
+    const clauses: Prisma.ConsultationWhereInput[] = [{ userId: session.user.id }];
+    if (anonymousId) clauses.push({ anonymousId });
+    return clauses.length === 1 ? clauses[0] : { OR: clauses };
   }
   if (anonymousId) {
     return { anonymousId };

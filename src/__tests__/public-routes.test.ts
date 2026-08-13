@@ -33,10 +33,26 @@ describe("isPublicRoute", () => {
       "/inbox",
       "/settings",
       "/medications",
-      "/chat/42",
     ]) {
       expect(isPublicRoute(path)).toBe(false);
     }
+  });
+
+  // /chat was moved out of the private list deliberately, not incidentally.
+  //
+  // An anonymous student has no account by design, and must still be able to
+  // read the pharmacist's reply to the consultation they just submitted —
+  // both at /chat and at /chat/<consultationId> when following a link from
+  // /track or a notification.
+  //
+  // This is safe because the page holds no data of its own. Every message is
+  // fetched from /api/chat/consultation/[consultationId], which authorises on
+  // session *or* anonymousId and returns 401 with neither. The API is the
+  // boundary, exactly as it is for /track. Making the route reachable does not
+  // make any consultation readable.
+  it("treats the consultation chat as public so anonymous students can reach it", () => {
+    expect(isPublicRoute("/chat")).toBe(true);
+    expect(isPublicRoute("/chat/42")).toBe(true);
   });
 
   // The single most dangerous bug this file could have: if "/" were treated as
