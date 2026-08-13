@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Info, Paperclip, Pill, Search, Send, Truck } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Info, Pill, Search, Truck } from "lucide-react";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
+import ConsultationChat from "@/components/Chat/ConsultationChat";
 import PharmacyShell from "@/components/pharmacy/PharmacyShell";
 import { Badge, Button, cn } from "@/components/ui";
 
@@ -35,14 +36,6 @@ interface ConsultationSummary {
   user: { firstName: string; lastName: string } | null;
   messages: { content: string; createdAt: string; isFromPharmacist: boolean }[];
   _count: { messages: number; prescriptions: number };
-}
-
-interface ChatMessage {
-  id: string;
-  content: string;
-  createdAt: string;
-  isFromPharmacist: boolean;
-  userId: string | null;
 }
 
 interface PrescriptionSummary {
@@ -85,11 +78,7 @@ function WorkspaceContent() {
   const [loadingList, setLoadingList] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState("");
-  const [sending, setSending] = useState(false);
   const [prescriptions, setPrescriptions] = useState<PrescriptionSummary[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const loadConsultations = useCallback(async () => {
     try {
@@ -107,53 +96,23 @@ function WorkspaceContent() {
     loadConsultations();
   }, [loadConsultations]);
 
-  const loadThread = useCallback(async (consultationId: string) => {
-    const [chatRes, prescriptionRes] = await Promise.all([
-      fetch(`/api/chat/consultation/${consultationId}`),
-      fetch(`/api/prescriptions?consultationId=${consultationId}`),
-    ]);
-    if (chatRes.ok) {
-      const data = await chatRes.json();
-      setMessages(data.messages ?? []);
-    }
-    if (prescriptionRes.ok) {
-      const data = await prescriptionRes.json();
+  // Messages are owned by ConsultationChat now, including their own polling.
+  // This only loads the prescription context panel, which that component
+  // knows nothing about.
+  const loadPrescriptions = useCallback(async (consultationId: string) => {
+    const res = await fetch(`/api/prescriptions?consultationId=${consultationId}`);
+    if (res.ok) {
+      const data = await res.json();
       setPrescriptions(data.prescriptions ?? []);
     }
   }, []);
 
   useEffect(() => {
     if (!selectedId) return;
-    loadThread(selectedId);
-    const interval = setInterval(() => loadThread(selectedId), POLL_INTERVAL_MS);
+    loadPrescriptions(selectedId);
+    const interval = setInterval(() => loadPrescriptions(selectedId), POLL_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [selectedId, loadThread]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const sendMessage = async () => {
-    if (!input.trim() || !selectedId || sending) return;
-    setSending(true);
-    const content = input;
-    setInput("");
-    try {
-      const res = await fetch(`/api/chat/consultation/${selectedId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
-      });
-      if (res.ok) {
-        await loadThread(selectedId);
-        loadConsultations();
-      } else {
-        setInput(content);
-      }
-    } finally {
-      setSending(false);
-    }
-  };
+  }, [selectedId, loadPrescriptions]);
 
   const filtered = consultations.filter((c) => {
     if (!search.trim()) return true;
@@ -231,66 +190,26 @@ function WorkspaceContent() {
               </div>
             </div>
 
-            <div className="flex-grow space-y-6 overflow-y-auto bg-surface-bright/50 p-6 dark:bg-surface-dark/40">
-              <div className="flex justify-center">
-                <span className="rounded-full bg-surface-container px-3 py-1 text-xs text-outline">
-                  Consultation started {new Date(selected.createdAt).toLocaleString()}
-                </span>
-              </div>
-
-              {messages.length === 0 && (
-                <p className="text-center text-sm text-on-surface-variant">No messages yet — say hello.</p>
-              )}
-
-              {messages.map((msg) => (
-                <div key={msg.id} className={cn("flex", msg.isFromPharmacist ? "justify-start" : "justify-end")}>
-                  <div
-                    className={cn(
-                      "max-w-[75%] rounded-2xl px-5 py-3 text-sm shadow-sm",
-                      msg.isFromPharmacist
-                        ? "rounded-tl-sm bg-medical-teal text-white"
-                        : "rounded-tr-sm bg-surface-container-high text-on-surface"
-                    )}
-                  >
-                    <p>{msg.content}</p>
-                    <span className={cn("mt-1 block text-right text-[10px]", msg.isFromPharmacist ? "text-primary-fixed-dim" : "text-outline")}>
-                      {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
+            <div className="flex justify-center border-b border-outline-variant/60 bg-surface-bright/50 py-3 dark:bg-surface-dark/40">
+              <span className="rounded-full bg-surface-container px-3 py-1 text-xs text-outline">
+                Consultation started {new Date(selected.createdAt).toLocaleString()}
+              </span>
             </div>
 
-            <div className="border-t border-outline-variant/60 p-4">
-              <div className="flex items-center gap-3 rounded-xl bg-surface-container-low p-2 pr-3 focus-within:ring-2 focus-within:ring-soft-aqua">
-                <button type="button" className="rounded-full p-2 text-outline hover:bg-surface-container-high hover:text-medical-teal" aria-label="Attach file" disabled>
-                  <Paperclip className="h-4 w-4" aria-hidden="true" />
-                </button>
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      sendMessage();
-                    }
-                  }}
-                  placeholder="Type your message…"
-                  className="flex-grow border-none bg-transparent py-2 text-sm text-on-surface focus:outline-none focus:ring-0"
-                />
-                <button
-                  type="button"
-                  onClick={sendMessage}
-                  disabled={!input.trim() || sending}
-                  className="rounded-lg bg-medical-teal p-2 text-white transition-colors hover:bg-primary disabled:opacity-50"
-                  aria-label="Send message"
-                >
-                  <Send className="h-4 w-4" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
+            {/* The same component the student sees, so both sides of a
+                consultation are literally one implementation. `key` forces a
+                remount when the pharmacist switches conversation — without it
+                the previous thread's messages would linger while the new one
+                loads. Header is off because the patient header above already
+                names the consultation and its status. */}
+            <ConsultationChat
+              key={selected.id}
+              consultationId={selected.id}
+              viewerIsPharmacist
+              showHeader={false}
+              onMessageSent={loadConsultations}
+              className="min-h-0 flex-grow"
+            />
           </>
         )}
       </section>

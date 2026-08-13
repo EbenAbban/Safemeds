@@ -45,12 +45,18 @@ export default function ConsultationChat({
   consultationId,
   anonymousId,
   viewerIsPharmacist = false,
+  showHeader = true,
+  onMessageSent,
   className,
 }: {
   consultationId: string;
   /** Present for anonymous students; authorises access without a session. */
   anonymousId?: string | null;
   viewerIsPharmacist?: boolean;
+  /** Off in the pharmacist inbox, which renders its own patient header. */
+  showHeader?: boolean;
+  /** Lets a host refresh surrounding UI — e.g. the inbox queue preview. */
+  onMessageSent?: () => void;
   className?: string;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -151,6 +157,7 @@ export default function ConsultationChat({
       }
       atBottomRef.current = true;
       await load({ silent: true });
+      onMessageSent?.();
     } catch (e) {
       setInput(content); // restore so the text isn't lost
       setError(e instanceof Error ? e.message : "Message failed to send");
@@ -166,6 +173,7 @@ export default function ConsultationChat({
 
   return (
     <div className={cn("flex h-[32rem] flex-col md:h-[36rem]", className)}>
+      {showHeader && (
       <header className="flex items-center justify-between gap-3 border-b border-outline-variant/60 px-4 py-3">
         <div className="flex items-center gap-2 min-w-0">
           <ShieldCheck className="h-5 w-5 shrink-0 text-medical-teal dark:text-primary" aria-hidden="true" />
@@ -186,6 +194,7 @@ export default function ConsultationChat({
           </span>
         )}
       </header>
+      )}
 
       <div
         ref={scrollRef}
