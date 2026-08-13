@@ -14,7 +14,7 @@ export default function ChatByIdPage() {
 
   return (
     <ProtectedRoute allowedRoles={["CLIENT", "PHARMACY"]}>
-      <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-purple-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark">
+      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
         <Navigation
           title="Consultation Chat"
           userRole={

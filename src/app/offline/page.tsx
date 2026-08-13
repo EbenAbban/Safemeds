@@ -8,9 +8,9 @@ export const metadata: Metadata = {
 
 export default function OfflinePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary-fixed/30 via-purple-50 to-pink-50 px-6 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 px-6 dark:from-surface-dark dark:to-surface-container-high">
       <div className="w-full max-w-sm text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-lowest shadow-md dark:bg-gray-800">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-lowest shadow-soft dark:bg-surface-container">
           <WifiOff className="h-8 w-8 text-medical-teal dark:text-primary-fixed-dim" />
         </div>
 

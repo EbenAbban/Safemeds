@@ -75,7 +75,7 @@ export default function CourierSharePage() {
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN", "COURIER"]}>
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 dark:from-surface-dark dark:via-gray-800 dark:to-surface-dark flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

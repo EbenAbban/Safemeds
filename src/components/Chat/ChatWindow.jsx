@@ -172,7 +172,7 @@ const ChatWindow = ({
                       msg.sender === "system"
                         ? "bg-slate-100/90 dark:bg-surface-container/80 text-slate-500 dark:text-on-surface-variant text-xs font-semibold border border-slate-200 dark:border-outline-variant/40 text-center flex items-center justify-center gap-2"
                         : msg.sender === "user"
-                        ? "bg-gradient-to-r from-primary-fixed/300 to-blue-600 text-white"
+                        ? "bg-gradient-to-r from-primary-fixed to-blue-600 text-white"
                         : "bg-surface-container-lowest dark:bg-surface-container border border-outline-variant/60 text-on-surface dark:text-on-surface"
                     }`}
                   >
@@ -295,7 +295,7 @@ const ChatWindow = ({
             disabled={!input.trim() || isLoading}
             className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
               input.trim() && !isLoading
-                ? "bg-gradient-to-r from-primary-fixed/300 to-blue-600 text-white shadow-lg hover:shadow-xl"
+                ? "bg-gradient-to-r from-primary-fixed to-blue-600 text-white shadow-lg hover:shadow-xl"
                 : "bg-surface-container-high text-outline cursor-not-allowed"
             }`}
           >
