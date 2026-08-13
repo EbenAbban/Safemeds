@@ -18,6 +18,16 @@ export const PUBLIC_ROUTES = [
   "/legal",
   "/consult",
   "/track",
+  // An anonymous student must be able to read the pharmacist's reply to the
+  // consultation they just submitted, and by design they have no account. The
+  // page holds no data of its own: every message comes from
+  // /api/chat/consultation/[id], which authorises on session *or* anonymousId
+  // and 401s without either. The API is the real boundary, as it is for /track.
+  //
+  // This does not widen caching. sw.js lists /chat in its never-cached set and
+  // GATED_ROUTES still applies the PWA install gate — auth-public, PWA-gated,
+  // never-cached, the same combination /consult already uses.
+  "/chat",
   "/delivery",
   // Precached by the service worker as the offline fallback. An offline user
   // cannot complete a sign-in redirect, so this must never be gated.
