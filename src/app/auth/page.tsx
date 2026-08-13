@@ -288,6 +288,30 @@ export default function AuthPage() {
             </button>
           </form>
 
+          {/* Students only. A first-time Google sign-in provisions a CLIENT,
+              so offering this under Pharmacy/Courier/Admin would quietly hand
+              someone the wrong kind of account — and pharmacist access depends
+              on a reviewed license number, which OAuth cannot attest to.
+              Staff who already have an account still sign in with credentials. */}
+          {userType === "CLIENT" && (
+            <>
+              <div className="my-6 flex items-center gap-4">
+                <span className="h-px flex-1 bg-outline-variant/60" aria-hidden="true" />
+                <span className="text-sm text-on-surface-variant">or</span>
+                <span className="h-px flex-1 bg-outline-variant/60" aria-hidden="true" />
+              </div>
+
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={() => signIn("google", { callbackUrl: "/" })}
+                className={buttonClasses({ variant: "secondary", size: "lg", fullWidth: true })}
+              >
+                Continue with Google
+              </button>
+            </>
+          )}
+
           <div className="mt-8 border-t border-outline-variant/60 pt-6 text-center">
             <p className="text-on-surface-variant">
               Don&apos;t have an account?{" "}

@@ -27,8 +27,14 @@ model User {
   termsVersion          String?
   createdAt             DateTime        @default(now())
   updatedAt             DateTime        @updatedAt
-  passwordHash          String
+  /// Null for accounts provisioned through an OAuth provider (Google) — they
+  /// authenticate against the provider and never had a local password.
+  passwordHash          String?
   username              String          @unique
+  /// Set when an identity provider has attested the address. Google stamps this
+  /// on first OAuth sign-in; null means the address is still unconfirmed.
+  emailVerifiedAt       DateTime?
+  googleId              String?         @unique
   assignedConsultations Consultation[]  @relation("PharmacistConsultations")
   consultations         Consultation[]
   deliveries            Delivery[]
@@ -139,6 +145,13 @@ model Delivery {
   // The courier account that claimed this delivery (self-service pool — a
   // COURIER user claims an unassigned, packaged delivery from their dashboard).
   courierId         String?
+  // Proof-of-delivery OTP. Only the bcrypt hash is stored — the plaintext code
+  // is returned once at issue time and never persisted, so a database leak
+  // can't be replayed to confirm someone else's handoff.
+  otpHash           String?
+  otpExpiresAt      DateTime?
+  otpAttempts       Int            @default(0)
+  otpVerifiedAt     DateTime?
   order             Order?         @relation(fields: [orderId], references: [id])
   user              User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
   courier           User?          @relation("CourierDeliveries", fields: [courierId], references: [id])
