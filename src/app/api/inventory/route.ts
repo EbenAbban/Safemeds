@@ -47,63 +47,62 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    const inventoryItems = await prisma.inventoryItem.findMany({
-      where,
-      include: {
-        medication: {
-          select: {
-            id: true,
-            name: true,
-            genericName: true,
-            dosageForm: true,
-            strength: true,
-            manufacturer: true,
-            price: true,
-            isPrescription: true,
-            isControlled: true,
+    // Independent reads — run concurrently instead of one round trip each.
+    const [inventoryItems, total, stats, lowStockCount, expiringCount] =
+      await Promise.all([
+        prisma.inventoryItem.findMany({
+          where,
+          include: {
+            medication: {
+              select: {
+                id: true,
+                name: true,
+                genericName: true,
+                dosageForm: true,
+                strength: true,
+                manufacturer: true,
+                price: true,
+                isPrescription: true,
+                isControlled: true,
+              },
+            },
           },
-        },
-      },
-      orderBy: { updatedAt: "desc" },
-      skip,
-      take: limit,
-    });
-
-    const total = await prisma.inventoryItem.count({ where });
-
-    // Get inventory statistics
-    const stats = await prisma.inventoryItem.aggregate({
-      where: {
-        pharmacyId: session.user.id,
-        isActive: true,
-      },
-      _count: {
-        id: true,
-      },
-      _sum: {
-        quantity: true,
-      },
-    });
-
-    const lowStockCount = await prisma.inventoryItem.count({
-      where: {
-        pharmacyId: session.user.id,
-        isActive: true,
-        quantity: {
-          lte: 10,
-        },
-      },
-    });
-
-    const expiringCount = await prisma.inventoryItem.count({
-      where: {
-        pharmacyId: session.user.id,
-        isActive: true,
-        expirationDate: {
-          lte: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        },
-      },
-    });
+          orderBy: { updatedAt: "desc" },
+          skip,
+          take: limit,
+        }),
+        prisma.inventoryItem.count({ where }),
+        prisma.inventoryItem.aggregate({
+          where: {
+            pharmacyId: session.user.id,
+            isActive: true,
+          },
+          _count: {
+            id: true,
+          },
+          _sum: {
+            quantity: true,
+          },
+        }),
+        prisma.inventoryItem.count({
+          where: {
+            pharmacyId: session.user.id,
+            isActive: true,
+            quantity: {
+              lte: 10,
+            },
+          },
+        }),
+        prisma.inventoryItem.count({
+          where: {
+            pharmacyId: session.user.id,
+            isActive: true,
+            expirationDate: {
+              lte: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            },
+          },
+        }),
+      ]);
 
     return NextResponse.json({
       inventoryItems,

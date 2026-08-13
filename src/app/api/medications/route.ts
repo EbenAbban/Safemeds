@@ -36,30 +36,30 @@ export async function GET(request: NextRequest) {
       where.isPrescription = isPrescription === "true";
     }
 
-    const medications = await prisma.medication.findMany({
-      where,
-      include: {
-        inventoryItems: {
-          where: {
-            pharmacyId: session.user.id,
-            isActive: true,
+    const [medications, total] = await Promise.all([
+      prisma.medication.findMany({
+        where,
+        include: {
+          // Just the caller's own stock for this medication — no need to
+          // re-include the parent medication record through its own child row.
+          inventoryItems: {
+            where: {
+              pharmacyId: session.user.id,
+              isActive: true,
+            },
           },
-          include: {
-            medication: true,
+          _count: {
+            select: {
+              prescriptions: true,
+            },
           },
         },
-        _count: {
-          select: {
-            prescriptions: true,
-          },
-        },
-      },
-      orderBy: { name: "asc" },
-      skip,
-      take: limit,
-    });
-
-    const total = await prisma.medication.count({ where });
+        orderBy: { name: "asc" },
+        skip,
+        take: limit,
+      }),
+      prisma.medication.count({ where }),
+    ]);
 
     return NextResponse.json({
       medications,

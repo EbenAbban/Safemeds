@@ -41,93 +41,93 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    const orders = await prisma.order.findMany({
-      where,
-      include: {
-        prescription: {
-          include: {
-            medication: {
-              select: {
-                id: true,
-                name: true,
-                genericName: true,
-                dosageForm: true,
-                strength: true,
-                manufacturer: true,
-                price: true,
-              },
-            },
-            consultation: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                  },
-                },
-                assignedPharmacist: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                  },
+    // Independent reads — run concurrently instead of one round trip each.
+    const [orders, total, stats] = await Promise.all([
+      prisma.order.findMany({
+        where,
+        include: {
+          prescription: {
+            include: {
+              medication: {
+                select: {
+                  id: true,
+                  name: true,
+                  genericName: true,
+                  dosageForm: true,
+                  strength: true,
+                  manufacturer: true,
+                  price: true,
                 },
               },
+              consultation: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      firstName: true,
+                      lastName: true,
+                      email: true,
+                    },
+                  },
+                  assignedPharmacist: {
+                    select: {
+                      id: true,
+                      firstName: true,
+                      lastName: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          delivery: {
+            select: {
+              id: true,
+              status: true,
+              trackingNumber: true,
+              estimatedDelivery: true,
+              actualDelivery: true,
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
             },
           },
         },
-        delivery: {
-          select: {
-            id: true,
-            status: true,
-            trackingNumber: true,
-            estimatedDelivery: true,
-            actualDelivery: true,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.order.count({ where }),
+      prisma.order.aggregate({
+        where: {
+          ...where,
+          status: {
+            in: [
+              "CONFIRMED",
+              "PROCESSING",
+              "READY_FOR_PICKUP",
+              "SHIPPED",
+              "DELIVERED",
+            ],
           },
+          paymentStatus: "PAID",
         },
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
+        _count: {
+          id: true,
         },
-      },
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: limit,
-    });
-
-    const total = await prisma.order.count({ where });
-
-    // Get order statistics
-    const stats = await prisma.order.aggregate({
-      where: {
-        ...where,
-        status: {
-          in: [
-            "CONFIRMED",
-            "PROCESSING",
-            "READY_FOR_PICKUP",
-            "SHIPPED",
-            "DELIVERED",
-          ],
+        _sum: {
+          totalAmount: true,
         },
-        paymentStatus: "PAID",
-      },
-      _count: {
-        id: true,
-      },
-      _sum: {
-        totalAmount: true,
-      },
-      _avg: {
-        totalAmount: true,
-      },
-    });
+        _avg: {
+          totalAmount: true,
+        },
+      }),
+    ]);
 
     return NextResponse.json({
       orders,

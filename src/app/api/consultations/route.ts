@@ -44,41 +44,42 @@ export async function GET(request: NextRequest) {
       where.userId = session.user.id;
     }
 
-    const consultations = await prisma.consultation.findMany({
-      where,
-      include: {
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
+    const [consultations, total] = await Promise.all([
+      prisma.consultation.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+          assignedPharmacist: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+          messages: {
+            orderBy: { createdAt: "desc" },
+            take: 1,
+          },
+          _count: {
+            select: {
+              messages: true,
+              prescriptions: true,
+            },
           },
         },
-        assignedPharmacist: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-        messages: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
-        },
-        _count: {
-          select: {
-            messages: true,
-            prescriptions: true,
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: limit,
-    });
-
-    const total = await prisma.consultation.count({ where });
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.consultation.count({ where }),
+    ]);
 
     return NextResponse.json({
       consultations,

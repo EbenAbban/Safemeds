@@ -39,58 +39,59 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    const prescriptions = await prisma.prescription.findMany({
-      where,
-      include: {
-        consultation: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
+    const [prescriptions, total] = await Promise.all([
+      prisma.prescription.findMany({
+        where,
+        include: {
+          consultation: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
+              },
+              assignedPharmacist: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
               },
             },
-            assignedPharmacist: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
+          },
+          medication: {
+            select: {
+              id: true,
+              name: true,
+              genericName: true,
+              dosageForm: true,
+              strength: true,
+              manufacturer: true,
+              price: true,
+              isControlled: true,
+            },
+          },
+          orders: {
+            include: {
+              delivery: {
+                select: {
+                  id: true,
+                  status: true,
+                  trackingNumber: true,
+                },
               },
             },
           },
         },
-        medication: {
-          select: {
-            id: true,
-            name: true,
-            genericName: true,
-            dosageForm: true,
-            strength: true,
-            manufacturer: true,
-            price: true,
-            isControlled: true,
-          },
-        },
-        orders: {
-          include: {
-            delivery: {
-              select: {
-                id: true,
-                status: true,
-                trackingNumber: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: limit,
-    });
-
-    const total = await prisma.prescription.count({ where });
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.prescription.count({ where }),
+    ]);
 
     return NextResponse.json({
       prescriptions,
