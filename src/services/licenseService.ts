@@ -113,14 +113,34 @@ export const verifyLicenseForSignIn = async (
 };
 
 /**
+ * The one licence-number shape for the whole app.
+ *
+ * There were previously two regexes that disagreed: `/^[A-Z]{2}\d{6}$/` here
+ * and `/^[A-Za-z]{1,2}\d{6,7}$/` in the verify-license route. The same number
+ * could validate in one place and be rejected in the other.
+ *
+ * 1–3 letters followed by 4–8 digits. Three letters matters: the sign-in form
+ * has always advertised `RPh-123456` as its example while every rule above
+ * capped prefixes at two letters, so the format the UI asked for could never
+ * pass. Board prefixes (PH, RPh, NY…) and digit lengths vary by jurisdiction,
+ * so the shape is intentionally broad.
+ *
+ * This is a *format* check, not proof of a licence. Authorisation comes from
+ * the number matching the account's own stored record, plus admin review via
+ * the LicenseVerification flow. Widening the shape does not widen access.
+ */
+export const LICENSE_PATTERN = /^[A-Z]{1,3}\d{4,8}$/;
+
+/**
  * Validate license number format
  * @param licenseNumber - The license number to validate
  * @returns boolean
  */
 export const validateLicenseFormat = (licenseNumber: string): boolean => {
-  // Format: PH123456 (2 letters followed by 6 digits)
-  const licenseRegex = /^[A-Z]{2}\d{6}$/;
-  return licenseRegex.test(licenseNumber);
+  // Checks the normalised form. Callers run input through formatLicenseNumber
+  // first, so "rph-123456" is accepted as RPH123456 while a raw mixed-case
+  // string is not silently treated as already valid.
+  return LICENSE_PATTERN.test(licenseNumber);
 };
 
 /**
@@ -129,13 +149,12 @@ export const validateLicenseFormat = (licenseNumber: string): boolean => {
  * @returns string
  */
 export const formatLicenseNumber = (licenseNumber: string): string => {
-  // Remove any non-alphanumeric characters and convert to uppercase
-  const cleaned = licenseNumber.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
-
-  // Ensure it follows the format PH123456
-  if (cleaned.length >= 8) {
-    return `${cleaned.slice(0, 2)}${cleaned.slice(2, 8)}`;
-  }
-
-  return cleaned;
+  // Strip separators people type ("RPh-123-456") and normalise case.
+  //
+  // This no longer truncates. The previous version sliced anything 8+ chars to
+  // two letters and six digits, which silently rewrote a valid RPH12345678
+  // into RPH12345 — a different licence number. Mangling an identifier is
+  // worse than rejecting it: validateLicenseFormat can reject a bad shape,
+  // but nothing can recover digits that were thrown away.
+  return licenseNumber.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
 };

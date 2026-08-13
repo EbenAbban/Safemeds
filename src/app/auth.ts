@@ -4,6 +4,7 @@ import Google from "next-auth/providers/google";
 import { verifyPassword } from "@/utils/password";
 import { getUserByUsername } from "@/utils/db";
 import { linkOrCreateGoogleUser } from "@/utils/googleAuth";
+import { formatLicenseNumber } from "@/services/licenseService";
 import { prisma } from "@/lib/prisma";
 
 // Extend the built-in session types
@@ -114,7 +115,18 @@ export const { handlers, auth } = NextAuth({
           // changing a verified credential must go through the admin license
           // verification flow, never a login attempt. A generic error is
           // returned to avoid leaking which field was wrong.
-          if (dbUser.licenseNumber !== trimmedLicenseNumber) {
+          //
+          // Both sides are normalised before comparing. A licence number is a
+          // case-insensitive identifier that people write with separators
+          // ("RPh-123-456"), and a raw string compare rejected every one of
+          // those spellings as "Invalid credentials" — indistinguishable from
+          // a wrong password, and unguessable for the pharmacist. Normalising
+          // does not weaken the check: the digits and letters must still match
+          // exactly.
+          if (
+            formatLicenseNumber(dbUser.licenseNumber ?? "") !==
+            formatLicenseNumber(trimmedLicenseNumber)
+          ) {
             throw new Error("Invalid credentials");
           }
 
