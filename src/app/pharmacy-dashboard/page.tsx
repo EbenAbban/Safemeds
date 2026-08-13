@@ -1,12 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { AlertTriangle, ClipboardList, MessageSquare, PackageSearch } from "lucide-react";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import PharmacyShell from "@/components/pharmacy/PharmacyShell";
-import IncomingCallListener from "@/components/Chat/IncomingCallListener";
 import { useAuth } from "@/hooks/useAuth";
 import { Card } from "@/components/ui";
+
+// Pulls in the Firebase SDK + WebRTC signaling for video calls — code a
+// pharmacist only needs if a call actually comes in. Loaded on the client
+// after the dashboard itself has rendered, instead of blocking first paint.
+const IncomingCallListener = dynamic(
+  () => import("@/components/Chat/IncomingCallListener"),
+  { ssr: false }
+);
 
 /**
  * Pharmacist dashboard — SafeMeds Vital design system.
