@@ -11,6 +11,10 @@ export interface User {
   // Null for OAuth-provisioned accounts, which have no local password.
   passwordHash?: string | null;
   isVerified?: boolean;
+  // Null until the address is confirmed. Sign-in blocks on this, so it must be
+  // selected by every query that feeds an auth check — omitting it yields
+  // undefined, which is falsy, which would lock out every account.
+  emailVerifiedAt?: Date | null;
 }
 
 export async function getUserFromDb(
@@ -63,6 +67,7 @@ export async function getUserByUsername(
         lastName: true,
         passwordHash: true,
         isVerified: true,
+        emailVerifiedAt: true,
       },
     });
 

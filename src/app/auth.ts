@@ -110,6 +110,23 @@ export const { handlers, auth } = NextAuth({
             throw new Error("Invalid credentials");
           }
 
+          // Sign-in requires a confirmed email address.
+          //
+          // This throws a distinct message, unlike every other failure here
+          // which is deliberately generic. The distinction is safe: reaching
+          // this line means the password was already correct, so it reveals
+          // nothing an attacker did not just prove they know. Returning
+          // "Invalid credentials" to someone holding the right password would
+          // be unactionable — they would have no idea a link was waiting.
+          //
+          // Accounts predating this requirement were backdated in the
+          // 20260813210000_email_verification migration, so nobody who signed
+          // up before it existed is locked out.
+          if (!dbUser.emailVerifiedAt) {
+            throw new Error("EMAIL_NOT_VERIFIED");
+          }
+
+
           // The provided license number must match the one on file for this
           // pharmacist. We intentionally do NOT auto-update it on mismatch:
           // changing a verified credential must go through the admin license
@@ -192,6 +209,23 @@ export const { handlers, auth } = NextAuth({
           if (!isValidPassword) {
             throw new Error("Invalid credentials");
           }
+
+          // Sign-in requires a confirmed email address.
+          //
+          // This throws a distinct message, unlike every other failure here
+          // which is deliberately generic. The distinction is safe: reaching
+          // this line means the password was already correct, so it reveals
+          // nothing an attacker did not just prove they know. Returning
+          // "Invalid credentials" to someone holding the right password would
+          // be unactionable — they would have no idea a link was waiting.
+          //
+          // Accounts predating this requirement were backdated in the
+          // 20260813210000_email_verification migration, so nobody who signed
+          // up before it existed is locked out.
+          if (!dbUser.emailVerifiedAt) {
+            throw new Error("EMAIL_NOT_VERIFIED");
+          }
+
 
           // Return user object without password hash
           const user = {

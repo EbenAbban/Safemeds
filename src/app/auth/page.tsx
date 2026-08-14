@@ -56,6 +56,7 @@ export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [userType, setUserType] = useState<"CLIENT" | "PHARMACY" | "ADMIN" | "COURIER">("CLIENT");
   const [showPassword, setShowPassword] = useState(false);
+  const [showVerifyHelp, setShowVerifyHelp] = useState(false);
 
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -117,7 +118,17 @@ export default function AuthPage() {
       const result = await signIn("credentials", { ...loginParams, redirect: false });
 
       if (result?.error) {
-        setErrors({ general: "Invalid credentials. Please check your details and try again." });
+        // NextAuth collapses provider errors to "CredentialsSignin", so the
+        // specific cause is not available here. An unverified address is the
+        // one failure a correct password can still produce, and telling
+        // someone their credentials are wrong when they are not would send
+        // them round in circles — so the message names both possibilities and
+        // offers the action that resolves the recoverable one.
+        setErrors({
+          general:
+            "Sign-in failed. If you have just registered, confirm your email address first — check your inbox, or request a new link.",
+        });
+        setShowVerifyHelp(true);
       }
     } catch {
       setErrors({ general: "Something went wrong. Please try again." });
@@ -276,6 +287,14 @@ export default function AuthPage() {
             {errors.general && (
               <div className="rounded-lg border border-error/30 bg-error-container px-4 py-3 text-sm text-on-error-container">
                 {errors.general}
+                {showVerifyHelp && (
+                  <>
+                    {" "}
+                    <Link href="/verify-email?status=expired" className="font-semibold underline">
+                      Resend confirmation email
+                    </Link>
+                  </>
+                )}
               </div>
             )}
 

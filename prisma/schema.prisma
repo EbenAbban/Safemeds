@@ -48,8 +48,29 @@ model User {
   notifications         Notification[]
   licenseVerification   LicenseVerification?
   pushSubscriptions     PushSubscription[]
+  emailVerificationTokens EmailVerificationToken[]
 
   @@map("users")
+}
+
+/// A pending "confirm your email address" link.
+///
+/// Only a SHA-256 hash of the token is stored. The plaintext exists in the
+/// emailed link and nowhere else, so a leak of this table cannot be used to
+/// verify anyone's address. Rows are consumed on use rather than deleted, so a
+/// second click on the same link can say "already verified" instead of
+/// "invalid link", which reads as a failure to someone who did nothing wrong.
+model EmailVerificationToken {
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique
+  userId     String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("email_verification_tokens")
 }
 
 /// A browser push endpoint. `userId` is nullable because consultations can be

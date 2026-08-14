@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createVerificationToken } from "@/lib/emailVerification";
+import { isEmailConfigured, sendVerificationEmail } from "@/lib/email";
 import { DEFAULT_LICENCE_REGION } from "@/lib/ghana";
 import { hashPassword } from "@/utils/password";
 import { prisma } from "@/lib/prisma";
@@ -226,8 +228,31 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Verification email. Deliberately after the account exists and outside its
+    // success path: a mail failure must not roll back a valid signup, and the
+    // user can always request a new link. The account simply cannot sign in
+    // until the address is confirmed.
+    let emailSent = false;
+    if (isEmailConfigured()) {
+      try {
+        const token = await createVerificationToken(user.id);
+        await sendVerificationEmail({
+          to: user.email,
+          firstName: user.firstName,
+          verifyUrl: new URL(
+            `/api/auth/verify-email?token=${encodeURIComponent(token)}`,
+            request.nextUrl.origin
+          ).toString(),
+        });
+        emailSent = true;
+      } catch (error) {
+        console.error("Verification email failed to send:", error);
+      }
+    }
+
     return NextResponse.json(
       {
+        emailSent,
         message: "User created successfully",
         user: {
           ...user,
