@@ -4,6 +4,7 @@ export { default as Card } from "./Card";
 export { default as Badge } from "./Badge";
 export type { BadgeTone } from "./Badge";
 export { default as Input } from "./Input";
+export { default as Select } from "./Select";
 export { Container, Section, SectionHeading } from "./Section";
 export { default as CountUp } from "./CountUp";
 export { default as Accordion } from "./Accordion";

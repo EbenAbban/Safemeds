@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { formatCurrency } from "@/lib/currency";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Search, Pill, Loader2 } from "lucide-react";
@@ -167,7 +168,7 @@ export default function SearchPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-bold text-on-surface">
-                      ${Number(med.price).toFixed(2)}
+                      {formatCurrency(med.price)}
                     </p>
                     <p className="text-xs text-outline mt-1">
                       {med.manufacturer}

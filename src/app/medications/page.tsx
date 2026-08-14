@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
 import { getMedications, Medication } from "@/services/medicationService";
 import { EmptyState, MedicationSkeleton } from "@/components/ui";
+import { formatCurrency } from "@/lib/currency";
 import { PillBottle } from "lucide-react";
 
 export default function MedicationsPage() {
@@ -299,7 +300,7 @@ export default function MedicationsPage() {
                         </span>
                       </div>
                       <div className="text-lg font-bold text-on-surface">
-                        ${medication.price.toFixed(2)}
+                        {formatCurrency(medication.price)}
                       </div>
                     </div>
 

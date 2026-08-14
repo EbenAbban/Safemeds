@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { formatCurrency } from "@/lib/currency";
 import {
   AlertTriangle,
   Edit,
@@ -341,7 +342,7 @@ function InventoryPageContent() {
                           </span>
                         </div>
                       </td>
-                      <td className="p-4 text-sm text-on-surface">${Number(item.medication.price).toFixed(2)}</td>
+                      <td className="p-4 text-sm text-on-surface">{formatCurrency(item.medication.price)}</td>
                       <td className="p-4">
                         <Badge tone={status.tone === "success" ? "success" : status.tone === "danger" ? "danger" : "neutral"}>
                           {status.label}

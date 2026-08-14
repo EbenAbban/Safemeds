@@ -5,8 +5,13 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LEGAL_VERSION } from "@/lib/legal";
-import { buttonClasses, Input } from "@/components/ui";
+import { buttonClasses, Input, Select } from "@/components/ui";
 import { CheckCircle2, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import {
+  GHANA_CITY_SUGGESTIONS,
+  GHANA_REGIONS,
+  isValidGhanaPhone,
+} from "@/lib/ghana";
 
 interface FormData {
   username: string;
@@ -148,8 +153,8 @@ export default function SignupPage() {
       if (!formData.licenseNumber.trim()) newErrors.licenseNumber = "License number is required.";
       if (!formData.phone.trim()) {
         newErrors.phone = "Phone number is required.";
-      } else if (!/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/[\s\-\(\)]/g, ""))) {
-        newErrors.phone = "Enter a valid phone number.";
+      } else if (!isValidGhanaPhone(formData.phone)) {
+        newErrors.phone = "Enter a Ghana number, e.g. 0546132427 or +233546132427.";
       }
       if (!formData.pharmacyName.trim()) newErrors.pharmacyName = "Pharmacy name is required.";
     }
@@ -157,8 +162,8 @@ export default function SignupPage() {
     if (userType === "COURIER") {
       if (!formData.phone.trim()) {
         newErrors.phone = "Phone number is required.";
-      } else if (!/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/[\s\-\(\)]/g, ""))) {
-        newErrors.phone = "Enter a valid phone number.";
+      } else if (!isValidGhanaPhone(formData.phone)) {
+        newErrors.phone = "Enter a Ghana number, e.g. 0546132427 or +233546132427.";
       }
     }
 
@@ -409,27 +414,47 @@ export default function SignupPage() {
                   label="Address"
                   value={formData.address}
                   onChange={(e) => handleInputChange("address", e.target.value)}
-                  placeholder="123 Main St"
+                  placeholder="543 Benab Street"
                 />
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  {/* City is a datalist, not a select: Ghana has far more towns
+                      than any list should claim to enumerate, so this offers
+                      the common ones while still accepting anything typed. */}
                   <Input
-                    label="City"
+                    label="City / Town"
+                    list="gh-cities"
                     value={formData.city}
                     onChange={(e) => handleInputChange("city", e.target.value)}
-                    placeholder="New York"
+                    placeholder="Kumasi"
                   />
-                  <Input
-                    label="State"
+                  <datalist id="gh-cities">
+                    {GHANA_CITY_SUGGESTIONS.map((c) => (
+                      <option key={c} value={c} />
+                    ))}
+                  </datalist>
+
+                  <Select
+                    label="Region"
                     value={formData.state}
                     onChange={(e) => handleInputChange("state", e.target.value)}
-                    placeholder="NY"
-                  />
+                    placeholder="Select region"
+                  >
+                    {GHANA_REGIONS.map((r) => (
+                      <option key={r} value={r}>
+                        {r}
+                      </option>
+                    ))}
+                  </Select>
+
+                  {/* Ghana has no US-style ZIP. GhanaPost GPS is the national
+                      equivalent, and it is optional here. */}
                   <Input
-                    label="Zip code"
+                    label="GhanaPost GPS"
                     value={formData.zipCode}
                     onChange={(e) => handleInputChange("zipCode", e.target.value)}
-                    placeholder="10001"
+                    placeholder="AK-039-5028"
+                    hint="Optional"
                   />
                 </div>
               </>
