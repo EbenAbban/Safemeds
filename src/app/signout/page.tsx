@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
@@ -114,7 +115,7 @@ export default function SignOutPage() {
                 transition={{ delay: 0, type: "spring" }}
                 className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"
               >
-                <span className="text-2xl"></span>
+                <LogOut className="h-7 w-7 text-secondary" aria-hidden="true" />
               </motion.div>
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}

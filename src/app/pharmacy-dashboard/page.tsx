@@ -133,7 +133,7 @@ export default function PharmacyDashboard() {
     <ProtectedRoute allowedRoles={["PHARMACY"]}>
       {/* Listens for incoming student video consultation calls */}
       <IncomingCallListener />
-      <PharmacyShell active="pharmacy" pageTitle="Dashboard">
+      <PharmacyShell active="inventory" pageTitle="Dashboard">
         <DashboardContent />
       </PharmacyShell>
     </ProtectedRoute>

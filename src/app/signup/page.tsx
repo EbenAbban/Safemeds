@@ -226,31 +226,16 @@ export default function SignupPage() {
         return;
       }
 
-      const loginParams =
-        userType === "PHARMACY"
-          ? {
-              email: formData.email,
-              password: formData.password,
-              licenseNumber: formData.licenseNumber,
-              role: userType,
-            }
-          : {
-              username: formData.username,
-              password: formData.password,
-              role: userType,
-            };
-
-      const result = await signIn("credentials", { ...loginParams, redirect: false });
-
-      if (result?.error) {
-        setErrors({
-          general: "Account created. Auto-login failed — please sign in manually.",
-        });
-      } else if (result?.ok) {
-        setIsSuccess(true);
-      } else {
-        setErrors({ general: "Account created. Please sign in to continue." });
-      }
+      // No auto-login. Sign-in now requires a confirmed address, so attempting
+      // it here would fail for every new account and report "auto-login failed"
+      // to someone whose signup actually succeeded. Send them to enter the code
+      // instead, with the address prefilled so the common path is one field.
+      router.push(
+        `/verify-email?email=${encodeURIComponent(formData.email)}${
+          data.emailSent ? "&sent=1" : ""
+        }`
+      );
+      return;
     } catch {
       setErrors({ general: "Something went wrong. Please try again." });
     } finally {

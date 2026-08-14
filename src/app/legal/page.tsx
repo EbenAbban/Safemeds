@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
+import { FileSearch } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "next/navigation";
@@ -343,7 +344,7 @@ function LegalContent() {
               <div className="space-y-8">
                 {filteredBlocks.length === 0 ? (
                   <div className="text-center py-16">
-                    <span className="text-4xl mb-4 block"></span>
+                    <FileSearch className="mx-auto mb-4 h-10 w-10 text-on-surface-variant" aria-hidden="true" />
                     <h4 className="text-lg font-semibold text-on-surface mb-1">
                       No matching sections found
                     </h4>

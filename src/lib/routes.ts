@@ -12,6 +12,9 @@ export const PUBLIC_ROUTES = [
   "/signin",
   "/signup",
   "/verify",
+  // The emailed confirmation link is followed by someone who cannot sign in
+  // yet — by definition, since that is what it unblocks.
+  "/verify-email",
   "/about",
   "/contact",
   "/search",

@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createVerificationCode } from "@/lib/emailVerification";
+import { isEmailConfigured, sendVerificationCodeEmail } from "@/lib/email";
+import { DEFAULT_LICENCE_REGION } from "@/lib/ghana";
 import { hashPassword } from "@/utils/password";
 import { prisma } from "@/lib/prisma";
 import { LEGAL_VERSION } from "@/lib/legal";
@@ -160,7 +163,7 @@ export async function POST(request: NextRequest) {
       try {
         isVerified = await verifyPharmacistLicense(
           licenseNumber,
-          state || "NY"
+          state || DEFAULT_LICENCE_REGION
         );
         if (!isVerified) {
           return NextResponse.json(
@@ -225,8 +228,28 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Verification email. Deliberately after the account exists and outside its
+    // success path: a mail failure must not roll back a valid signup, and the
+    // user can always request a new link. The account simply cannot sign in
+    // until the address is confirmed.
+    let emailSent = false;
+    if (isEmailConfigured()) {
+      try {
+        const code = await createVerificationCode(user.id);
+        await sendVerificationCodeEmail({
+          to: user.email,
+          firstName: user.firstName,
+          code,
+        });
+        emailSent = true;
+      } catch (error) {
+        console.error("Verification email failed to send:", error);
+      }
+    }
+
     return NextResponse.json(
       {
+        emailSent,
         message: "User created successfully",
         user: {
           ...user,

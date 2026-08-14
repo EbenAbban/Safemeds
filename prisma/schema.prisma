@@ -48,8 +48,33 @@ model User {
   notifications         Notification[]
   licenseVerification   LicenseVerification?
   pushSubscriptions     PushSubscription[]
+  emailVerificationTokens EmailVerificationToken[]
 
   @@map("users")
+}
+
+/// A pending "confirm your email address" code.
+///
+/// Holds a bcrypt hash of a six-digit code, not a long random token. That
+/// choice follows from the shape: six digits are guessable, so the hash has to
+/// be slow and the attempts have to be capped — exactly like the delivery OTP.
+/// A long token would not need either, but a code is far easier to type on a
+/// phone than a link is to click from a mail client.
+///
+/// Lookup is by user, then bcrypt compare, because a bcrypt hash is salted and
+/// therefore cannot be searched for directly.
+model EmailVerificationToken {
+  id         String   @id @default(cuid())
+  codeHash   String
+  userId     String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  attempts   Int      @default(0)
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, consumedAt])
+  @@map("email_verification_tokens")
 }
 
 /// A browser push endpoint. `userId` is nullable because consultations can be

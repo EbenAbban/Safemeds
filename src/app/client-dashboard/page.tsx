@@ -7,6 +7,7 @@ import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
 import { SlideUp, StaggerContainer, StaggerItem } from "@/components/animations";
 import { buttonClasses } from "@/components/ui";
+import MyPrescriptions from "@/components/Delivery/MyPrescriptions";
 
 /**
  * Migrated off hand-rolled Framer props onto the shared motion primitives.
@@ -88,6 +89,14 @@ export default function ClientDashboard() {
                 </div>
               ))}
             </dl>
+          </SlideUp>
+
+          {/* Prescriptions waiting on the student. Above the feature cards
+              because an unanswered prescription is the most actionable thing
+              on this page — someone is waiting on them to accept it. */}
+          <SlideUp className="mb-8">
+            <h2 className="mb-3 text-lg font-semibold text-on-surface">Your prescriptions</h2>
+            <MyPrescriptions />
           </SlideUp>
 
           <StaggerContainer

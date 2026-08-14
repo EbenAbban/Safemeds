@@ -405,7 +405,7 @@ function InventoryPageContent() {
 export default function InventoryPage() {
   return (
     <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-      <PharmacyShell active="pharmacy" pageTitle="Pharmacy Inventory">
+      <PharmacyShell active="inventory" pageTitle="Pharmacy Inventory">
         <InventoryPageContent />
       </PharmacyShell>
     </ProtectedRoute>

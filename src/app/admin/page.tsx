@@ -366,7 +366,6 @@ export default function AdminPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl mb-2"></div>
                       <div className="text-sm text-on-surface-variant">Admin Account</div>
                     </div>
                   </div>

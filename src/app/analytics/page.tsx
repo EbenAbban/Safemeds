@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { formatCurrency } from "@/lib/currency";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
-import Navigation from "@/components/Common/Navigation";
+import PharmacyShell from "@/components/pharmacy/PharmacyShell";
+
 import { getAnalytics, type AnalyticsData } from "@/services/analyticsService";
 import { Banknote, ClipboardList, MessageCircle, Pill } from "lucide-react";
 
@@ -29,15 +31,11 @@ export default function AnalyticsPage() {
     fetchAnalytics();
   }, [period]);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount || 0);
-  };
-
+  // formatCurrency comes from lib/currency: it handles Prisma Decimals, which
+  // arrive as strings and cannot be passed to a number-typed formatter, and it
+  // uses cedis rather than the dollars this page previously printed.
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('en-US').format(num || 0);
+    return new Intl.NumberFormat('en-GH').format(num || 0);
   };
 
   const getStatusColor = (status: string) => {
@@ -58,25 +56,24 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-        <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
-          <Navigation title="Analytics" userRole="pharmacy" />
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <PharmacyShell active="analytics" pageTitle="Analytics">
+        <div className="min-h-full">
+          <main className="py-2">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-soft-aqua mx-auto"></div>
               <p className="mt-4 text-on-surface-variant">Loading analytics...</p>
             </div>
           </main>
         </div>
+        </PharmacyShell>
       </ProtectedRoute>
     );
   }
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
-        <Navigation title="Analytics Dashboard" userRole="pharmacy" />
-
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-full">
+        <main className="py-2">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

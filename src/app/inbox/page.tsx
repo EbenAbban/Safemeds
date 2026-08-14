@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Info, Pill, Search, Truck } from "lucide-react";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import ConsultationChat from "@/components/Chat/ConsultationChat";
+import { useAuth } from "@/hooks/useAuth";
 import PharmacyShell from "@/components/pharmacy/PharmacyShell";
+import IssuePrescription from "@/components/pharmacy/IssuePrescription";
 import { Badge, Button, cn } from "@/components/ui";
 
 /**
@@ -33,7 +35,7 @@ interface ConsultationSummary {
   anonymousId: string | null;
   isAnonymous: boolean;
   createdAt: string;
-  user: { firstName: string; lastName: string } | null;
+  user: { id: string; firstName: string; lastName: string } | null;
   messages: { content: string; createdAt: string; isFromPharmacist: boolean }[];
   _count: { messages: number; prescriptions: number };
 }
@@ -79,6 +81,8 @@ function WorkspaceContent() {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [prescriptions, setPrescriptions] = useState<PrescriptionSummary[]>([]);
+
+  const { user } = useAuth();
 
   const loadConsultations = useCallback(async () => {
     try {
@@ -257,6 +261,17 @@ function WorkspaceContent() {
               <h3 className="font-bold text-on-surface">Prescriptions</h3>
             </div>
             <div className="space-y-4 p-5">
+              {selected && (
+                <IssuePrescription
+                  consultationId={selected.id}
+                  patientUserId={selected.user?.id ?? null}
+                  pharmacistName={user?.name ?? user?.username ?? "Pharmacist"}
+                  onIssued={() => {
+                    loadPrescriptions(selected.id);
+                    loadConsultations();
+                  }}
+                />
+              )}
               {prescriptions.length === 0 && (
                 <p className="flex items-start gap-2 text-sm text-on-surface-variant">
                   <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />

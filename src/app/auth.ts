@@ -6,6 +6,7 @@ import { getUserByUsername } from "@/utils/db";
 import { linkOrCreateGoogleUser } from "@/utils/googleAuth";
 import { formatLicenseNumber } from "@/services/licenseService";
 import { prisma } from "@/lib/prisma";
+import { isEmailConfigured, sendSignInEmail } from "@/lib/email";
 
 // Extend the built-in session types
 declare module "next-auth" {
@@ -110,6 +111,23 @@ export const { handlers, auth } = NextAuth({
             throw new Error("Invalid credentials");
           }
 
+          // Sign-in requires a confirmed email address.
+          //
+          // This throws a distinct message, unlike every other failure here
+          // which is deliberately generic. The distinction is safe: reaching
+          // this line means the password was already correct, so it reveals
+          // nothing an attacker did not just prove they know. Returning
+          // "Invalid credentials" to someone holding the right password would
+          // be unactionable — they would have no idea a link was waiting.
+          //
+          // Accounts predating this requirement were backdated in the
+          // 20260813210000_email_verification migration, so nobody who signed
+          // up before it existed is locked out.
+          if (!dbUser.emailVerifiedAt) {
+            throw new Error("EMAIL_NOT_VERIFIED");
+          }
+
+
           // The provided license number must match the one on file for this
           // pharmacist. We intentionally do NOT auto-update it on mismatch:
           // changing a verified credential must go through the admin license
@@ -193,6 +211,23 @@ export const { handlers, auth } = NextAuth({
             throw new Error("Invalid credentials");
           }
 
+          // Sign-in requires a confirmed email address.
+          //
+          // This throws a distinct message, unlike every other failure here
+          // which is deliberately generic. The distinction is safe: reaching
+          // this line means the password was already correct, so it reveals
+          // nothing an attacker did not just prove they know. Returning
+          // "Invalid credentials" to someone holding the right password would
+          // be unactionable — they would have no idea a link was waiting.
+          //
+          // Accounts predating this requirement were backdated in the
+          // 20260813210000_email_verification migration, so nobody who signed
+          // up before it existed is locked out.
+          if (!dbUser.emailVerifiedAt) {
+            throw new Error("EMAIL_NOT_VERIFIED");
+          }
+
+
           // Return user object without password hash
           const user = {
             id: dbUser.id,
@@ -211,6 +246,29 @@ export const { handlers, auth } = NextAuth({
       },
     }),
   ],
+  // Sign-in notification.
+  //
+  // In an event rather than inside authorize(): events fire after the sign-in
+  // has already succeeded, so a slow or failing mail provider cannot delay or
+  // break the login itself. It is awaited only far enough to catch errors.
+  events: {
+    async signIn({ user }) {
+      if (!user?.email || !isEmailConfigured()) return;
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+          select: { firstName: true },
+        });
+        await sendSignInEmail({
+          to: user.email,
+          firstName: dbUser?.firstName ?? "there",
+        });
+      } catch (error) {
+        // Never surfaced: a missing notification must not fail a valid login.
+        console.error("Sign-in email failed to send:", error);
+      }
+    },
+  },
   pages: {
     signIn: "/auth",
     error: "/auth",
