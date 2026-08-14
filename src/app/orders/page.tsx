@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { formatCurrency } from "@/lib/currency";
 import { useRouter } from "next/navigation";
 import { SlideUp } from "@/components/animations";
 import { useAuth } from "@/hooks/useAuth";
@@ -97,12 +98,6 @@ export default function OrdersPage() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount || 0);
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

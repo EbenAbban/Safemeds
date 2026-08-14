@@ -14,7 +14,9 @@ export interface Medication {
   sideEffects?: string;
   interactions?: string;
   contraindications?: string;
-  price: number;
+  // Prisma Decimal — arrives as a string over JSON, never a number.
+  // Typing it `number` is what let `price.toFixed()` past the compiler.
+  price: number | string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -133,7 +135,9 @@ export interface CreateMedicationData {
   sideEffects?: string;
   interactions?: string;
   contraindications?: string;
-  price: number;
+  // Prisma Decimal — arrives as a string over JSON, never a number.
+  // Typing it `number` is what let `price.toFixed()` past the compiler.
+  price: number | string;
 }
 
 export interface CreatePrescriptionData {
