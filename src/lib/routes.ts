@@ -57,3 +57,27 @@ export function isPublicRoute(pathname: string): boolean {
     return path.startsWith(`${route}/`);
   });
 }
+
+/**
+ * Where a signed-in user belongs after landing on "/", or when a menu offers
+ * them "Dashboard".
+ *
+ * This mapping existed in four places — middleware, ProtectedRoute, the
+ * landing page and the account menu — each written slightly differently, and
+ * one of them sent every role to /client-dashboard regardless. A pharmacist
+ * clicking "Dashboard" was taken to a student page they have no access to.
+ *
+ * Case-insensitive because the session carries an uppercase role while the
+ * header components pass a lowercase one.
+ */
+const DASHBOARD_BY_ROLE: Record<string, string> = {
+  CLIENT: "/client-dashboard",
+  PHARMACY: "/pharmacy-dashboard",
+  COURIER: "/courier-dashboard",
+  ADMIN: "/admin",
+};
+
+export function dashboardPathForRole(role: string | null | undefined): string | null {
+  if (!role) return null;
+  return DASHBOARD_BY_ROLE[role.toUpperCase()] ?? null;
+}

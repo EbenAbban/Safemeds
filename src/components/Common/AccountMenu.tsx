@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, LogOut, Settings as SettingsIcon, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { dashboardPathForRole } from "@/lib/routes";
 
 /**
  * Account menu for the authenticated header.
@@ -58,6 +59,9 @@ export default function AccountMenu({ userRole }: { userRole: string }) {
     }
   };
 
+  // Role-aware: a pharmacist choosing "Dashboard" was previously sent to the
+  // student dashboard, which their own guard then bounced them out of.
+  const dashboardPath = dashboardPathForRole(user?.role ?? userRole);
   const displayName = user?.name || user?.username || "Account";
   const initial = displayName.trim().charAt(0).toUpperCase() || "A";
 
@@ -112,17 +116,19 @@ export default function AccountMenu({ userRole }: { userRole: string }) {
               <SettingsIcon className="h-4 w-4" aria-hidden="true" />
               Settings
             </button>
+            {dashboardPath && (
             <button
               role="menuitem"
               onClick={() => {
                 setOpen(false);
-                router.push("/client-dashboard");
+                router.push(dashboardPath);
               }}
               className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
             >
               <User className="h-4 w-4" aria-hidden="true" />
               Dashboard
             </button>
+            )}
           </div>
 
           <div className="border-t border-outline-variant/60 p-1">

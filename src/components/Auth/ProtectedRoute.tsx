@@ -4,6 +4,7 @@ import { SlideUp } from "@/components/animations";
 import { useAuth } from "@/hooks/useAuth";
 import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { dashboardPathForRole } from "@/lib/routes";
 import { Lock, ShieldAlert } from "lucide-react";
 import { DashboardSkeleton } from "@/components/ui";
 
@@ -31,14 +32,8 @@ export default function ProtectedRoute({
     ) {
       if (!allowedRoles.includes(user.role)) {
         // Redirect to appropriate dashboard based on role
-        const dashboardPath =
-          user.role === "ADMIN"
-            ? "/admin"
-            : user.role === "PHARMACY"
-            ? "/pharmacy-dashboard"
-            : user.role === "COURIER"
-            ? "/courier-dashboard"
-            : "/client-dashboard";
+        const dashboardPath = dashboardPathForRole(user.role);
+        if (!dashboardPath) return;
         router.push(dashboardPath);
       }
     }

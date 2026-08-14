@@ -1,14 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
-import { isPublicRoute } from '@/lib/routes'
-
-const DASHBOARD_BY_ROLE: Record<string, string> = {
-  CLIENT: '/client-dashboard',
-  PHARMACY: '/pharmacy-dashboard',
-  COURIER: '/courier-dashboard',
-  ADMIN: '/admin',
-}
+import { dashboardPathForRole, isPublicRoute } from '@/lib/routes'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -32,7 +25,7 @@ export async function middleware(request: NextRequest) {
       secureCookie: request.nextUrl.protocol === 'https:',
     })
     const role = typeof token?.role === 'string' ? token.role : null
-    const destination = role ? DASHBOARD_BY_ROLE[role] : null
+    const destination = dashboardPathForRole(role)
     if (destination) {
       return NextResponse.redirect(new URL(destination, request.url))
     }
