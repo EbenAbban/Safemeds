@@ -9,7 +9,17 @@ import { auth } from "@/app/auth";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { OnboardingProvider } from "@/context/OnboardingContext";
-import OnboardingWizard from "@/components/Common/OnboardingWizard";
+import dynamic from "next/dynamic";
+
+// Loaded on demand. The wizard returns null for everyone who has already seen
+// it, but as a static import its code — and framer-motion with it — was in the
+// shared bundle for all 48 routes. It is never part of first paint, so nothing
+// is lost by fetching it only when it actually renders.
+// `ssr: false` is not permitted in a Server Component, and is not needed —
+// dynamic() alone moves this into its own chunk, out of the shared bundle.
+const OnboardingWizard = dynamic(
+  () => import("@/components/Common/OnboardingWizard")
+);
 import NavButtons from "@/components/Common/NavButtons";
 import ThemeToggle from "@/components/Common/ThemeToggle";
 

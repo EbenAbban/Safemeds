@@ -1,7 +1,16 @@
 "use client";
 
 import { useTheme } from "@/context/ThemeContext";
-import { motion } from "framer-motion";
+
+/**
+ * Deliberately free of framer-motion.
+ *
+ * This renders in the root layout, so anything it imports lands in the shared
+ * bundle for all 48 routes — pages that never animate were paying for an
+ * animation library to scale a button on hover and spin an icon 180 degrees.
+ * Both are CSS transitions, and `motion-reduce:` keeps the reduced-motion
+ * behaviour the Framer version had.
+ */
 
 interface ThemeToggleProps {
   className?: string;
@@ -30,18 +39,15 @@ export default function ThemeToggle({
 
   if (variant === "icon") {
     return (
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <button
         onClick={toggleTheme}
-        className={`${sizeClasses[size]} rounded-full bg-surface-container-high dark:bg-surface-container-high hover:bg-outline-variant dark:hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center ${className}`}
+        className={`${sizeClasses[size]} rounded-full bg-surface-container-high dark:bg-surface-container-high hover:bg-outline-variant dark:hover:bg-gray-600 flex items-center justify-center transition-[colors,transform] duration-200 hover:scale-105 active:scale-95 motion-reduce:transform-none ${className}`}
         aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
       >
-        <motion.div
-          initial={false}
-          animate={{ rotate: theme === "dark" ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-          className={iconSizes[size]}
+        <div
+          className={`${iconSizes[size]} transition-transform duration-300 motion-reduce:transition-none ${
+            theme === "dark" ? "rotate-180" : "rotate-0"
+          }`}
         >
           {theme === "light" ? (
             <svg
@@ -64,24 +70,21 @@ export default function ThemeToggle({
               />
             </svg>
           )}
-        </motion.div>
-      </motion.button>
+        </div>
+      </button>
     );
   }
 
   return (
-    <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+    <button
       onClick={toggleTheme}
-      className={`px-4 py-2 rounded-lg bg-surface-container-high dark:bg-surface-container-high hover:bg-outline-variant dark:hover:bg-gray-600 text-on-surface-variant dark:text-on-surface transition-colors duration-200 flex items-center gap-2 font-medium ${className}`}
+      className={`px-4 py-2 rounded-lg bg-surface-container-high dark:bg-surface-container-high hover:bg-outline-variant dark:hover:bg-gray-600 text-on-surface-variant dark:text-on-surface flex items-center gap-2 font-medium transition-[colors,transform] duration-200 hover:scale-[1.02] active:scale-[0.98] motion-reduce:transform-none ${className}`}
       aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
     >
-      <motion.div
-        initial={false}
-        animate={{ rotate: theme === "dark" ? 180 : 0 }}
-        transition={{ duration: 0.3 }}
-        className={iconSizes[size]}
+      <div
+        className={`${iconSizes[size]} transition-transform duration-300 motion-reduce:transition-none ${
+          theme === "dark" ? "rotate-180" : "rotate-0"
+        }`}
       >
         {theme === "light" ? (
           <svg
@@ -104,8 +107,8 @@ export default function ThemeToggle({
             />
           </svg>
         )}
-      </motion.div>
+      </div>
       <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
-    </motion.button>
+    </button>
   );
 }

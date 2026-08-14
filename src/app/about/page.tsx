@@ -1,10 +1,24 @@
-"use client";
-
+import type { Metadata } from "next";
 import { SlideUp } from "@/components/animations";
 import { Lock, ShieldCheck, Smartphone } from "lucide-react";
 import SiteHeader from "@/components/Common/SiteHeader";
 import Footer from "@/components/Common/Footer";
 import { ButtonLink, Card, Container, Section } from "@/components/ui";
+
+/**
+ * Server component. This page has no state, no effects and no event handlers —
+ * it was marked "use client" without needing to be, which shipped its whole
+ * tree to the browser as JavaScript for content that never changes.
+ *
+ * The reveal animations still work: SlideUp is itself a client component, and a
+ * server component may render one. Only SlideUp's own code crosses the
+ * boundary now, not the page.
+ */
+export const metadata: Metadata = {
+  title: "About SafeMeds",
+  description:
+    "Anonymous, licence-verified pharmacist consultations built for students.",
+};
 
 const VALUES = [
   {
