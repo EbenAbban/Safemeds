@@ -3,8 +3,7 @@ export {
   FadeIn,
   SlideUp,
   ScaleIn,
-  staggerParent,
-  staggerChild,
+  usePrefersReducedMotion,
   MOTION,
   EASE_OUT_SOFT,
 } from "./Reveal";

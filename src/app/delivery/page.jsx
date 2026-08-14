@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import Navigation from "@/components/Common/Navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { AlertTriangle, BadgeCheck, Clock3, Lock, Package } from "lucide-react";
+import { DeliverySkeleton } from "@/components/ui";
 
 export default function DeliveryPage() {
   const [deliveryData, setDeliveryData] = useState(null);
@@ -76,14 +77,10 @@ export default function DeliveryPage() {
         />
 
         {loading ? (
-          <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-soft-aqua mx-auto mb-4"></div>
-              <p className="text-on-surface-variant">
-                🔍 Loading your delivery information...
-              </p>
-            </div>
-          </div>
+          // A skeleton in the shape of the tracking view, not a spinner that
+          // blanks the viewport: the map panel and timeline hold their place,
+          // so nothing jumps when the data lands.
+          <DeliverySkeleton />
         ) : error ? (
           <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
             <div className="text-center max-w-md mx-auto p-6">

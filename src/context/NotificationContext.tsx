@@ -46,10 +46,32 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     }
   }, [isAuthenticated]);
 
+  // Poll only while the tab is visible. This runs on every authenticated page
+  // via the root layout, so a backgrounded tab was waking the database every
+  // 30 seconds for a badge nobody could see.
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+
+    const start = () => {
+      if (!interval) interval = setInterval(fetchNotifications, 30000);
+    };
+    const stop = () => {
+      if (interval) clearInterval(interval);
+      interval = null;
+    };
+    const onVisibility = () => {
+      if (document.hidden) return stop();
+      fetchNotifications();
+      start();
+    };
+
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
+    if (!document.hidden) start();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, [fetchNotifications]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
