@@ -7,11 +7,18 @@
  *
  * Run with:  npm run db:seed
  *
- * Demo credentials (also printed at the end):
- *   Admin     -> username: admin     password: Admin@123
- *   Client    -> username: client    password: Client@123
- *   Courier   -> username: courier   password: Courier@123
- *   Pharmacy  -> email: pharmacy@safemeds.app  password: Pharma@123  license: PH-1234567
+ * PASSWORDS COME FROM THE ENVIRONMENT:
+ *
+ *   SEED_ADMIN_PASSWORD     SEED_CLIENT_PASSWORD
+ *   SEED_COURIER_PASSWORD   SEED_PHARMACY_PASSWORD
+ *   SEED_PHARMACY_LICENSE   (optional, defaults to the demo license)
+ *
+ * Against a local database, any of these left unset falls back to a well-known
+ * development password and the seed says so loudly. Against a remote database
+ * it refuses to run instead, because this file is committed to a public
+ * repository: hardcoded defaults on a live deployment would publish a working
+ * admin login to anyone who opens the repo. Local convenience is worth a weak
+ * default; a public site is not.
  *
  * Every seeded account is created email-verified. Sign-in rejects any account
  * with a null emailVerifiedAt (see src/app/auth.ts), and the backfill in the
@@ -32,17 +39,118 @@ async function hash(pw) {
 // predates the verification requirement also repairs those accounts.
 const VERIFIED = { isVerified: true, emailVerifiedAt: new Date() };
 
+// --- Credentials -----------------------------------------------------------
+
+const LOCAL_HOSTS = ["localhost", "127.0.0.1", "::1", "host.docker.internal"];
+
+/**
+ * Whether DATABASE_URL points somewhere only this machine can reach. Used to
+ * decide if a weak fallback password is acceptable. Anything unparseable is
+ * treated as remote — failing closed is the safe direction here.
+ */
+function targetIsLocal() {
+  const url = process.env.DATABASE_URL || "";
+  try {
+    return LOCAL_HOSTS.includes(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
+const ACCOUNTS = [
+  { key: "admin", env: "SEED_ADMIN_PASSWORD", devDefault: "Admin@123" },
+  { key: "client", env: "SEED_CLIENT_PASSWORD", devDefault: "Client@123" },
+  { key: "courier", env: "SEED_COURIER_PASSWORD", devDefault: "Courier@123" },
+  { key: "pharmacy", env: "SEED_PHARMACY_PASSWORD", devDefault: "Pharma@123" },
+];
+
+/**
+ * Resolves each account's password, returning both the value and whether it
+ * came from the environment — the summary at the end prints the password only
+ * when it is the public development default, so a real one never lands in a
+ * terminal scrollback or a CI log.
+ */
+function resolveCredentials() {
+  const isLocal = targetIsLocal();
+  const resolved = {};
+  const missing = [];
+  const tooShort = [];
+
+  for (const { key, env, devDefault } of ACCOUNTS) {
+    const supplied = process.env[env];
+    if (supplied) {
+      // Matches the signup policy in src/app/api/auth/signup/route.ts, so a
+      // seeded account can never be one the app itself would have rejected.
+      if (supplied.length < 8) tooShort.push(env);
+      resolved[key] = { password: supplied, fromEnv: true };
+    } else {
+      missing.push(env);
+      resolved[key] = { password: devDefault, fromEnv: false };
+    }
+  }
+
+  if (tooShort.length) {
+    throw new Error(
+      `These seed passwords are shorter than 8 characters: ${tooShort.join(", ")}.`
+    );
+  }
+
+  if (missing.length && !isLocal) {
+    throw new Error(
+      "Refusing to seed a non-local database with development passwords.\n" +
+        `  Unset: ${missing.join(", ")}\n` +
+        "  These defaults are committed to a public repository, so seeding them\n" +
+        "  onto a live deployment would publish a working admin login.\n" +
+        "  Set the variables above and run again."
+    );
+  }
+
+  if (missing.length) {
+    console.warn(
+      `\n  WARNING: using development passwords for ${missing.length} account(s).` +
+        "\n  Fine for localhost. Never for a deployed database.\n"
+    );
+  }
+
+  return resolved;
+}
+
+const CREDENTIALS = resolveCredentials();
+const PHARMACY_LICENSE = process.env.SEED_PHARMACY_LICENSE || "PH-1234567";
+
+/**
+ * What to print for an account's password in the closing summary. A supplied
+ * password is named, never echoed: this output routinely ends up in terminal
+ * scrollback and CI logs. The development defaults are already public, so
+ * printing those costs nothing and keeps local onboarding a copy-paste.
+ */
+function shown(key) {
+  const { password, fromEnv } = CREDENTIALS[key];
+  const envVar = ACCOUNTS.find((a) => a.key === key).env;
+  return fromEnv ? `(from ${envVar})` : password;
+}
+
 async function main() {
   console.log("Seeding database...");
+
+  // Hashed once and applied to both create and update, so re-running the seed
+  // after changing a SEED_*_PASSWORD actually rotates the existing account
+  // rather than silently leaving the old password in place.
+  const hashes = {
+    admin: await hash(CREDENTIALS.admin.password),
+    client: await hash(CREDENTIALS.client.password),
+    courier: await hash(CREDENTIALS.courier.password),
+    pharmacy: await hash(CREDENTIALS.pharmacy.password),
+  };
 
   // --- Users (the four roles) -----------------------------------------------
   const admin = await prisma.user.upsert({
     where: { username: "admin" },
-    update: { ...VERIFIED },
+    update: { ...VERIFIED, passwordHash: hashes.admin },
     create: {
       username: "admin",
       email: "admin@safemeds.app",
-      passwordHash: await hash("Admin@123"),
+      passwordHash: hashes.admin,
       firstName: "Admin",
       lastName: "User",
       role: "ADMIN",
@@ -54,11 +162,11 @@ async function main() {
 
   const client = await prisma.user.upsert({
     where: { username: "client" },
-    update: { ...VERIFIED },
+    update: { ...VERIFIED, passwordHash: hashes.client },
     create: {
       username: "client",
       email: "client@safemeds.app",
-      passwordHash: await hash("Client@123"),
+      passwordHash: hashes.client,
       firstName: "Demo",
       lastName: "Client",
       role: "CLIENT",
@@ -71,16 +179,16 @@ async function main() {
 
   const pharmacy = await prisma.user.upsert({
     where: { username: "pharmacy" },
-    update: { ...VERIFIED, licenseNumber: "PH-1234567" },
+    update: { ...VERIFIED, licenseNumber: PHARMACY_LICENSE, passwordHash: hashes.pharmacy },
     create: {
       username: "pharmacy",
       email: "pharmacy@safemeds.app",
-      passwordHash: await hash("Pharma@123"),
+      passwordHash: hashes.pharmacy,
       firstName: "Demo",
       lastName: "Pharmacist",
       role: "PHARMACY",
       pharmacyName: "SafeMeds Campus Pharmacy",
-      licenseNumber: "PH-1234567",
+      licenseNumber: PHARMACY_LICENSE,
       phone: "+233200000002",
       address: "1 University Ave",
       city: "Kumasi",
@@ -97,11 +205,11 @@ async function main() {
   // dispatch contacts the courier directly when a delivery needs attention.
   await prisma.user.upsert({
     where: { username: "courier" },
-    update: { ...VERIFIED },
+    update: { ...VERIFIED, passwordHash: hashes.courier },
     create: {
       username: "courier",
       email: "courier@safemeds.app",
-      passwordHash: await hash("Courier@123"),
+      passwordHash: hashes.courier,
       firstName: "Demo",
       lastName: "Courier",
       role: "COURIER",
@@ -244,7 +352,7 @@ async function main() {
     update: {},
     create: {
       userId: pharmacy.id,
-      licenseNumber: "PH-1234567",
+      licenseNumber: PHARMACY_LICENSE,
       licenseType: "Pharmacist",
       issuingBody: "Pharmacy Council of Ghana",
       verified: false,
@@ -253,10 +361,12 @@ async function main() {
 
   console.log("Notifications, contact messages, and license verification created.");
   console.log("\nSeed complete. Login with:");
-  console.log("  Admin    -> username: admin    | password: Admin@123");
-  console.log("  Client   -> username: client   | password: Client@123");
-  console.log("  Courier  -> username: courier  | password: Courier@123");
-  console.log("  Pharmacy -> email: pharmacy@safemeds.app | password: Pharma@123 | license: PH-1234567");
+  console.log(`  Admin    -> username: admin    | password: ${shown("admin")}`);
+  console.log(`  Client   -> username: client   | password: ${shown("client")}`);
+  console.log(`  Courier  -> username: courier  | password: ${shown("courier")}`);
+  console.log(
+    `  Pharmacy -> email: pharmacy@safemeds.app | password: ${shown("pharmacy")} | license: ${PHARMACY_LICENSE}`
+  );
 }
 
 main()

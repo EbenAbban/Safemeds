@@ -78,6 +78,32 @@ Generated client: `src/lib/prisma-client`
 npm run db:seed
 ```
 
+Creates one account per role (`admin`, `client`, `courier` by username;
+`pharmacy@safemeds.app` by email) plus demo content.
+
+Passwords come from the environment:
+
+| Variable | Account |
+|---|---|
+| `SEED_ADMIN_PASSWORD` | admin |
+| `SEED_CLIENT_PASSWORD` | client |
+| `SEED_COURIER_PASSWORD` | courier |
+| `SEED_PHARMACY_PASSWORD` | pharmacy |
+| `SEED_PHARMACY_LICENSE` | pharmacy license number (optional) |
+
+Against a **local** database, any left unset falls back to a documented
+development password and the seed warns you. Against a **remote** database it
+refuses to run — this repository is public, so seeding the built-in defaults
+onto a deployment would publish a working admin login. Set the variables and
+re-run:
+
+```bash
+SEED_ADMIN_PASSWORD='…' SEED_CLIENT_PASSWORD='…' SEED_COURIER_PASSWORD='…' SEED_PHARMACY_PASSWORD='…' npm run db:seed
+```
+
+Re-running rotates the passwords of existing seeded accounts rather than
+skipping them, so this is also how you change one.
+
 ---
 
 ## Scripts
