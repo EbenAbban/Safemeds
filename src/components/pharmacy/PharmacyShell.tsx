@@ -3,21 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  AlertTriangle,
-  BarChart3,
-  Bell,
-  LayoutGrid,
-  LogOut,
-  Menu,
-  Pill,
-  Search,
-  Settings,
-  ShieldAlert,
-  Stethoscope,
-  Truck,
-  Users,
-} from "lucide-react";
+import { AlertTriangle, BarChart3, Bell, ClipboardList, LayoutGrid, LogOut, Menu, Pill, Search, Settings, ShieldAlert, Stethoscope, Truck, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/components/ui";
 
@@ -31,14 +17,15 @@ import { cn } from "@/components/ui";
  */
 
 const NAV_ITEMS = [
+  // Every label names the page it actually opens. Previously "Prescriptions"
+  // opened Medication Management and "Delivery" opened Order Management, and
+  // four of these destinations rendered outside this shell entirely, so the
+  // side panel vanished the moment you used it.
   { key: "consultations", label: "Consultations", href: "/inbox", Icon: Stethoscope },
-  // "Prescriptions" and "Delivery" route to the closest existing real pages
-  // rather than dead links — SafeMeds has no dedicated /prescriptions or
-  // /delivery list route yet; medication and order management already cover
-  // that ground today.
-  { key: "prescriptions", label: "Prescriptions", href: "/medications", Icon: Pill },
-  { key: "pharmacy", label: "Pharmacy", href: "/inventory", Icon: LayoutGrid },
-  { key: "delivery", label: "Delivery", href: "/orders", Icon: Truck },
+  { key: "prescriptions", label: "Prescriptions", href: "/prescriptions", Icon: ClipboardList },
+  { key: "medications", label: "Medications", href: "/medications", Icon: Pill },
+  { key: "inventory", label: "Inventory", href: "/inventory", Icon: LayoutGrid },
+  { key: "deliveries", label: "Deliveries", href: "/orders", Icon: Truck },
   { key: "staff", label: "Staff", href: "/staff-management", Icon: Users },
   { key: "analytics", label: "Analytics", href: "/analytics", Icon: BarChart3 },
 ] as const;

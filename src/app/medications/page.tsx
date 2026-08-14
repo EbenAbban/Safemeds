@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
-import Navigation from "@/components/Common/Navigation";
+import PharmacyShell from "@/components/pharmacy/PharmacyShell";
+
 import { getMedications, Medication } from "@/services/medicationService";
 import { EmptyState, MedicationSkeleton } from "@/components/ui";
 import { formatCurrency } from "@/lib/currency";
@@ -119,10 +120,9 @@ export default function MedicationsPage() {
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
-        <Navigation title="Medication Management" userRole="pharmacy" />
-
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <PharmacyShell active="medications" pageTitle="Medications">
+      <div className="min-h-full">
+        <main className="py-2">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -368,6 +368,7 @@ export default function MedicationsPage() {
           )}
         </main>
       </div>
+      </PharmacyShell>
     </ProtectedRoute>
   );
 } 

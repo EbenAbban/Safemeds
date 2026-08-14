@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 import { SlideUp } from "@/components/animations";
 import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
-import Navigation from "@/components/Common/Navigation";
+import PharmacyShell from "@/components/pharmacy/PharmacyShell";
+
 import { getOrders, Order } from "@/services/orderService";
 
 export default function OrdersPage() {
@@ -113,10 +114,9 @@ export default function OrdersPage() {
 
   return (
     <ProtectedRoute allowedRoles={["PHARMACY", "ADMIN"]}>
-      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high">
-        <Navigation title="Order Management" userRole="pharmacy" />
-
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <PharmacyShell active="deliveries" pageTitle="Deliveries">
+      <div className="min-h-full">
+        <main className="py-2">
           {/* Header */}
           <SlideUp className="mb-8">
             <h1 className="text-3xl font-bold text-on-surface mb-2">
@@ -444,6 +444,7 @@ export default function OrdersPage() {
           </SlideUp>
         </main>
       </div>
+      </PharmacyShell>
     </ProtectedRoute>
   );
 } 
