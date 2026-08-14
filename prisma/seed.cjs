@@ -1,7 +1,7 @@
 /**
  * Database seed for SafeMeds.
  *
- * Creates the three login roles plus demo data so every dashboard shows content.
+ * Creates the four login roles plus demo data so every dashboard shows content.
  * Idempotent: users are upserted by username; demo content is only created the
  * first time (guarded on the medications table being empty).
  *
@@ -10,7 +10,14 @@
  * Demo credentials (also printed at the end):
  *   Admin     -> username: admin     password: Admin@123
  *   Client    -> username: client    password: Client@123
+ *   Courier   -> username: courier   password: Courier@123
  *   Pharmacy  -> email: pharmacy@safemeds.app  password: Pharma@123  license: PH-1234567
+ *
+ * Every seeded account is created email-verified. Sign-in rejects any account
+ * with a null emailVerifiedAt (see src/app/auth.ts), and the backfill in the
+ * 20260813210000_email_verification migration only reached rows that already
+ * existed when it ran — so without this, a freshly seeded database would hand
+ * out four accounts that all fail login with EMAIL_NOT_VERIFIED.
  */
 const { PrismaClient } = require("../src/lib/prisma-client");
 const bcrypt = require("bcrypt");
@@ -21,13 +28,17 @@ async function hash(pw) {
   return bcrypt.hash(pw, 12);
 }
 
+// Applied to both create and update so re-seeding an older database that
+// predates the verification requirement also repairs those accounts.
+const VERIFIED = { isVerified: true, emailVerifiedAt: new Date() };
+
 async function main() {
   console.log("Seeding database...");
 
-  // --- Users (the three roles) ----------------------------------------------
+  // --- Users (the four roles) -----------------------------------------------
   const admin = await prisma.user.upsert({
     where: { username: "admin" },
-    update: { isVerified: true },
+    update: { ...VERIFIED },
     create: {
       username: "admin",
       email: "admin@safemeds.app",
@@ -35,7 +46,7 @@ async function main() {
       firstName: "Admin",
       lastName: "User",
       role: "ADMIN",
-      isVerified: true,
+      ...VERIFIED,
       termsAcceptedAt: new Date(),
       termsVersion: "1.0",
     },
@@ -43,7 +54,7 @@ async function main() {
 
   const client = await prisma.user.upsert({
     where: { username: "client" },
-    update: { isVerified: true },
+    update: { ...VERIFIED },
     create: {
       username: "client",
       email: "client@safemeds.app",
@@ -52,7 +63,7 @@ async function main() {
       lastName: "Client",
       role: "CLIENT",
       phone: "+233200000001",
-      isVerified: true,
+      ...VERIFIED,
       termsAcceptedAt: new Date(),
       termsVersion: "1.0",
     },
@@ -60,7 +71,7 @@ async function main() {
 
   const pharmacy = await prisma.user.upsert({
     where: { username: "pharmacy" },
-    update: { isVerified: true, licenseNumber: "PH-1234567" },
+    update: { ...VERIFIED, licenseNumber: "PH-1234567" },
     create: {
       username: "pharmacy",
       email: "pharmacy@safemeds.app",
@@ -75,13 +86,33 @@ async function main() {
       city: "Kumasi",
       state: "Ashanti",
       zipCode: "00233",
-      isVerified: true,
+      ...VERIFIED,
       termsAcceptedAt: new Date(),
       termsVersion: "1.0",
     },
   });
 
-  console.log("Users ready: admin, client, pharmacy");
+  // Couriers sign in with a username, same as students and admins. The phone
+  // number is not decorative: signup requires one for this role, because
+  // dispatch contacts the courier directly when a delivery needs attention.
+  await prisma.user.upsert({
+    where: { username: "courier" },
+    update: { ...VERIFIED },
+    create: {
+      username: "courier",
+      email: "courier@safemeds.app",
+      passwordHash: await hash("Courier@123"),
+      firstName: "Demo",
+      lastName: "Courier",
+      role: "COURIER",
+      phone: "+233200000003",
+      ...VERIFIED,
+      termsAcceptedAt: new Date(),
+      termsVersion: "1.0",
+    },
+  });
+
+  console.log("Users ready: admin, client, pharmacy, courier");
 
   // --- Demo content (only seed once) ----------------------------------------
   const medCount = await prisma.medication.count();
@@ -224,6 +255,7 @@ async function main() {
   console.log("\nSeed complete. Login with:");
   console.log("  Admin    -> username: admin    | password: Admin@123");
   console.log("  Client   -> username: client   | password: Client@123");
+  console.log("  Courier  -> username: courier  | password: Courier@123");
   console.log("  Pharmacy -> email: pharmacy@safemeds.app | password: Pharma@123 | license: PH-1234567");
 }
 
