@@ -6,6 +6,7 @@ import { getUserByUsername } from "@/utils/db";
 import { linkOrCreateGoogleUser } from "@/utils/googleAuth";
 import { formatLicenseNumber } from "@/services/licenseService";
 import { prisma } from "@/lib/prisma";
+import { isEmailConfigured, sendSignInEmail } from "@/lib/email";
 
 // Extend the built-in session types
 declare module "next-auth" {
@@ -245,6 +246,29 @@ export const { handlers, auth } = NextAuth({
       },
     }),
   ],
+  // Sign-in notification.
+  //
+  // In an event rather than inside authorize(): events fire after the sign-in
+  // has already succeeded, so a slow or failing mail provider cannot delay or
+  // break the login itself. It is awaited only far enough to catch errors.
+  events: {
+    async signIn({ user }) {
+      if (!user?.email || !isEmailConfigured()) return;
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+          select: { firstName: true },
+        });
+        await sendSignInEmail({
+          to: user.email,
+          firstName: dbUser?.firstName ?? "there",
+        });
+      } catch (error) {
+        // Never surfaced: a missing notification must not fail a valid login.
+        console.error("Sign-in email failed to send:", error);
+      }
+    },
+  },
   pages: {
     signIn: "/auth",
     error: "/auth",

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createVerificationToken } from "@/lib/emailVerification";
-import { isEmailConfigured, sendVerificationEmail } from "@/lib/email";
+import { createVerificationCode } from "@/lib/emailVerification";
+import { isEmailConfigured, sendVerificationCodeEmail } from "@/lib/email";
 import { DEFAULT_LICENCE_REGION } from "@/lib/ghana";
 import { hashPassword } from "@/utils/password";
 import { prisma } from "@/lib/prisma";
@@ -235,14 +235,11 @@ export async function POST(request: NextRequest) {
     let emailSent = false;
     if (isEmailConfigured()) {
       try {
-        const token = await createVerificationToken(user.id);
-        await sendVerificationEmail({
+        const code = await createVerificationCode(user.id);
+        await sendVerificationCodeEmail({
           to: user.email,
           firstName: user.firstName,
-          verifyUrl: new URL(
-            `/api/auth/verify-email?token=${encodeURIComponent(token)}`,
-            request.nextUrl.origin
-          ).toString(),
+          code,
         });
         emailSent = true;
       } catch (error) {
