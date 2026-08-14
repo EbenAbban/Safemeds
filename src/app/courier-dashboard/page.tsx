@@ -41,7 +41,13 @@ function DeliveryCard({
     <div className="rounded-lg border border-outline-variant/60 bg-surface-container-lowest p-4 dark:bg-surface-container">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="font-mono text-sm font-semibold text-on-surface">
+          {/* The package code, given prominence because it is the courier's
+              entire job: carry this package to that place and hand it to
+              whoever quotes the code back. They are never told who the
+              student is, which is what keeps an anonymous-first consultation
+              anonymous through to collection. */}
+          <p className="text-xs uppercase tracking-wide text-on-surface-variant">Package</p>
+          <p className="font-mono text-lg font-bold tracking-wider text-on-surface">
             {delivery.trackingNumber}
           </p>
           <p className="mt-1 flex items-center gap-1.5 text-sm text-on-surface-variant">
