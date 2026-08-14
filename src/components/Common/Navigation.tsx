@@ -3,9 +3,10 @@
 import { Reveal } from "@/components/animations";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GraduationCap, LogOut, Menu, Pill, ShieldCheck, Stethoscope, Truck, MessageCircle } from "lucide-react";
+import { GraduationCap, Menu, Pill, ShieldCheck, Stethoscope, Truck, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import NotificationBell from "./NotificationBell";
+import AccountMenu from "./AccountMenu";
 
 interface NavigationProps {
   title: string;
@@ -24,19 +25,8 @@ const ROLE_ICON = { client: GraduationCap, pharmacy: Pill, admin: ShieldCheck, c
  */
 export default function Navigation({ title, userRole }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
-  const { user, logout } = useAuth();
-
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      await logout();
-    } catch (error) {
-      console.error("Logout error:", error);
-      setIsLoggingOut(false);
-    }
-  };
+  const { user } = useAuth();
 
   const RoleIcon = ROLE_ICON[userRole];
 
@@ -79,35 +69,7 @@ export default function Navigation({ title, userRole }: NavigationProps) {
           <div className="flex items-center gap-4">
             <NotificationBell />
 
-            <div className="hidden text-right md:block">
-              <p className="text-sm font-medium text-on-surface">{user?.email || user?.username}</p>
-              <p className="text-xs capitalize text-on-surface-variant">{userRole} Account</p>
-            </div>
-
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
-                isLoggingOut
-                  ? "cursor-not-allowed bg-surface-container-high text-on-surface-variant"
-                  : "bg-error-container text-on-error-container hover:opacity-90"
-              }`}
-            >
-              {isLoggingOut ? (
-                <>
-                  <span
-                    aria-hidden="true"
-                    className="h-4 w-4 animate-spin rounded-full border-2 border-on-surface-variant border-t-transparent motion-reduce:animate-none"
-                  />
-                  Logging out…
-                </>
-              ) : (
-                <>
-                  <LogOut className="h-4 w-4" aria-hidden="true" />
-                  Logout
-                </>
-              )}
-            </button>
+            <AccountMenu userRole={userRole} />
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -151,10 +113,6 @@ export default function Navigation({ title, userRole }: NavigationProps) {
                 </button>
               </>
             )}
-            <div className="border-t border-outline-variant/60 px-4 py-2">
-              <p className="text-sm text-on-surface-variant">{user?.email || user?.username}</p>
-              <p className="text-xs capitalize text-on-surface-variant/70">{userRole} Account</p>
-            </div>
           </div>
           </div>
         </div>
