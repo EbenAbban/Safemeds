@@ -1,7 +1,7 @@
 "use client";
 
+import { SlideUp } from "@/components/animations";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import { Construction, ArrowLeft } from "lucide-react";
 import { Card, buttonClasses } from "@/components/ui";
 
@@ -17,7 +17,7 @@ export default function ComingSoon({
   const router = useRouter();
   return (
     <div className="flex min-h-screen items-center justify-center bg-surface p-4 dark:bg-surface-dark">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
+      <SlideUp className="w-full max-w-md">
         <Card radius="xl" className="text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-secondary-container/40 text-medical-teal dark:text-primary-fixed-dim">
             <Construction className="h-7 w-7" aria-hidden="true" />
@@ -31,7 +31,7 @@ export default function ComingSoon({
             Go back
           </button>
         </Card>
-      </motion.div>
+      </SlideUp>
     </div>
   );
 }
