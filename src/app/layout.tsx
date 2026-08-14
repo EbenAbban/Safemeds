@@ -5,6 +5,7 @@ import "./globals.css";
 import InstallGate from "@/components/pwa/InstallGate";
 import ServiceWorkerRegistrar from "@/components/pwa/ServiceWorkerRegistrar";
 import SessionProvider from "@/components/Auth/SessionProvider";
+import { auth } from "@/app/auth";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { OnboardingProvider } from "@/context/OnboardingContext";
@@ -78,6 +79,9 @@ export default async function RootLayout({
   // Read server-side so the install overlay is present in the initial HTML for
   // mobile visitors, rather than popping in after hydration.
   const userAgent = (await headers()).get("user-agent") ?? "";
+  // Resolved here so the client never has to fetch it before it can render
+  // a guarded page. See SessionProvider for why this matters.
+  const session = await auth();
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -86,7 +90,7 @@ export default async function RootLayout({
       </head>
       <body className={`${inter.variable} ${manrope.variable} antialiased`}>
         <ThemeProvider>
-          <SessionProvider>
+          <SessionProvider session={session}>
             <NotificationProvider>
               <OnboardingProvider>
                 <NavButtons />

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, ShieldAlert } from "lucide-react";
+import { DashboardSkeleton } from "@/components/ui";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -43,25 +44,19 @@ export default function ProtectedRoute({
     }
   }, [isLoading, isAuthenticated, user?.role, allowedRoles, router]);
 
+  // A guarded page no longer blanks itself while auth resolves.
+  //
+  // The session is now provided by the server in the root layout, so `status`
+  // is settled on first paint and this branch is reached only in the rare case
+  // where it genuinely is not. Even then, showing a page-shaped skeleton keeps
+  // the layout stable instead of replacing everything with a spinner and then
+  // snapping to content — the flash that made every navigation feel slow.
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-fixed/30 to-primary-fixed/50 dark:from-surface-dark dark:to-surface-container-high flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-16 h-16 border-4 border-soft-aqua border-t-transparent rounded-full mx-auto mb-4"
-          />
-          <h2 className="text-xl font-semibold text-on-surface mb-2">
-            Loading...
-          </h2>
-          <p className="text-on-surface-variant">Checking authentication status</p>
-        </motion.div>
+      <div className="min-h-screen bg-surface p-6 dark:bg-surface-dark">
+        <div className="mx-auto max-w-7xl">
+          <DashboardSkeleton />
+        </div>
       </div>
     );
   }
