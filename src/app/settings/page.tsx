@@ -4,37 +4,24 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
-
-const iconMap = {
-  Shield: () => <span className="text-lg">️</span>,
-  Bell: () => <span className="text-lg"></span>,
-  Truck: () => <span className="text-lg"></span>,
-  Users: () => <span className="text-lg"></span>,
-  Eye: () => <span className="text-lg">️</span>,
-  Lock: () => <span className="text-lg"></span>,
-  MapPin: () => <span className="text-lg"></span>,
-  Clock: () => <span className="text-lg">⏰</span>,
-  Phone: () => <span className="text-lg"></span>,
-  Mail: () => <span className="text-lg"></span>,
-  Settings: () => <span className="text-lg">️</span>,
-  Save: () => <span className="text-lg"></span>,
-  AlertTriangle: () => <span className="text-lg">️</span>,
-  CheckCircle: () => <span className="text-lg"></span>,
-  Loader2: () => <span className="animate-spin text-lg inline-block">⏳</span>,
-};
-
-const {
-  Shield,
-  Bell,
-  Truck,
-  Users,
-  Lock,
-  Settings,
-  Save,
+import {
   AlertTriangle,
+  Bell,
   CheckCircle,
   Loader2,
-} = iconMap;
+  Lock,
+  Save,
+  Settings,
+  Shield,
+  Truck,
+  Users,
+} from "lucide-react";
+
+// These were previously a local `iconMap` of stand-in components, every one of
+// which rendered an empty <span> — the emoji they were meant to hold had been
+// stripped. Nothing on this page had a visible icon, and the Save control was
+// an unlabelled green pill because its only child rendered nothing at all.
+// lucide-react is already a dependency and is what the rest of the app uses.
 
 export default function SettingsPage() {
   const { data: session, status } = useSession();
@@ -182,7 +169,7 @@ export default function SettingsPage() {
     return (
       <div className="min-h-screen bg-surface dark:bg-surface-dark flex items-center justify-center">
         <div className="flex items-center gap-2 text-on-surface dark:text-on-surface">
-          <Loader2 />
+          <Loader2 className="h-8 w-8 animate-spin text-medical-teal motion-reduce:animate-none" aria-hidden="true" />
           <span>Loading...</span>
         </div>
       </div>
@@ -738,7 +725,11 @@ export default function SettingsPage() {
                 : "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-on-error-container border border-error/30 dark:border-red-700"
             }`}
           >
-            {message.type === "success" ? <CheckCircle /> : <AlertTriangle />}
+            {message.type === "success" ? (
+              <CheckCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
+            ) : (
+              <AlertTriangle className="h-5 w-5 shrink-0" aria-hidden="true" />
+            )}
             {message.text}
           </div>
         )}
@@ -767,13 +758,30 @@ export default function SettingsPage() {
             <div className="bg-surface-container-lowest dark:bg-surface-container rounded-lg shadow-sm border border-outline-variant/60 p-6">
               {renderTabComponent[activeTab as keyof typeof renderTabComponent]()}
 
-              <div className="flex justify-end mt-8 pt-6 border-t border-outline-variant/60">
+              {/* An icon alone is not a save button. This previously rendered
+                  its label from a stand-in component that produced an empty
+                  span, so the control appeared as a bare green pill with no
+                  indication of what it did. */}
+              <div className="mt-8 flex flex-col-reverse items-stretch gap-3 border-t border-outline-variant/60 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-on-surface-variant">
+                  Changes apply once you save.
+                </p>
                 <button
                   onClick={handleSave}
                   disabled={loading}
-                  className="flex items-center gap-2 bg-medical-teal text-white px-6 py-2 rounded-lg hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-medical-teal px-6 py-2.5 font-semibold text-white shadow-soft transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary dark:text-on-primary"
                 >
-                  {loading ? <Loader2 /> : <Save />}
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                      Saving…
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" aria-hidden="true" />
+                      Save changes
+                    </>
+                  )}
                 </button>
               </div>
             </div>
