@@ -40,7 +40,12 @@ export default function Navigation({ title, userRole }: NavigationProps) {
             </div>
             <div>
               <h1 className="font-display text-xl font-bold text-on-surface">{title}</h1>
-              <p className="text-sm text-on-surface-variant">Welcome, {user?.name || "User"}</p>
+              {/* Only greet someone we can actually name. This header also
+                  renders on public pages, where "Welcome, User" greeted a
+                  visitor who had never signed in. */}
+              {user?.name && (
+                <p className="text-sm text-on-surface-variant">Welcome, {user.name}</p>
+              )}
             </div>
           </Reveal>
 

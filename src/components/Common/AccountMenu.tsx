@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, LogOut, Settings as SettingsIcon, User } from "lucide-react";
+import Link from "next/link";
+import { ChevronDown, LogIn, LogOut, Settings as SettingsIcon, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { dashboardPathForRole } from "@/lib/routes";
@@ -29,7 +30,7 @@ export default function AccountMenu({ userRole }: { userRole: string }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
 
   // Close on outside click and on Escape. A menu that can only be dismissed by
   // choosing something in it is a trap for keyboard users.
@@ -62,6 +63,29 @@ export default function AccountMenu({ userRole }: { userRole: string }) {
   // Role-aware: a pharmacist choosing "Dashboard" was previously sent to the
   // student dashboard, which their own guard then bounced them out of.
   const dashboardPath = dashboardPathForRole(user?.role ?? userRole);
+  // Public pages render this same header — /consult exists precisely so that
+  // someone with no account can use it. Showing them an avatar, a greeting to
+  // "User", and a menu offering Settings, Dashboard and Sign out described a
+  // state they are not in. A signed-out visitor gets the one action that
+  // applies to them.
+  if (!isLoading && !isAuthenticated) {
+    return (
+      <Link
+        href="/auth"
+        className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-medical-teal transition-colors hover:bg-surface-container-high dark:text-primary-fixed-dim"
+      >
+        <LogIn className="h-4 w-4" aria-hidden="true" />
+        Sign in
+      </Link>
+    );
+  }
+
+  // Hold the space while auth settles rather than flashing "Sign in" and then
+  // swapping it for an avatar.
+  if (isLoading) {
+    return <div aria-hidden="true" className="h-8 w-8 rounded-full bg-surface-container-high" />;
+  }
+
   const displayName = user?.name || user?.username || "Account";
   const initial = displayName.trim().charAt(0).toUpperCase() || "A";
 
