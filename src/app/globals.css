@@ -232,6 +232,10 @@
    Base
    ========================================================================== */
 body {
+  /* Clearance for the fixed back/forward controls (bottom-left) and the theme
+     toggle (bottom-right). Without it they overlap page content and can cover
+     buttons outright, making them unclickable. */
+  padding-bottom: 4rem;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
