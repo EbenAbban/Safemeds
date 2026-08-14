@@ -270,7 +270,6 @@ export default function MedicationsPage() {
                           </p>
                         )}
                       </div>
-                      <div className="text-2xl"></div>
                     </div>
 
                     <div className="space-y-2 mb-4">

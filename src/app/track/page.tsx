@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, Suspense } from "react";
+import { PackageSearch } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Navigation from "@/components/Common/Navigation";
@@ -126,7 +127,7 @@ function TrackConsultationContent() {
           className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-lg p-8"
         >
           <div className="text-center mb-8">
-            <div className="text-6xl mb-4"></div>
+            <PackageSearch className="mx-auto mb-4 h-12 w-12 text-medical-teal dark:text-primary" aria-hidden="true" />
             <h1 className="text-3xl font-bold text-on-surface mb-2">
               Track Your Consultation
             </h1>

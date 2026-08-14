@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { formatCurrency } from "@/lib/currency";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
@@ -29,15 +30,11 @@ export default function AnalyticsPage() {
     fetchAnalytics();
   }, [period]);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount || 0);
-  };
-
+  // formatCurrency comes from lib/currency: it handles Prisma Decimals, which
+  // arrive as strings and cannot be passed to a number-typed formatter, and it
+  // uses cedis rather than the dollars this page previously printed.
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('en-US').format(num || 0);
+    return new Intl.NumberFormat('en-GH').format(num || 0);
   };
 
   const getStatusColor = (status: string) => {

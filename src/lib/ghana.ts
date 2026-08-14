@@ -62,3 +62,12 @@ export function normalizeGhanaPhone(input: string): string | null {
 export function isValidGhanaPhone(input: string): boolean {
   return normalizeGhanaPhone(input) !== null;
 }
+
+/**
+ * Fallback region for licence verification when the caller sends none.
+ *
+ * This was "NY". A Ghanaian pharmacist's licence was being checked against New
+ * York, which is either meaningless or wrong depending on what the verification
+ * service does with it. Ashanti is where the campus this product serves sits.
+ */
+export const DEFAULT_LICENCE_REGION = "Ashanti";

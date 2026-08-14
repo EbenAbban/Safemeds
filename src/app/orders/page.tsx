@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Banknote, ShoppingBag, TrendingUp } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
+import { EmptyState, TableSkeleton } from "@/components/ui";
 import { useRouter } from "next/navigation";
 import { SlideUp } from "@/components/animations";
 import { useAuth } from "@/hooks/useAuth";
@@ -131,7 +133,7 @@ export default function OrdersPage() {
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-primary-fixed/50 rounded-lg flex items-center justify-center">
-                    <span className="text-medical-teal text-lg"></span>
+                    <ShoppingBag className="h-4 w-4 text-medical-teal" aria-hidden="true" />
                   </div>
                 </div>
                 <div className="ml-4">
@@ -147,7 +149,7 @@ export default function OrdersPage() {
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                    <span className="text-secondary text-lg"></span>
+                    <Banknote className="h-4 w-4 text-secondary" aria-hidden="true" />
                   </div>
                 </div>
                 <div className="ml-4">
@@ -163,7 +165,7 @@ export default function OrdersPage() {
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span className="text-tertiary text-lg"></span>
+                    <TrendingUp className="h-4 w-4 text-tertiary" aria-hidden="true" />
                   </div>
                 </div>
                 <div className="ml-4">
@@ -245,22 +247,20 @@ export default function OrdersPage() {
           {/* Orders Table */}
           <SlideUp className="bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-lg overflow-hidden">
             {loading ? (
-              <div className="p-8 text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-soft-aqua mx-auto"></div>
-                <p className="mt-4 text-on-surface-variant">Loading orders...</p>
+              <div className="p-4">
+                <TableSkeleton rows={filters.limit ?? 10} columns={5} />
               </div>
             ) : orders.length === 0 ? (
-              <div className="p-8 text-center">
-                <div className="text-4xl mb-4"></div>
-                <h3 className="text-lg font-semibold text-on-surface mb-2">
-                  No orders found
-                </h3>
-                <p className="text-on-surface-variant">
-                  {filters.status || filters.paymentStatus
-                    ? "Try adjusting your filters"
-                    : "No orders have been placed yet"}
-                </p>
-              </div>
+              <EmptyState
+                className="border-0"
+                icon={ShoppingBag}
+                title="No orders found"
+                description={
+                  filters.status || filters.paymentStatus
+                    ? "No order matches these filters. Try widening the status or payment filter."
+                    : "No orders have been placed yet. New orders appear here as they arrive."
+                }
+              />
             ) : (
               <>
                 <div className="overflow-x-auto">

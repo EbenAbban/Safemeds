@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { DEFAULT_LICENCE_REGION } from "@/lib/ghana";
 import { hashPassword } from "@/utils/password";
 import { prisma } from "@/lib/prisma";
 import { LEGAL_VERSION } from "@/lib/legal";
@@ -160,7 +161,7 @@ export async function POST(request: NextRequest) {
       try {
         isVerified = await verifyPharmacistLicense(
           licenseNumber,
-          state || "NY"
+          state || DEFAULT_LICENCE_REGION
         );
         if (!isVerified) {
           return NextResponse.json(

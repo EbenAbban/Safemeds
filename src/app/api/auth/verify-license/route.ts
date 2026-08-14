@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { DEFAULT_LICENCE_REGION } from "@/lib/ghana";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rateLimit";
 // Format rules live in licenseService. This route previously kept its own,
@@ -44,7 +45,7 @@ async function verifyPharmacistLicense(
         },
         body: JSON.stringify({
           licenseNumber: formatLicenseNumber(licenseNumber),
-          state: state || "NY",
+          state: state || DEFAULT_LICENCE_REGION,
         }),
       });
 
@@ -61,7 +62,7 @@ async function verifyPharmacistLicense(
     return {
       isValid: true,
       details: {
-        state: state || "NY",
+        state: state || DEFAULT_LICENCE_REGION,
         status: "PENDING_VERIFICATION",
       },
     };
@@ -70,7 +71,7 @@ async function verifyPharmacistLicense(
     return {
       isValid: true,
       details: {
-        state: state || "NY",
+        state: state || DEFAULT_LICENCE_REGION,
         status: "PENDING_VERIFICATION",
       },
     };
