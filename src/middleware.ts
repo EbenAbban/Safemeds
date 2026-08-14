@@ -1,9 +1,42 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 import { isPublicRoute } from '@/lib/routes'
+
+const DASHBOARD_BY_ROLE: Record<string, string> = {
+  CLIENT: '/client-dashboard',
+  PHARMACY: '/pharmacy-dashboard',
+  COURIER: '/courier-dashboard',
+  ADMIN: '/admin',
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // A signed-in visitor landing on "/" is sent to their dashboard here, before
+  // anything renders.
+  //
+  // This used to happen on the client: the page rendered a full-screen
+  // "Loading SafeMeds…" spinner while the session resolved, then a second
+  // full-screen "Welcome back… redirecting" panel, and only then navigated.
+  // Two blocking interstitials before any real content, on the very first
+  // thing anyone sees when they open the site. A redirect issued here costs
+  // no render at all.
+  if (pathname === '/') {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+      // Vercel serves over HTTPS, so the cookie carries the __Secure- prefix
+      // there and not in local development. Getting this wrong means the token
+      // is never found and the redirect silently stops happening.
+      secureCookie: request.nextUrl.protocol === 'https:',
+    })
+    const role = typeof token?.role === 'string' ? token.role : null
+    const destination = role ? DASHBOARD_BY_ROLE[role] : null
+    if (destination) {
+      return NextResponse.redirect(new URL(destination, request.url))
+    }
+  }
 
   // The allowlist lives in @/lib/routes so the client-side redirect in useAuth
   // enforces exactly the same set. When these two disagreed, public pages that

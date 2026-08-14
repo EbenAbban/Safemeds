@@ -174,51 +174,13 @@ export default function Home() {
     setShowConsultCta(true);
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-surface dark:bg-surface-dark">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="mx-auto mb-4 h-16 w-16 rounded-full border-4 border-medical-teal border-t-transparent"
-          />
-          <h2 className="mb-2 text-xl font-semibold text-on-surface">Loading SafeMeds...</h2>
-          <p className="text-on-surface-variant">Preparing your healthcare experience</p>
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (isAuthenticated && user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-surface dark:bg-surface-dark">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
-        >
-          <motion.div
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary"
-          >
-            <Check className="h-8 w-8 text-on-secondary" strokeWidth={2.5} aria-hidden="true" />
-          </motion.div>
-          <h2 className="mb-2 text-xl font-semibold text-on-surface">
-            Welcome back, {user.name || user.username}!
-          </h2>
-          <p className="text-on-surface-variant">Redirecting to your {user.role.toLowerCase()} dashboard...</p>
-        </motion.div>
-      </div>
-    );
-  }
+  // No loading or "redirecting" interstitial.
+  //
+  // Signed-in visitors are redirected to their dashboard by middleware before
+  // this component renders at all, so the authenticated branch that used to
+  // live here is unreachable by design. Everyone else gets the landing page
+  // immediately — previously they waited behind a full-screen spinner while
+  // the session resolved, for a page that does not need a session to render.
 
   return (
     <div className="min-h-screen bg-surface dark:bg-surface-dark">
